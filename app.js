@@ -23,27 +23,20 @@ const modalContent= document.getElementById('modalContent');
    Mega, Mediafire, etc.
    ============================================================ */
 const LINKS = {
-  // ============ EJEMPLO (descomenta y edítalo) ============
-  // "Naruto": {
-  //   "Terabox": {
-  //     "1": "https://terabox.com/s/xxxxx1",
-  //     "2": "https://terabox.com/s/xxxxx2",
-  //     "3": "https://terabox.com/s/xxxxx3"
-  //   },
-  //   "Drive": {
-  //     "1": "https://drive.google.com/file/d/xxxxx1/view",
-  //     "2": "https://drive.google.com/file/d/xxxxx2/view"
-  //   }
-  // },
-  // "One Piece": {
-  //   "Terabox": {
-  //     "1": "https://terabox.com/s/yyyyy1",
-  //     "2": "https://terabox.com/s/yyyyy2"
-  //   },
-  //   "Mega": {
-  //     "1": "https://mega.nz/file/yyyyy1"
-  //   }
-  // }
+  "Attack on Titan": {
+    "Terabox": {
+      "1": "https://terabox.com/s/tu-link-real-1",
+      "2": "https://terabox.com/s/tu-link-real-2"
+    },
+    "Drive": {
+      "1": "https://drive.google.com/file/d/tu-id-1/view"
+    }
+  },
+  "Demon Slayer": {
+    "Terabox": {
+      "1": "https://terabox.com/s/tu-link-ds-1"
+    }
+  }
 };
 
 /* Íconos por servidor (decorativo) */
