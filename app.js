@@ -37,12 +37,14 @@ const LINKS = {
       "1": "https://terabox.com/s/tu-link-ds-1"
     }
   },
-  "Blue Exorcist": {
+   "Blue Exorcist": {
     "Drive": {
-      "1": "https://drive.google.com/file/d/1Pw-etcZRlrayTsEY1VPvOZf09YcyLDmF/preview"
+      "1": "https://drive.google.com/file/d/1Pw-etcZRlrayTsEY1VPvOZf09YcyLDmF/preview",
+      "2": "https://drive.google.com/file/d/1XEOvRpbEGPrRVNhAEn5acpJ9VA8r0F8L/preview",
+      "3": "https://drive.google.com/file/d/1DQzgaCH0OnCwDGgVJHACrvH_ooN_ZeQf/preview",
+      "4": "https://drive.google.com/file/d/18U03kcXEcnpVeJHHYt_AlBAI9rhynYkk/preview"
     }
-  }
-};
+  },
 
 /* Íconos por servidor (decorativo) */
 const SERVER_ICONS = {
