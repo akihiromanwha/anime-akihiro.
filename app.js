@@ -194,7 +194,9 @@ function applyFilters(){
     const text = normalize([a.title, ...(a.genres||[])].join(' '));
     return (!q || text.includes(q)) && (!g || (a.genres||[]).some(x => normalize(x) === g));
   });
-  sectionTitle.textContent = q ? `Resultados para "${searchInput.value}"` : 'Animes populares';
+    sectionTitle.textContent = q 
+    ? `Resultados para "${searchInput.value}"` 
+    : (currentType === 'anime' ? 'Animes populares' : 'Manhwas populares');
   statusEl.textContent = `${filtered.length} anime${filtered.length===1?'':'s'} encontrado${filtered.length===1?'':'s'}.`;
   render(filtered);
 }
