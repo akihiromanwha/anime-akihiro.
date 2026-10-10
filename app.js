@@ -257,11 +257,11 @@ function openAnime(a){
       renderEpisodes(btn.dataset.server);
     };
   });
-  function renderEpisodes(serverName){
+   function renderEpisodes(serverName){
     const box = document.getElementById('episodesBox');
     const eps = animeLinks[serverName] || {};
     const keys = Object.keys(eps).sort((x,y) => Number(x) - Number(y));
-   
+
     if (!keys.length){
       box.innerHTML = `<p class="noLinks">No hay episodios en ${esc(serverName)}.</p>`;
       return;
@@ -272,34 +272,39 @@ function openAnime(a){
         Episodio ${esc(num)}
       </button>
     `).join('');
+  }
 
-    // Reproducir dentro de la página
-    box.querySelectorAll('.episode').forEach(btn => {
-      btn.onclick = () => {
-        const link = btn.dataset.link;
-        const num  = btn.dataset.num;
-        const player = document.getElementById('playerBox');
-        const isDrive = link.includes('drive.google.com');
-        const isTerabox = link.includes('terabox');
+  const boxGlobal = document.getElementById('episodesBox');
+  if (boxGlobal){
+    boxGlobal.onclick = (e) => {
+      const btn = e.target.closest('.episode');
+      if (!btn) return;
 
-        if (isDrive){
-          // Convertir a embed de Drive
-          let id = '';
-          const match = link.match(/\/d\/([^/]+)/);
-          if (match) id = match[1];
-          player.innerHTML = `
-            <div class="playerHeader">
-              <span>▶ Episodio ${esc(num)}</span>
-              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
-            </div>
-            <iframe src="https://drive.google.com/file/d/${id}/preview"
-              allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-        } else {
-          // Otros servidores abren en pestaña nueva
-          window.open(link, '_blank', 'noopener');
-        }
-      };
-    });
+      const link = btn.dataset.link;
+      const num  = btn.dataset.num;
+      let player = document.getElementById('playerBox');
+
+      // Si por alguna razón no existe, lo creamos
+      if (!player){
+        player = document.createElement('div');
+        player.id = 'playerBox';
+        document.getElementById('episodesBox').after(player);
+      }
+
+      if (link.includes('drive.google.com')){
+        const match = link.match(/\/d\/([^/]+)/);
+        const id = match ? match[1] : '';
+        player.innerHTML = `
+          <div class="playerHeader">
+            <span>▶ Episodio ${esc(num)}</span>
+            <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+          </div>
+          <iframe src="https://drive.google.com/file/d/${id}/preview"
+            allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+      } else {
+        window.open(link, '_blank', 'noopener');
+      }
+    };
   }
 
   modal.classList.remove('hidden');
