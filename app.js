@@ -257,12 +257,11 @@ function openAnime(a){
       renderEpisodes(btn.dataset.server);
     };
   });
-
-   function renderEpisodes(serverName){
+  function renderEpisodes(serverName){
     const box = document.getElementById('episodesBox');
     const eps = animeLinks[serverName] || {};
     const keys = Object.keys(eps).sort((x,y) => Number(x) - Number(y));
-
+   
     if (!keys.length){
       box.innerHTML = `<p class="noLinks">No hay episodios en ${esc(serverName)}.</p>`;
       return;
