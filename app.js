@@ -65,7 +65,68 @@ function getAnimeLinks(title){
   }
   return null;
 }
-
+/* ============================================================
+   🌟 ANIMES PERSONALIZADOS
+   Agrega aquí los animes que TÚ quieras (los que tienes en Terabox)
+   ============================================================ */
+const CUSTOM_ANIME = [
+  {
+    title: "Blue Exorcist",
+    genres: ["Action", "Supernatural", "Fantasy"],
+    episodes: 25,
+    score: "7.8",
+    cover: "https://img.anili.st/media/9919"
+  },
+  {
+    title: "Ranma 1/2",
+    genres: ["Comedy", "Romance", "Action"],
+    episodes: 161,
+    score: "7.7",
+    cover: "https://img.anili.st/media/210"
+  },
+  {
+    title: "Bleach",
+    genres: ["Action", "Adventure", "Supernatural"],
+    episodes: 366,
+    score: "7.9",
+    cover: "https://img.anili.st/media/269"
+  },
+  {
+    title: "Inuyasha",
+    genres: ["Action", "Adventure", "Romance"],
+    episodes: 167,
+    score: "7.6",
+    cover: "https://img.anili.st/media/249"
+  },
+  {
+    title: "Hunter x Hunter",
+    genres: ["Action", "Adventure", "Fantasy"],
+    episodes: 148,
+    score: "9.0",
+    cover: "https://img.anili.st/media/11061"
+  },
+  {
+    title: "Fullmetal Alchemist: Brotherhood",
+    genres: ["Action", "Adventure", "Drama"],
+    episodes: 64,
+    score: "9.1",
+    cover: "https://img.anili.st/media/5114"
+  },
+  {
+    title: "Death Note",
+    genres: ["Mystery", "Psychological", "Thriller"],
+    episodes: 37,
+    score: "8.6",
+    cover: "https://img.anili.st/media/1535"
+  },
+  {
+    title: "Tokyo Ghoul",
+    genres: ["Action", "Horror", "Supernatural"],
+    episodes: 12,
+    score: "7.8",
+    cover: "https://img.anili.st/media/20605"
+  }
+];
 /* ============================================================
    Catálogo de respaldo
    ============================================================ */
@@ -231,25 +292,42 @@ document.getElementById('themeBtn').onclick = () => { document.body.classList.to
 async function loadCatalog(){
   statusEl.textContent = 'Cargando catálogo automático...';
   try{
-    const query = `query { Page(page:1, perPage:100) { media(type:ANIME, sort:POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore coverImage { large } } } }`;
-    const res = await fetch('https://graphql.anilist.co',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({query})
-    });
-    if(!res.ok) throw new Error('API');
-    const data = await res.json();
-    const rows = data?.data?.Page?.media || [];
-    catalog = rows.map(x => ({
+    const query = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type:ANIME, sort:POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore coverImage { large } } } }`;
+    const paginas = [1, 2];
+    const todas = [];
+
+    for (const p of paginas){
+      const res = await fetch('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables: { page: p } })
+      });
+      const data = await res.json();
+      const rows = data?.data?.Page?.media || [];
+      todas.push(...rows);
+      await new Promise(r => setTimeout(r, 700));
+    }
+
+    const deAniList = todas.map(x => ({
       title: x.title?.english || x.title?.romaji || x.title?.native || 'Anime',
       genres: x.genres || [],
       episodes: x.episodes || 0,
       score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
       cover: x.coverImage?.large || ''
     })).filter(x => x.title);
+
+    catalog = [...CUSTOM_ANIME, ...deAniList];
+
+    const vistos = new Set();
+    catalog = catalog.filter(a => {
+      if (vistos.has(a.title)) return false;
+      vistos.add(a.title);
+      return true;
+    });
+
     if(!catalog.length) throw new Error('Sin datos');
   }catch(e){
-    catalog = fallback;
+    catalog = [...CUSTOM_ANIME, ...fallback];
     statusEl.textContent = 'Catálogo de respaldo cargado.';
   }
   fillGenres();
