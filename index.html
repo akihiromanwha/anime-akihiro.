@@ -12,7 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="AnimeAkihiroDaiky">
 <meta name="description" content="AnimeAkihiroDaiky — Tu mundo de anime, manga y manhwa.">
-<meta name="theme-color" content="#0f0f14">
+<meta name="theme-color" content="#0a0a0a">
 <title>AnimeAkihiroDaiky</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -21,7 +21,7 @@
 <header>
   <div class="logo">Anime<span>AkihiroDaiky</span></div>
   <div class="searchWrap">
-    <input id="searchInput" type="search" placeholder="Buscar anime...">
+    <input id="searchInput" type="search" placeholder="Buscar...">
   </div>
   <button id="themeBtn" class="smallBtn">☀️</button>
 </header>
@@ -34,6 +34,12 @@
       <p>Busca tus series favoritas y consulta sus capítulos.</p>
       <button id="heroListBtn" class="primary">❤️ Mi lista</button>
     </div>
+  </section>
+
+  <!-- 🎬 PESTAÑAS ANIME / MANHWA -->
+  <section class="typeTabs">
+    <button class="typeTab active" data-type="anime">🎬 Anime</button>
+    <button class="typeTab" data-type="manhwa">📖 Manhwa</button>
   </section>
 
   <section class="toolbar">
@@ -66,14 +72,11 @@
    ANIMEAKHIRODAIKY — Protección de contenido
    © 2026 AnimeAkihiroDaiky
    ════════════════════════════════════════════════════════════ */
-console.log('%c ANIMEAKHIRODAIKY ', 'background:#7c3aed;color:#fff;font-size:22px;font-weight:bold;padding:10px 20px;border-radius:6px');
-console.log('%c© 2026 AnimeAkihiroDaiky — Todos los derechos reservados', 'color:#9a9aac;font-size:13px');
-console.log('%c🔗 https://github.com/akihiromanwha', 'color:#2563eb;font-size:13px');
+console.log('%c ANIMEAKHIRODAIKY ', 'background:#e50914;color:#fff;font-size:22px;font-weight:bold;padding:10px 20px;border-radius:6px');
+console.log('%c© 2026 AnimeAkihiroDaiky — Todos los derechos reservados', 'color:#a0a0a0;font-size:13px');
+console.log('%c🔗 https://github.com/akihiromanwha', 'color:#e50914;font-size:13px');
 
-// Bloquear clic derecho
 document.addEventListener('contextmenu', e => e.preventDefault());
-
-// Bloquear atajos (F12, Ctrl+U, Ctrl+Shift+I/J/C)
 document.addEventListener('keydown', e => {
   if (e.key === 'F12' ||
       (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
@@ -82,7 +85,6 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Firma oculta (rastreador de copias)
 window._firma = "ANIMEAKHIRODAIKY-2026-BY-AKIHIROMANWHA";
 </script>
 
