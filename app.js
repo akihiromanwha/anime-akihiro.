@@ -258,7 +258,7 @@ function openAnime(a){
     };
   });
 
-  function renderEpisodes(serverName){
+   function renderEpisodes(serverName){
     const box = document.getElementById('episodesBox');
     const eps = animeLinks[serverName] || {};
     const keys = Object.keys(eps).sort((x,y) => Number(x) - Number(y));
@@ -269,10 +269,38 @@ function openAnime(a){
     }
 
     box.innerHTML = keys.map(num => `
-      <a class="episode" target="_blank" rel="noopener" href="${esc(eps[num])}">
+      <button class="episode" data-link="${esc(eps[num])}" data-num="${esc(num)}">
         Episodio ${esc(num)}
-      </a>
+      </button>
     `).join('');
+
+    // Reproducir dentro de la página
+    box.querySelectorAll('.episode').forEach(btn => {
+      btn.onclick = () => {
+        const link = btn.dataset.link;
+        const num  = btn.dataset.num;
+        const player = document.getElementById('playerBox');
+        const isDrive = link.includes('drive.google.com');
+        const isTerabox = link.includes('terabox');
+
+        if (isDrive){
+          // Convertir a embed de Drive
+          let id = '';
+          const match = link.match(/\/d\/([^/]+)/);
+          if (match) id = match[1];
+          player.innerHTML = `
+            <div class="playerHeader">
+              <span>▶ Episodio ${esc(num)}</span>
+              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+            </div>
+            <iframe src="https://drive.google.com/file/d/${id}/preview"
+              allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+        } else {
+          // Otros servidores abren en pestaña nueva
+          window.open(link, '_blank', 'noopener');
+        }
+      };
+    });
   }
 
   modal.classList.remove('hidden');
