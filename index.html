@@ -1,12 +1,23 @@
+<!--
+  ════════════════════════════════════════════════════════════
+   ANIMEAKHIRODAIKY
+   © 2026 AnimeAkihiroDaiky — Todos los derechos reservados
+   GitHub: https://github.com/akihiromanwha
+   ════════════════════════════════════════════════════════════
+-->
 <!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="AnimeAkihiroDaiky">
+<meta name="description" content="AnimeAkihiroDaiky — Tu mundo de anime, manga y manhwa.">
+<meta name="theme-color" content="#0f0f14">
 <title>AnimeAkihiroDaiky</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <header>
   <div class="logo">Anime<span>AkihiroDaiky</span></div>
   <div class="searchWrap">
@@ -36,12 +47,44 @@
   <section id="animeGrid" class="grid"></section>
 </main>
 
+<footer class="siteFooter">
+  <p>© 2026 <b>AnimeAkihiroDaiky</b> — Hecho por 
+    <a href="https://github.com/akihiromanwha" target="_blank" rel="noopener">akihiromanwha</a>
+  </p>
+  <p class="muted">Los videos y portadas pertenecen a sus respectivos autores.</p>
+</footer>
+
 <div id="modal" class="modal hidden">
   <div class="modalBox">
     <button id="closeModal" class="close">✕</button>
     <div id="modalContent"></div>
   </div>
 </div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   ANIMEAKHIRODAIKY — Protección de contenido
+   © 2026 AnimeAkihiroDaiky
+   ════════════════════════════════════════════════════════════ */
+console.log('%c ANIMEAKHIRODAIKY ', 'background:#7c3aed;color:#fff;font-size:22px;font-weight:bold;padding:10px 20px;border-radius:6px');
+console.log('%c© 2026 AnimeAkihiroDaiky — Todos los derechos reservados', 'color:#9a9aac;font-size:13px');
+console.log('%c🔗 https://github.com/akihiromanwha', 'color:#2563eb;font-size:13px');
+
+// Bloquear clic derecho
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// Bloquear atajos (F12, Ctrl+U, Ctrl+Shift+I/J/C)
+document.addEventListener('keydown', e => {
+  if (e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
+      (e.ctrlKey && e.key.toLowerCase() === 'u')){
+    e.preventDefault();
+  }
+});
+
+// Firma oculta (rastreador de copias)
+window._firma = "ANIMEAKHIRODAIKY-2026-BY-AKIHIROMANWHA";
+</script>
 
 <script src="app.js"></script>
 </body>
