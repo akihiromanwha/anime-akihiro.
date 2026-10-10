@@ -177,7 +177,7 @@ function render(list){
       <div class="cardBody">
         <div class="title">${esc(a.title)}</div>
         <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))} ${a.episodes?`• ${a.episodes} eps.`:''}</div>
-        <button data-index="${i}">Ver opciones</button>
+               <button data-index="${i}">${currentType === 'anime' ? 'Ver episodios' : 'Ver capítulos'}</button>
       </div>`;
     card.querySelector('button').onclick = () => openAnime(a);
     animeGrid.appendChild(card);
@@ -371,5 +371,104 @@ async function loadCatalog(){
   }
   fillGenres();
   applyFilters();
+}
+async function loadCatalog(){
+  statusEl.textContent = 'Cargando catálogo...';
+  try{
+    const query = `query ($page: Int, $type: MediaType, $country: CountryCode) { 
+      Page(page: $page, perPage: 50) { 
+        media(type: $type, countryOfOrigin: $country, sort: POPULARITY_DESC) { 
+          id title { romaji english native } genres episodes chapters averageScore coverImage { large } 
+        } 
+      } 
+    }`;
+
+    // Cargar anime
+    const animeTodas = [];
+    for (const p of [1, 2]){
+      const res = await fetch('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables: { page: p, type: 'ANIME' } })
+      });
+      const data = await res.json();
+      animeTodas.push(...(data?.data?.Page?.media || []));
+      await new Promise(r => setTimeout(r, 700));
+    }
+
+    catalogAnime = animeTodas.map(x => ({
+      title: x.title?.english || x.title?.romaji || x.title?.native || 'Anime',
+      genres: x.genres || [],
+      episodes: x.episodes || 0,
+      score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
+      cover: x.coverImage?.large || ''
+    })).filter(x => x.title);
+
+    catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
+
+    // Cargar manhwa (MANGA de Corea)
+    const manhwaTodas = [];
+    for (const p of [1, 2]){
+      const res = await fetch('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables: { page: p, type: 'MANGA', country: 'KR' } })
+      });
+      const data = await res.json();
+      manhwaTodas.push(...(data?.data?.Page?.media || []));
+      await new Promise(r => setTimeout(r, 700));
+    }
+
+    catalogManhwa = manhwaTodas.map(x => ({
+      title: x.title?.english || x.title?.romaji || x.title?.native || 'Manhwa',
+      genres: x.genres || [],
+      episodes: x.chapters || 0,
+      score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
+      cover: x.coverImage?.large || ''
+    })).filter(x => x.title);
+
+    catalogManhwa = [...CUSTOM_MANHWA, ...catalogManhwa];
+
+    // Quitar duplicados
+    const limpiar = arr => {
+      const vistos = new Set();
+      return arr.filter(a => {
+        if (vistos.has(a.title)) return false;
+        vistos.add(a.title);
+        return true;
+      });
+    };
+    catalogAnime = limpiar(catalogAnime);
+    catalogManhwa = limpiar(catalogManhwa);
+
+    catalog = catalogAnime;
+    if(!catalog.length) throw new Error('Sin datos');
+  }catch(e){
+    catalogAnime = [...CUSTOM_ANIME, ...fallback];
+    catalogManhwa = CUSTOM_MANHWA;
+    catalog = catalogAnime;
+    statusEl.textContent = 'Catálogo de respaldo cargado.';
+  }
+  fillGenres();
+  applyFilters();
+
+  // 🎬 Activar pestañas Anime / Manhwa
+  document.querySelectorAll('.typeTab').forEach(tab => {
+    tab.onclick = () => {
+      document.querySelectorAll('.typeTab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const tipo = tab.dataset.type;
+
+      catalog = tipo === 'anime' ? catalogAnime : catalogManhwa;
+      currentType = tipo;
+
+      searchInput.value = '';
+      genreFilter.innerHTML = '<option value="">Todos los géneros</option>';
+      fillGenres();
+
+      sectionTitle.textContent = tipo === 'anime' ? 'Animes populares' : 'Manhwas populares';
+      applyFilters();
+    };
+  });
 }
 loadCatalog();
