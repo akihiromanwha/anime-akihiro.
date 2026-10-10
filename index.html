@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AnimeAkihiroDaiky</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="logo">Anime<span>AkihiroDaiky</span></div>
+  <div class="searchWrap">
+    <input id="searchInput" type="search" placeholder="Buscar anime...">
+  </div>
+  <button id="themeBtn" class="smallBtn">☀️</button>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <p class="tag">ANIME • MANGA • MANHWA</p>
+      <h1>Tu mundo de anime,<br>manga y manhwa.</h1>
+      <p>Busca tus series favoritas y consulta sus capítulos.</p>
+      <button id="heroListBtn" class="primary">❤️ Mi lista</button>
+    </div>
+  </section>
+
+  <section class="toolbar">
+    <h2 id="sectionTitle">Animes populares</h2>
+    <select id="genreFilter">
+      <option value="">Todos los géneros</option>
+    </select>
+  </section>
+
+  <section id="status" class="status">Cargando catálogo...</section>
+  <section id="animeGrid" class="grid"></section>
+</main>
+
+<div id="modal" class="modal hidden">
+  <div class="modalBox">
+    <button id="closeModal" class="close">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
