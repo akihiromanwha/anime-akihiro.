@@ -32,7 +32,7 @@ const LINKS = {
       "1": "https://drive.google.com/file/d/tu-id-1/view"
     }
   },
-  "Demon Slayer": {
+  "Demon Slayer: Kimetsu no Yaiba": { 
     "Terabox": {
       "1": "https://terabox.com/s/tu-link-ds-1"
     }
