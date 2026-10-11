@@ -158,6 +158,10 @@ function openAnime(a){
 
   modalContent.querySelectorAll('.serverTab').forEach(btn => {
     btn.onclick = () => {
+      // 🔇 Detener video anterior al cambiar de servidor
+      const player = document.getElementById('playerBox');
+      if (player) player.innerHTML = '';
+
       modalContent.querySelectorAll('.serverTab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderEpisodes(btn.dataset.server);
@@ -193,6 +197,9 @@ function openAnime(a){
         if (box.parentNode) box.parentNode.insertBefore(player, box.nextSibling);
       }
 
+      // 🔇 Detener el video anterior antes de poner el nuevo
+      player.innerHTML = '';
+
       if (link.includes('drive.google.com')){
         const match = link.match(/\/d\/([^/]+)/);
         const id = match ? match[1] : '';
@@ -211,11 +218,19 @@ function openAnime(a){
   modal.classList.remove('hidden');
 }
 
-/* ═══ Cerrar modal ═══ */
-document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
-modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.add('hidden'); });
+/* ═══ CERRAR MODAL (detiene el video) ═══ */
+function cerrarModal(){
+  const player = document.getElementById('playerBox');
+  if (player) player.innerHTML = '';      // 🔇 destruye el iframe → corta el audio
+  modalContent.innerHTML = '';             // limpia el contenido del modal
+  modal.classList.add('hidden');
+}
 
+document.getElementById('closeModal').onclick = cerrarModal;
+modal.addEventListener('click', e => { if (e.target === modal) cerrarModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+/* ═══ EVENTOS ═══ */
 searchInput.addEventListener('input', applyFilters);
 genreFilter.addEventListener('change', applyFilters);
 document.getElementById('heroListBtn').onclick = () => { searchInput.focus(); };
@@ -249,7 +264,6 @@ async function loadCatalog(){
 
     catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
 
-    // Quitar duplicados
     const vistos = new Set();
     catalogAnime = catalogAnime.filter(a => {
       if (vistos.has(a.title)) return false;
