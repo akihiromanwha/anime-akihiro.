@@ -36,7 +36,6 @@
     </div>
   </section>
 
-  <!-- 🎬 PESTAÑAS ANIME / MANHWA -->
   <section class="typeTabs">
     <button class="typeTab active" data-type="anime">🎬 Anime</button>
     <button class="typeTab" data-type="manhwa">📖 Manhwa</button>
@@ -69,13 +68,16 @@
 
 <script>
 /* ════════════════════════════════════════════════════════════
-   ANIMEAKHIRODAIKY — Protección de contenido
+   ANIMEAKHIRODAIKY — Firma
    © 2026 AnimeAkihiroDaiky
    ════════════════════════════════════════════════════════════ */
 console.log('%c ANIMEAKHIRODAIKY ', 'background:#e50914;color:#fff;font-size:22px;font-weight:bold;padding:10px 20px;border-radius:6px');
 console.log('%c© 2026 AnimeAkihiroDaiky — Todos los derechos reservados', 'color:#a0a0a0;font-size:13px');
 console.log('%c🔗 https://github.com/akihiromanwha', 'color:#e50914;font-size:13px');
 
+window._firma = "ANIMEAKHIRODAIKY-2026-BY-AKIHIROMANWHA";
+
+/* ═══ BLOQUEO DESACTIVADO TEMPORALMENTE PARA DEBUG ═══
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('keydown', e => {
   if (e.key === 'F12' ||
@@ -84,8 +86,7 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
   }
 });
-
-window._firma = "ANIMEAKHIRODAIKY-2026-BY-AKIHIROMANWHA";
+*/
 </script>
 
 <script src="app.js"></script>
