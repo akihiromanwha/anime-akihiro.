@@ -255,7 +255,7 @@ async function openMangaReader(manga){
 
   try {
     const feed = await fetchMangaDex(
-      `https://api.mangadex.org/manga/${manga.id}/feed?translatedLanguage[]=es-la&translatedLanguage[]=es&translatedLanguage[]=en&order[chapter]=asc&limit=500&includeExternalUrl=0`
+      `https://api.mangadex.org/manga/${manga.id}/feed?order[chapter]=asc&limit=500`
     );
     const chapters = (feed.data || []).filter(ch => !ch.attributes.externalUrl);
 
@@ -347,7 +347,7 @@ async function loadCatalog(){
 
     catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
 
-    // Manhwas desde MangaDex (portadas por proxy)
+    // Manhwas desde MangaDex
     try {
       const mangaRes = await fetchMangaDex(
         'https://api.mangadex.org/manga?limit=50&includes[]=cover_art&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&originalLanguage[]=ko&hasAvailableChapters=true'
