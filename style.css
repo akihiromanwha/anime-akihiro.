@@ -416,3 +416,26 @@ body.light .noLinks code{ background: rgba(0,0,0,.08); }
   .grid{ grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
   .typeTab{ padding: .5rem .9rem; font-size: .85rem; }
 }
+/* ===== Lector de Manhwas ===== */
+#mangaReaderBox{
+  margin-top: 1rem;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: #0a0a0a;
+  border-radius: 10px;
+  padding: 0.5rem;
+}
+.mangaPages{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mangaPages img{
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  display: block;
+  margin-bottom: 0.25rem;
+  border-radius: 4px;
+  background: #1a1a1a;
+}
