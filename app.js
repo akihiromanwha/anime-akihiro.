@@ -38,6 +38,7 @@ const SERVER_ICONS = {
   "terabox": "🟦", "drive": "🟢", "mega": "🟥",
   "mediafire": "🟠", "netu": "🟣", "default": "🎬"
 };
+
 function serverIcon(name){
   const k = name.toLowerCase();
   for (const [key, icon] of Object.entries(SERVER_ICONS)){
@@ -45,6 +46,15 @@ function serverIcon(name){
   }
   return SERVER_ICONS.default;
 }
+
+function normalize(s){
+  return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+}
+
+function esc(s){
+  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function getAnimeLinks(title){
   if (!title) return null;
   if (LINKS[title]) return LINKS[title];
@@ -67,8 +77,7 @@ const CUSTOM_ANIME = [
   { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", cover: "https://img.anili.st/media/20605" }
 ];
 
-/* ═══ MANHWAS PERSONALIZADOS ═══
-   Déjalo vacío para usar solo los de MangaDex */
+/* ═══ MANHWAS PERSONALIZADOS ═══ */
 const CUSTOM_MANHWA = [];
 
 let currentType = 'anime';
@@ -81,13 +90,6 @@ const fallback = [
   {title:'One Piece',genres:['Action','Adventure'],episodes:1100,score:8.7,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-0pQwJfYc7m9L.jpg'},
   {title:'Attack on Titan',genres:['Action','Drama'],episodes:89,score:9.0,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-8mQ2vR6sK1pL.jpg'}
 ];
-
-function normalize(s){
-  return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
-}
-function esc(s){
-  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
 
 /* ═══ RENDER ═══ */
 function render(list){
@@ -103,7 +105,7 @@ function render(list){
       <img class="cover" src="${esc(a.cover)}" alt="${esc(a.title)}" onerror="this.style.display='none'">
       <div class="cardBody">
         <div class="title">${esc(a.title)}</div>
-        <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))} ${a.episodes?`• ${a.episodes} eps.`:''}</div>
+        <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))} ${a.episodes?`• ${a.episodes} ${currentType === 'anime' ? 'eps.' : 'caps.'}`:''}</div>
         <button data-index="${i}">${currentType === 'anime' ? 'Ver episodios' : 'Leer'}</button>
       </div>`;
     card.querySelector('button').onclick = () => openAnime(a);
@@ -146,7 +148,7 @@ function openAnime(a){
 
   if (!animeLinks || !Object.keys(animeLinks).length){
     modalContent.innerHTML = `
-      <img class="modalCover" src="${esc(a.cover)}" alt="">
+      <img class="modalCover" src="${esc(a.cover)}" alt="" onerror="this.style.display='none'">
       <h2>${esc(a.title)}</h2>
       <p>⭐ ${esc(a.score || '—')} &nbsp; • &nbsp; ${esc((a.genres||[]).join(', '))}</p>
       <div class="watchOptions">
@@ -160,7 +162,7 @@ function openAnime(a){
 
   const servers = Object.keys(animeLinks);
   modalContent.innerHTML = `
-    <img class="modalCover" src="${esc(a.cover)}" alt="">
+    <img class="modalCover" src="${esc(a.cover)}" alt="" onerror="this.style.display='none'">
     <h2>${esc(a.title)}</h2>
     <p>⭐ ${esc(a.score || '—')} &nbsp; • &nbsp; ${esc((a.genres||[]).join(', '))}</p>
     <div class="watchOptions">
@@ -176,7 +178,9 @@ function openAnime(a){
       <div id="playerBox"></div>
     </div>
   `;
+
   renderEpisodes(servers[0]);
+
   modalContent.querySelectorAll('.serverTab').forEach(btn => {
     btn.onclick = () => {
       modalContent.querySelectorAll('.serverTab').forEach(b => b.classList.remove('active'));
@@ -190,63 +194,45 @@ function openAnime(a){
     if (!box) return;
     const eps = animeLinks[serverName] || {};
     const keys = Object.keys(eps).sort((x,y) => Number(x) - Number(y));
+
     if (!keys.length){
       box.innerHTML = `<p class="noLinks">No hay episodios en ${esc(serverName)}.</p>`;
       return;
     }
+
     box.innerHTML = keys.map(num => `
       <button class="episode" data-link="${esc(eps[num])}" data-num="${esc(num)}">
         Episodio ${esc(num)}
       </button>
     `).join('');
 
-    const boxGlobal = document.getElementById('episodesBox');
-    if (boxGlobal){
-      boxGlobal.onclick = (e) => {
-        const btn = e.target.closest('.episode');
-        if (!btn) return;
-        const link = btn.dataset.link;
-        const num  = btn.dataset.num;
-        let player = document.getElementById('playerBox');
-        if (!player){
-          player = document.createElement('div');
-          player.id = 'playerBox';
-          const box2 = document.getElementById('episodesBox');
-          if (box2 && box2.parentNode) box2.parentNode.insertBefore(player, box2.nextSibling);
-        }
-        if (link.includes('drive.google.com')){
-          const match = link.match(/\/d\/([^/]+)/);
-          const id = match ? match[1] : '';
-          player.innerHTML = `
-            <div class="playerHeader">
-              <span>▶ Episodio ${esc(num)}</span>
-              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
-            </div>
-            <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-        } else if (link.includes('hqq.tv') || link.includes('netu.tv')){
-          const match = link.match(/vid=([^&]+)/);
-          const vid = match ? match[1] : '';
-          player.innerHTML = `
-            <div class="playerHeader">
-              <span>▶ Episodio ${esc(num)}</span>
-              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
-            </div>
-            <iframe src="https://hqq.tv/player/embed_player.php?vid=${vid}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-        } else if (link.includes('pixeldrain.com')){
-          const match = link.match(/\/(?:u|api\/file)\/([^/?]+)/);
-          const id = match ? match[1] : '';
-          player.innerHTML = `
-            <div class="playerHeader">
-              <span>▶ Episodio ${esc(num)}</span>
-              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
-            </div>
-            <iframe src="https://pixeldrain.com/api/file/${id}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-        } else {
-          window.open(link, '_blank', 'noopener');
-        }
-      };
-    }
+    box.onclick = (e) => {
+      const btn = e.target.closest('.episode');
+      if (!btn) return;
+      const link = btn.dataset.link;
+      const num  = btn.dataset.num;
+      let player = document.getElementById('playerBox');
+      if (!player){
+        player = document.createElement('div');
+        player.id = 'playerBox';
+        if (box.parentNode) box.parentNode.insertBefore(player, box.nextSibling);
+      }
+
+      if (link.includes('drive.google.com')){
+        const match = link.match(/\/d\/([^/]+)/);
+        const id = match ? match[1] : '';
+        player.innerHTML = `
+          <div class="playerHeader">
+            <span>▶ Episodio ${esc(num)}</span>
+            <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+          </div>
+          <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+      } else {
+        window.open(link, '_blank', 'noopener');
+      }
+    };
   }
+
   modal.classList.remove('hidden');
 }
 
@@ -282,7 +268,7 @@ async function openMangaReader(manga){
     const listEl = document.getElementById('chaptersList');
     listEl.innerHTML = chapters.map(ch => `
       <button class="episode" data-chapter-id="${ch.id}">
-        Cap. ${ch.attributes.chapter || '?'}
+        Cap. ${ch.attributes.chapter || '?'} ${ch.attributes.translatedLanguage ? '('+ch.attributes.translatedLanguage+')' : ''}
       </button>
     `).join('');
 
@@ -297,16 +283,11 @@ async function openMangaReader(manga){
         const serverData = await fetchMangaDex(`https://api.mangadex.org/at-home/server/${chapterId}`);
         const baseUrl = serverData.baseUrl;
         const hash = serverData.chapter.hash;
-        const pages = serverData.chapter.dataSaver && serverData.chapter.dataSaver.length
-          ? serverData.chapter.dataSaver
-          : serverData.chapter.data;
-        const folder = serverData.chapter.dataSaver && serverData.chapter.dataSaver.length
-          ? 'data-saver'
-          : 'data';
+        const useSaver = serverData.chapter.dataSaver && serverData.chapter.dataSaver.length;
+        const pages = useSaver ? serverData.chapter.dataSaver : serverData.chapter.data;
+        const folder = useSaver ? 'data-saver' : 'data';
 
-        const imageUrls = pages.map(filename =>
-          proxify(`${baseUrl}/${folder}/${hash}/${filename}`)
-        );
+        const imageUrls = pages.map(filename => proxify(`${baseUrl}/${folder}/${hash}/${filename}`));
 
         readerBox.innerHTML = `
           <div class="playerHeader" style="margin-top:1rem;">
@@ -366,16 +347,18 @@ async function loadCatalog(){
 
     catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
 
+    // Manhwas desde MangaDex (portadas por proxy)
     try {
       const mangaRes = await fetchMangaDex(
         'https://api.mangadex.org/manga?limit=50&includes[]=cover_art&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&originalLanguage[]=ko&hasAvailableChapters=true'
       );
       const mangas = mangaRes.data || [];
+      const proxify = (url) => `${PROXY_URL}/api/proxy?url=${encodeURIComponent(url)}`;
 
       const deMangaDex = mangas.map(x => {
         const coverRel = (x.relationships || []).find(r => r.type === 'cover_art');
-        const coverUrl = coverRel
-          ? `${PROXY_URL}/api/proxy?url=${encodeURIComponent(`https://uploads.mangadex.org/covers/${x.id}/${coverRel.attributes.fileName}.256.jpg`)}`
+        const coverRaw = coverRel
+          ? `https://uploads.mangadex.org/covers/${x.id}/${coverRel.attributes.fileName}.256.jpg`
           : '';
         return {
           id: x.id,
@@ -383,7 +366,7 @@ async function loadCatalog(){
           genres: (x.attributes.tags || []).map(t => t.attributes.name.en).filter(Boolean),
           episodes: 0,
           score: x.attributes.year ? String(x.attributes.year) : '',
-          cover: coverUrl,
+          cover: coverRaw ? proxify(coverRaw) : '',
           source: 'mangadex'
         };
       }).filter(x => x.title);
@@ -404,9 +387,10 @@ async function loadCatalog(){
     };
     catalogAnime = limpiar(catalogAnime);
     catalogManhwa = limpiar(catalogManhwa);
-
     catalog = catalogAnime;
+
   } catch(e) {
+    console.error('Error cargando catálogo:', e);
     catalogAnime = [...CUSTOM_ANIME, ...fallback];
     catalogManhwa = [...CUSTOM_MANHWA];
     catalog = catalogAnime;
