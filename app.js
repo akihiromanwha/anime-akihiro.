@@ -12,16 +12,17 @@ const sectionTitle= document.getElementById('sectionTitle');
 const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
-/* ============================================================
-   🎬 LINKS DE SERVIDORES (USO PERSONAL)
-   Formato:
-   "Nombre del Anime": {
-     "Servidor": {
-       "1": "link del capi 1",
-       "2": "link del capi 2"
-     }
-   }
-   ============================================================ */
+/* ═══ PROXY MANGADEX ═══ */
+const PROXY_URL = 'https://mangadex-proxy-ten.vercel.app';
+
+async function fetchMangaDex(endpoint){
+  const url = `${PROXY_URL}/api/proxy?url=${encodeURIComponent(endpoint)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
+  return await res.json();
+}
+
+/* ═══ LINKS DE SERVIDORES (USO PERSONAL) ═══ */
 const LINKS = {
   "Blue Exorcist": {
     "Drive": {
@@ -33,14 +34,9 @@ const LINKS = {
   }
 };
 
-/* Íconos por servidor */
 const SERVER_ICONS = {
-  "terabox":   "🟦",
-  "drive":     "🟢",
-  "mega":      "🟥",
-  "mediafire": "🟠",
-  "netu":      "🟣",
-  "default":   "🎬"
+  "terabox": "🟦", "drive": "🟢", "mega": "🟥",
+  "mediafire": "🟠", "netu": "🟣", "default": "🎬"
 };
 function serverIcon(name){
   const k = name.toLowerCase();
@@ -49,8 +45,6 @@ function serverIcon(name){
   }
   return SERVER_ICONS.default;
 }
-
-/* Busca en LINKS por título exacto o normalizado */
 function getAnimeLinks(title){
   if (!title) return null;
   if (LINKS[title]) return LINKS[title];
@@ -61,133 +55,37 @@ function getAnimeLinks(title){
   return null;
 }
 
-/* ============================================================
-   🌟 ANIMES PERSONALIZADOS
-   ============================================================ */
+/* ═══ ANIMES PERSONALIZADOS ═══ */
 const CUSTOM_ANIME = [
-  {
-    title: "Blue Exorcist",
-    genres: ["Action", "Supernatural", "Fantasy"],
-    episodes: 25,
-    score: "7.8",
-    cover: "https://img.anili.st/media/9919"
-  },
-  {
-    title: "Ranma 1/2",
-    genres: ["Comedy", "Romance", "Action"],
-    episodes: 161,
-    score: "7.7",
-    cover: "https://img.anili.st/media/210"
-  },
-  {
-    title: "Bleach",
-    genres: ["Action", "Adventure", "Supernatural"],
-    episodes: 366,
-    score: "7.9",
-    cover: "https://img.anili.st/media/269"
-  },
-  {
-    title: "Inuyasha",
-    genres: ["Action", "Adventure", "Romance"],
-    episodes: 167,
-    score: "7.6",
-    cover: "https://img.anili.st/media/249"
-  },
-  {
-    title: "Hunter x Hunter",
-    genres: ["Action", "Adventure", "Fantasy"],
-    episodes: 148,
-    score: "9.0",
-    cover: "https://img.anili.st/media/11061"
-  },
-  {
-    title: "Fullmetal Alchemist: Brotherhood",
-    genres: ["Action", "Adventure", "Drama"],
-    episodes: 64,
-    score: "9.1",
-    cover: "https://img.anili.st/media/5114"
-  },
-  {
-    title: "Death Note",
-    genres: ["Mystery", "Psychological", "Thriller"],
-    episodes: 37,
-    score: "8.6",
-    cover: "https://img.anili.st/media/1535"
-  },
-  {
-    title: "Tokyo Ghoul",
-    genres: ["Action", "Horror", "Supernatural"],
-    episodes: 12,
-    score: "7.8",
-    cover: "https://img.anili.st/media/20605"
-  }
+  { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 25, score: "7.8", cover: "https://img.anili.st/media/9919" },
+  { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", cover: "https://img.anili.st/media/210" },
+  { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", cover: "https://img.anili.st/media/269" },
+  { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", cover: "https://img.anili.st/media/249" },
+  { title: "Hunter x Hunter", genres: ["Action","Adventure","Fantasy"], episodes: 148, score: "9.0", cover: "https://img.anili.st/media/11061" },
+  { title: "Fullmetal Alchemist: Brotherhood", genres: ["Action","Adventure","Drama"], episodes: 64, score: "9.1", cover: "https://img.anili.st/media/5114" },
+  { title: "Death Note", genres: ["Mystery","Psychological","Thriller"], episodes: 37, score: "8.6", cover: "https://img.anili.st/media/1535" },
+  { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", cover: "https://img.anili.st/media/20605" }
 ];
 
-/* ============================================================
-   📖 MANHWAS PERSONALIZADOS
-   ============================================================ */
+/* ═══ MANHWAS PERSONALIZADOS (los que aparecen destacados primero) ═══ */
 const CUSTOM_MANHWA = [
-  {
-    title: "Solo Leveling",
-    genres: ["Action", "Fantasy", "Adventure"],
-    episodes: 179,
-    score: "8.9",
-    cover: "https://img.anili.st/media/105398"
-  },
-  {
-    title: "Tomb Raider King",
-    genres: ["Action", "Adventure", "Fantasy"],
-    episodes: 300,
-    score: "7.8",
-    cover: "https://img.anili.st/media/102090"
-  },
-  {
-    title: "The Beginning After the End",
-    genres: ["Action", "Fantasy", "Adventure"],
-    episodes: 200,
-    score: "8.7",
-    cover: "https://img.anili.st/media/113497"
-  },
-  {
-    title: "Nano Machine",
-    genres: ["Action", "Martial Arts", "Fantasy"],
-    episodes: 220,
-    score: "8.3",
-    cover: "https://img.anili.st/media/110773"
-  },
-  {
-    title: "Eleceed",
-    genres: ["Action", "Comedy", "Supernatural"],
-    episodes: 300,
-    score: "8.6",
-    cover: "https://img.anili.st/media/110334"
-  }
+  { title: "Solo Leveling", genres: ["Action","Fantasy","Adventure"], episodes: 179, score: "8.9", cover: "https://img.anili.st/media/105398" },
+  { title: "The Beginning After the End", genres: ["Action","Fantasy","Adventure"], episodes: 200, score: "8.7", cover: "https://img.anili.st/media/113497" },
+  { title: "Nano Machine", genres: ["Action","Martial Arts","Fantasy"], episodes: 220, score: "8.3", cover: "https://img.anili.st/media/110773" },
+  { title: "Eleceed", genres: ["Action","Comedy","Supernatural"], episodes: 300, score: "8.6", cover: "https://img.anili.st/media/110334" }
 ];
 
-/* Tipo actual (anime o manhwa) */
 let currentType = 'anime';
 let catalogAnime = [];
 let catalogManhwa = [];
-
-/* ============================================================
-   Catálogo de respaldo
-   ============================================================ */
-const fallback = [
-  {title:'Naruto',genres:['Action','Adventure','Ninja'],episodes:220,score:8.1,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20-9zXJ6z0g7n8R.jpg'},
-  {title:'Naruto: Shippuden',genres:['Action','Adventure','Ninja'],episodes:500,score:8.2,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1735-0mZkQ8cV4xQw.jpg'},
-  {title:'One Piece',genres:['Action','Adventure','Fantasy'],episodes:1100,score:8.7,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-0pQwJfYc7m9L.jpg'},
-  {title:'Demon Slayer',genres:['Action','Fantasy'],episodes:63,score:8.5,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-gZx5Q8s3T1uA.jpg'},
-  {title:'Jujutsu Kaisen',genres:['Action','Fantasy','Supernatural'],episodes:47,score:8.6,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113415-Km2xL9qW4s7A.jpg'},
-  {title:'Dragon Ball Z',genres:['Action','Adventure','Fantasy'],episodes:291,score:8.1,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx813-7vK9pQ2sLm4N.jpg'},
-  {title:'Attack on Titan',genres:['Action','Drama','Fantasy'],episodes:89,score:9.0,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-8mQ2vR6sK1pL.jpg'},
-  {title:'My Hero Academia',genres:['Action','Superhero'],episodes:159,score:8.0,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21459-aK7mP2qL8vR3.jpg'}
-];
-
 let catalog = [];
 
-/* ============================================================
-   Utilidades
-   ============================================================ */
+const fallback = [
+  {title:'Naruto',genres:['Action','Adventure'],episodes:220,score:8.1,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20-9zXJ6z0g7n8R.jpg'},
+  {title:'One Piece',genres:['Action','Adventure'],episodes:1100,score:8.7,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-0pQwJfYc7m9L.jpg'},
+  {title:'Attack on Titan',genres:['Action','Drama'],episodes:89,score:9.0,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-8mQ2vR6sK1pL.jpg'}
+];
+
 function normalize(s){
   return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 }
@@ -195,9 +93,7 @@ function esc(s){
   return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-/* ============================================================
-   Render del grid
-   ============================================================ */
+/* ═══ RENDER ═══ */
 function render(list){
   animeGrid.innerHTML = '';
   if(!list.length){
@@ -212,16 +108,13 @@ function render(list){
       <div class="cardBody">
         <div class="title">${esc(a.title)}</div>
         <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))} ${a.episodes?`• ${a.episodes} eps.`:''}</div>
-        <button data-index="${i}">${currentType === 'anime' ? 'Ver episodios' : 'Ver capítulos'}</button>
+        <button data-index="${i}">${currentType === 'anime' ? 'Ver episodios' : 'Leer'}</button>
       </div>`;
     card.querySelector('button').onclick = () => openAnime(a);
     animeGrid.appendChild(card);
   });
 }
 
-/* ============================================================
-   Filtros
-   ============================================================ */
 function applyFilters(){
   const q = normalize(searchInput.value);
   const g = normalize(genreFilter.value);
@@ -246,10 +139,14 @@ function fillGenres(){
   });
 }
 
-/* ============================================================
-   🎬 MODAL — Servidor + Episodios
-   ============================================================ */
+/* ═══ MODAL DE ANIME ═══ */
 function openAnime(a){
+  // Si viene de MangaDex, abrir lector de manhwa
+  if (a.source === 'mangadex'){
+    openMangaReader(a);
+    return;
+  }
+
   const animeLinks = getAnimeLinks(a.title);
 
   if (!animeLinks || !Object.keys(animeLinks).length){
@@ -267,12 +164,10 @@ function openAnime(a){
   }
 
   const servers = Object.keys(animeLinks);
-
   modalContent.innerHTML = `
     <img class="modalCover" src="${esc(a.cover)}" alt="">
     <h2>${esc(a.title)}</h2>
     <p>⭐ ${esc(a.score || '—')} &nbsp; • &nbsp; ${esc((a.genres||[]).join(', '))}</p>
-
     <div class="watchOptions">
       <h3 class="watchTitle">▶ Elegir servidor</h3>
       <div class="serverTabs">
@@ -286,9 +181,7 @@ function openAnime(a){
       <div id="playerBox"></div>
     </div>
   `;
-
   renderEpisodes(servers[0]);
-
   modalContent.querySelectorAll('.serverTab').forEach(btn => {
     btn.onclick = () => {
       modalContent.querySelectorAll('.serverTab').forEach(b => b.classList.remove('active'));
@@ -302,25 +195,21 @@ function openAnime(a){
     if (!box) return;
     const eps = animeLinks[serverName] || {};
     const keys = Object.keys(eps).sort((x,y) => Number(x) - Number(y));
-
     if (!keys.length){
-      box.innerHTML = `<p class="noLinks">No hay ${currentType === 'anime' ? 'episodios' : 'capítulos'} en ${esc(serverName)}.</p>`;
+      box.innerHTML = `<p class="noLinks">No hay episodios en ${esc(serverName)}.</p>`;
       return;
     }
-
     box.innerHTML = keys.map(num => `
       <button class="episode" data-link="${esc(eps[num])}" data-num="${esc(num)}">
-        ${currentType === 'anime' ? 'Episodio' : 'Capítulo'} ${esc(num)}
+        Episodio ${esc(num)}
       </button>
     `).join('');
 
-    // Delegación de eventos
     const boxGlobal = document.getElementById('episodesBox');
     if (boxGlobal){
       boxGlobal.onclick = (e) => {
         const btn = e.target.closest('.episode');
         if (!btn) return;
-
         const link = btn.dataset.link;
         const num  = btn.dataset.num;
         let player = document.getElementById('playerBox');
@@ -330,82 +219,112 @@ function openAnime(a){
           const box2 = document.getElementById('episodesBox');
           if (box2 && box2.parentNode) box2.parentNode.insertBefore(player, box2.nextSibling);
         }
-
-        // Drive
         if (link.includes('drive.google.com')){
           const match = link.match(/\/d\/([^/]+)/);
           const id = match ? match[1] : '';
           player.innerHTML = `
             <div class="playerHeader">
-              <span>▶ ${currentType === 'anime' ? 'Episodio' : 'Capítulo'} ${esc(num)}</span>
+              <span>▶ Episodio ${esc(num)}</span>
               <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
             </div>
-            <iframe src="https://drive.google.com/file/d/${id}/preview"
-              allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-        }
-        // Netu / hqq
-        else if (link.includes('hqq.tv') || link.includes('netu.tv')){
-          const match = link.match(/vid=([^&]+)/);
-          const vid = match ? match[1] : '';
-          player.innerHTML = `
-            <div class="playerHeader">
-              <span>▶ ${currentType === 'anime' ? 'Episodio' : 'Capítulo'} ${esc(num)}</span>
-              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
-            </div>
-            <iframe src="https://hqq.tv/player/embed_player.php?vid=${vid}"
-              allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-        }
-        // Pixeldrain
-        else if (link.includes('pixeldrain.com')){
-          const match = link.match(/\/(?:u|api\/file)\/([^/?]+)/);
-          const id = match ? match[1] : '';
-          player.innerHTML = `
-            <div class="playerHeader">
-              <span>▶ ${currentType === 'anime' ? 'Episodio' : 'Capítulo'} ${esc(num)}</span>
-              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
-            </div>
-            <iframe src="https://pixeldrain.com/api/file/${id}"
-              allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-        }
-        // Otros (Terabox, Mega, etc.)
-        else {
+            <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+        } else {
           window.open(link, '_blank', 'noopener');
         }
       };
     }
   }
-
   modal.classList.remove('hidden');
 }
 
-/* Cerrar modal */
+/* ═══ LECTOR DE MANHWA (MangaDex) ═══ */
+async function openMangaReader(manga){
+  modalContent.innerHTML = `
+    <img class="modalCover" src="${esc(manga.cover)}" alt="">
+    <h2>${esc(manga.title)}</h2>
+    <p>${esc(manga.score)} ${manga.genres.length ? '• '+esc(manga.genres.slice(0,3).join(', ')) : ''}</p>
+    <div class="watchOptions">
+      <h3 class="watchTitle">▶ Capítulos</h3>
+      <div class="episodes" id="chaptersList">
+        <p class="noLinks">Cargando capítulos...</p>
+      </div>
+      <div id="mangaReaderBox"></div>
+    </div>`;
+  modal.classList.remove('hidden');
+
+  try {
+    const feed = await fetchMangaDex(
+      `https://api.mangadex.org/manga/${manga.id}/feed?translatedLanguage[]=es-la&translatedLanguage[]=es&order[chapter]=asc&limit=200`
+    );
+    const chapters = feed.data || [];
+
+    if (!chapters.length){
+      document.getElementById('chaptersList').innerHTML =
+        '<p class="noLinks">No hay capítulos en español disponibles.</p>';
+      return;
+    }
+
+    const listEl = document.getElementById('chaptersList');
+    listEl.innerHTML = chapters.map(ch => `
+      <button class="episode" data-chapter-id="${ch.id}">
+        Cap. ${ch.attributes.chapter || '?'}
+      </button>
+    `).join('');
+
+    listEl.onclick = async (e) => {
+      const btn = e.target.closest('.episode');
+      if (!btn) return;
+      const chapterId = btn.dataset.chapterId;
+      const readerBox = document.getElementById('mangaReaderBox');
+      readerBox.innerHTML = '<p style="padding:1rem;text-align:center;color:#a0a0a0;">Cargando páginas...</p>';
+
+      try {
+        const serverData = await fetchMangaDex(`https://api.mangadex.org/at-home/server/${chapterId}`);
+        const baseUrl = serverData.baseUrl;
+        const hash = serverData.chapter.hash;
+        const pages = serverData.chapter.data;
+
+        const imageUrls = pages.map(filename =>
+          `${baseUrl}/data/${hash}/${filename}`
+        );
+
+        readerBox.innerHTML = `
+          <div class="playerHeader" style="margin-top:1rem;">
+            <span>📖 ${btn.textContent.trim()}</span>
+            <button class="closePlayer" onclick="document.getElementById('mangaReaderBox').innerHTML=''">✕</button>
+          </div>
+          <div class="mangaPages">
+            ${imageUrls.map(url => `<img src="${esc(url)}" loading="lazy" alt="Página">`).join('')}
+          </div>`;
+      } catch (err) {
+        readerBox.innerHTML = '<p class="noLinks">Error al cargar las páginas.</p>';
+        console.error(err);
+      }
+    };
+  } catch (err) {
+    document.getElementById('chaptersList').innerHTML =
+      '<p class="noLinks">Error al cargar los capítulos.</p>';
+    console.error(err);
+  }
+}
+
+/* ═══ Cerrar modal ═══ */
 document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.add('hidden'); });
 
-/* ============================================================
-   Eventos generales
-   ============================================================ */
 searchInput.addEventListener('input', applyFilters);
 genreFilter.addEventListener('change', applyFilters);
 document.getElementById('heroListBtn').onclick = () => { searchInput.focus(); };
 document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
-/* ============================================================
-   Carga del catálogo (Anime + Manhwa)
-   ============================================================ */
+/* ═══ CARGA DEL CATÁLOGO ═══ */
 async function loadCatalog(){
   statusEl.textContent = 'Cargando catálogo...';
-  try{
-    const query = `query ($page: Int, $type: MediaType, $country: CountryCode) { 
-      Page(page: $page, perPage: 50) { 
-        media(type: $type, countryOfOrigin: $country, sort: POPULARITY_DESC) { 
-          id title { romaji english native } genres episodes chapters averageScore coverImage { large } 
-        } 
-      } 
-    }`;
+  try {
+    const query = `query ($page: Int, $type: MediaType) { Page(page: $page, perPage: 50) { media(type: $type, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes chapters averageScore coverImage { large } } } }`;
 
-    // Anime
+    // Anime desde AniList
     const animeTodas = [];
     for (const p of [1, 2]){
       const res = await fetch('https://graphql.anilist.co', {
@@ -428,28 +347,34 @@ async function loadCatalog(){
 
     catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
 
-    // Manhwa (MANGA de Corea)
-    const manhwaTodas = [];
-    for (const p of [1, 2]){
-      const res = await fetch('https://graphql.anilist.co', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, variables: { page: p, type: 'MANGA', country: 'KR' } })
-      });
-      const data = await res.json();
-      manhwaTodas.push(...(data?.data?.Page?.media || []));
-      await new Promise(r => setTimeout(r, 700));
+    // Manhwas desde MangaDex
+    try {
+      const mangaRes = await fetchMangaDex(
+        'https://api.mangadex.org/manga?limit=50&includes[]=cover_art&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&originalLanguage[]=ko&hasAvailableChapters=true'
+      );
+      const mangas = mangaRes.data || [];
+
+      const deMangaDex = mangas.map(x => {
+        const coverRel = (x.relationships || []).find(r => r.type === 'cover_art');
+        const coverUrl = coverRel
+          ? `https://uploads.mangadex.org/covers/${x.id}/${coverRel.attributes.fileName}.256.jpg`
+          : '';
+        return {
+          id: x.id,
+          title: x.attributes.title.en || x.attributes.title.ja || Object.values(x.attributes.title)[0] || 'Manhwa',
+          genres: (x.attributes.tags || []).map(t => t.attributes.name.en).filter(Boolean),
+          episodes: 0,
+          score: x.attributes.year ? String(x.attributes.year) : '',
+          cover: coverUrl,
+          source: 'mangadex'
+        };
+      }).filter(x => x.title);
+
+      catalogManhwa = [...CUSTOM_MANHWA, ...deMangaDex];
+    } catch (err){
+      console.error('MangaDex error:', err);
+      catalogManhwa = [...CUSTOM_MANHWA];
     }
-
-    catalogManhwa = manhwaTodas.map(x => ({
-      title: x.title?.english || x.title?.romaji || x.title?.native || 'Manhwa',
-      genres: x.genres || [],
-      episodes: x.chapters || 0,
-      score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
-      cover: x.coverImage?.large || ''
-    })).filter(x => x.title);
-
-    catalogManhwa = [...CUSTOM_MANHWA, ...catalogManhwa];
 
     // Quitar duplicados
     const limpiar = arr => {
@@ -464,31 +389,27 @@ async function loadCatalog(){
     catalogManhwa = limpiar(catalogManhwa);
 
     catalog = catalogAnime;
-    if(!catalog.length) throw new Error('Sin datos');
-  }catch(e){
+  } catch(e) {
     catalogAnime = [...CUSTOM_ANIME, ...fallback];
-    catalogManhwa = CUSTOM_MANHWA;
+    catalogManhwa = [...CUSTOM_MANHWA];
     catalog = catalogAnime;
     statusEl.textContent = 'Catálogo de respaldo cargado.';
   }
+
   fillGenres();
   applyFilters();
 
-  // Pestañas Anime / Manhwa
+  // Pestañas
   document.querySelectorAll('.typeTab').forEach(tab => {
     tab.onclick = () => {
       document.querySelectorAll('.typeTab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       const tipo = tab.dataset.type;
-
       catalog = tipo === 'anime' ? catalogAnime : catalogManhwa;
       currentType = tipo;
-
       searchInput.value = '';
       genreFilter.innerHTML = '<option value="">Todos los géneros</option>';
       fillGenres();
-
-      sectionTitle.textContent = tipo === 'anime' ? 'Animes populares' : 'Manhwas populares';
       applyFilters();
     };
   });
