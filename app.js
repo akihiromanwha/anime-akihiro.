@@ -72,12 +72,7 @@ const CUSTOM_ANIME = [
 ];
 
 /* ═══ MANHWAS PERSONALIZADOS ═══ */
-const CUSTOM_MANHWA = [
-  { title: "Solo Leveling", genres: ["Action","Fantasy","Adventure"], episodes: 179, score: "8.9", cover: "https://img.anili.st/media/105398" },
-  { title: "The Beginning After the End", genres: ["Action","Fantasy","Adventure"], episodes: 200, score: "8.7", cover: "https://img.anili.st/media/113497" },
-  { title: "Nano Machine", genres: ["Action","Martial Arts","Fantasy"], episodes: 220, score: "8.3", cover: "https://img.anili.st/media/110773" },
-  { title: "Eleceed", genres: ["Action","Comedy","Supernatural"], episodes: 300, score: "8.6", cover: "https://img.anili.st/media/110334" }
-];
+const CUSTOM_MANHWA = [];
 
 let currentType = 'anime';
 let catalogAnime = [];
