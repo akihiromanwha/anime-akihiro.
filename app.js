@@ -43,9 +43,7 @@ const LINKS = {
       "25": "https://drive.google.com/file/d/1Feot667h59Ts6qcZ-sRqKdp19A-Yob4O/preview",
       "26": "https://drive.google.com/file/d/11xLLlV-c-q4D0YNHO7ZwDrXdFNv8NaKx/preview",
       "27": "https://drive.google.com/file/d/1_TA1DNFLb2YE9NxfLqHv0ltTz6bm8OCG/preview"
-    }
-  },
-    }
+    }  
   }
 };
 
