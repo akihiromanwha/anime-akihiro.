@@ -252,25 +252,27 @@ function openAnime(a){
 }
 
 /* ═══ LECTOR DE MANHWA (MangaDex) ═══ */
-async function openMangaReader(manga){
-  modalContent.innerHTML = `
-    <img class="modalCover" src="${esc(manga.cover)}" alt="" onerror="this.style.display='none'">
-    <h2>${esc(manga.title)}</h2>
-    <p>${esc(manga.score)} ${manga.genres.length ? '• '+esc(manga.genres.slice(0,3).join(', ')) : ''}</p>
-    <div class="watchOptions">
-      <h3 class="watchTitle">▶ Capítulos</h3>
-      <div class="episodes" id="chaptersList">
-        <p class="noLinks">Cargando capítulos...</p>
-      </div>
-      <div id="mangaReaderBox"></div>
-    </div>`;
-  modal.classList.remove('hidden');
+// 1er intento: español
+let feed = await fetchMangaDex(
+  `https://api.mangadex.org/manga/${manga.id}/feed?translatedLanguage[]=es-la&translatedLanguage[]=es&order[chapter]=asc&limit=500`
+);
+let chapters = (feed.data || []).filter(ch => !ch.attributes.externalUrl);
 
-  try {
-    const feed = await fetchMangaDex(
-      `https://api.mangadex.org/manga/${manga.id}/feed?translatedLanguage[]=es-la&translatedLanguage[]=es&order[chapter]=asc&limit=200&includeExternalUrl=0`
-    );
-    const chapters = (feed.data || []).filter(ch => !ch.attributes.externalUrl);
+// 2do intento: si no hay en español, cargar en inglés
+if (!chapters.length){
+  feed = await fetchMangaDex(
+    `https://api.mangadex.org/manga/${manga.id}/feed?translatedLanguage[]=en&order[chapter]=asc&limit=500`
+  );
+  chapters = (feed.data || []).filter(ch => !ch.attributes.externalUrl);
+}
+
+// 3er intento: cualquier idioma
+if (!chapters.length){
+  feed = await fetchMangaDex(
+    `https://api.mangadex.org/manga/${manga.id}/feed?order[chapter]=asc&limit=500`
+  );
+  chapters = (feed.data || []).filter(ch => !ch.attributes.externalUrl);
+}
 
     if (!chapters.length){
       document.getElementById('chaptersList').innerHTML =
