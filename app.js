@@ -14,39 +14,59 @@ const modalContent= document.getElementById('modalContent');
 
 /* ═══ LINKS DE SERVIDORES (USO PERSONAL) ═══ */
 const LINKS = {
-   "Blue Exorcist": {
+  "Blue Exorcist": {
     "Drive": {
       "1": "https://drive.google.com/file/d/1Pw-etcZRlrayTsEY1VPvOZf09YcyLDmF/preview",
       "2": "https://drive.google.com/file/d/1XEOvRpbEGPrRVNhAEn5acpJ9VA8r0F8L/preview",
       "3": "https://drive.google.com/file/d/1DQzgaCH0OnCwDGgVJHACrvH_ooN_ZeQf/preview",
       "4": "https://drive.google.com/file/d/18U03kcXEcnpVeJHHYt_AlBAI9rhynYkk/preview",
-      "5": "https://drive.google.com/file/d/1frXC_lBxSMVT4_7vkE1yXF7M0uhlbCxI/preview",
-      "6": "https://drive.google.com/file/d/1coWHp7daQoj89NwIuUs6_5tUJGHzIgMT/preview",
-      "7": "https://drive.google.com/file/d/17THu33ZROHKTrxaFkua8cXBG98qGwxTt/preview",
-      "8": "https://drive.google.com/file/d/1B9tbCACH7DwDiEMnhP-mMVVFONliHQ3b/preview",
-      "9": "https://drive.google.com/file/d/13zcUdiJjqj3rabkZcp2PJOcTbpiiestY/preview",
-      "10": "https://drive.google.com/file/d/16xmxgzZly0HiP25_nt7DoNsS0RsrGNPu/preview",
-      "11": "https://drive.google.com/file/d/1M_8Ld3t-A4nLj-cVadwXTgMkrWl9O5w0/preview",
-      "12": "https://drive.google.com/file/d/1YDwKyqcp3mTr0ICb2GdsyYxfK2tlxppV/preview",
-      "13": "https://drive.google.com/file/d/1uOc04h1apo5MmejpRBF3D0T-lsjE8ic0/preview",
-      "14": "https://drive.google.com/file/d/1JFNutB3kYkis5OnHGblVVu0T7tMvi4T9/preview",
-      "15": "https://drive.google.com/file/d/1T09mDlhmvHfipHWr5Cs487t0J-g4BodV/preview",
-      "16": "https://drive.google.com/file/d/1rluRFAapA7_pRpcNr1qO0NrX7RxgKmg7/preview",
-      "17": "https://drive.google.com/file/d/1AdUXG5vJv_Dyr0PBas0Qzomq8p9Ai0sY/preview",
-      "18": "https://drive.google.com/file/d/1Z0vMMqyGuqg1iwH0szA_OKmDrhAQRhQB/preview",
-      "19": "https://drive.google.com/file/d/1FVpCQtXl6OHIC95ur5AbYrSyrGBvwyor/preview",
-      "20": "https://drive.google.com/file/d/1aogsK8s54sibJdCWrk8YX8SRrcyB7kWM/preview",
-      "21": "https://drive.google.com/file/d/1bzvj1XEWgI8Q0CKIXZPnzEJ1ZHku_ILf/preview",
+      "5": "https://drive.google.com/file/d/1frXC_1BxSMVT4_7vKE1yXF7M0uhlbcXI/preview",
+      "6": "https://drive.google.com/file/d/1coWlp7daQoJ89NwIuOs6_5tUJGHzIgMT/preview",
+      "7": "https://drive.google.com/file/d/17THu332ROHkTrxafKua8cXBG98q6wxTt/preview",
+      "8": "https://drive.google.com/file/d/1B9tbCACH7DwD1EMnhP-mWVFQN1iHQ3b/preview",
+      "9": "https://drive.google.com/file/d/13zcUdijjqj3rabkZcp2PJOcTbpiesty/preview",
+      "10": "https://drive.google.com/file/d/16xmxgzZLy0HIP25_nt7DOnsS0RsrGNPa/preview",
+      "11": "https://drive.google.com/file/d/1M_8Ld3t-A4nLj-cVadwXTgMkrW1905w0/preview",
+      "12": "https://drive.google.com/file/d/1YDwKycqp3Mtr0ICb2GdsyYxfK2tlxppV/preview",
+      "13": "https://drive.google.com/file/d/1uOc04h1apo5MmejpRBF3DOT-1sjE8ic0/preview",
+      "14": "https://drive.google.com/file/d/1JFNuTB3kYkiSs0nHGb1VU0T7tMvI4T9/preview",
+      "15": "https://drive.google.com/file/d/1T09mDlhmvHfiphWR5Cs487t0J-g4BodV/preview",
+      "16": "https://drive.google.com/file/d/1rIuRFAapA7_pRpcNr1qO0NrX7RxgKmg7/preview",
+      "17": "https://drive.google.com/file/d/1AdUXG5vJv-Dyr0PBas0Qzomq8p9Ai8sY/preview",
+      "18": "https://drive.google.com/file/d/1Z0vMMqyGuqq1iwH0szA_0KmDrhAQRhQB/preview",
+      "19": "https://drive.google.com/file/d/1fVpCQtX16OHIC95ur5AbYrSyrGbwvyor/preview",
+      "20": "https://drive.google.com/file/d/1aogsk8s54sibJdCWrk8YX8SRrcyB7kWM/preview",
+      "21": "https://drive.google.com/file/d/1bzvj1XEWgI8O0cKIXZPnzEJ1ZHku_Ilf/preview",
       "22": "https://drive.google.com/file/d/19-Sbg98zm5ZQxNY8WyY2W-_zAQJTqeom/preview",
-      "23": "https://drive.google.com/file/d/1kLFOLGuXCYzxerS21eovzkWD43LR-YUP/preview",
-      "24": "https://drive.google.com/file/d/13LGfJT7i8fSocN5DFQDQoCO-x_gMe2k2/preview",
-      "25": "https://drive.google.com/file/d/1Feot667h59Ts6qcZ-sRqKdp19A-Yob4O/preview",
-      "26": "https://drive.google.com/file/d/11xLLlV-c-q4D0YNHO7ZwDrXdFNv8NaKx/preview",
-      "27": "https://drive.google.com/file/d/1_TA1DNFLb2YE9NxfLqHv0ltTz6bm8OCG/preview"
-    }  
+      "23": "https://drive.google.com/file/d/1kLf0LGuXCYzxerS21eovzkWD43LR-YUP/preview",
+      "24": "https://drive.google.com/file/d/13LGfJT7i8fSocN5DFQDqoCO-x_gMe2k2/preview",
+      "25": "https://drive.google.com/file/d/1Feot667h59tS6qcz-sRqKdp19A-Yob40/preview",
+      "26": "https://drive.google.com/file/d/11xLL1V-c-q4D0YNHO7ZwDrXdFNv8NaKx/preview",
+      "27": "https://drive.google.com/file/d/1_TA1DNFLb2YE9NxfLqHv0ltTz6bm8O0G/preview"
+    }
+  },
+  "Overlord": {
+    "Temporada 2": {
+      "Drive": {
+        "1": "https://drive.google.com/file/d/1kK8yop1NzCDp8mrgq9J5dZVg3JCZ7ub3/preview",
+        "2": "https://drive.google.com/file/d/1P16PwQysQqiWUnJOPqDJmRccRVBpofD9/preview",
+        "3": "https://drive.google.com/file/d/1MH1Eo7vP8gG_SLww2dMG8kOhHMbai4Fc/preview",
+        "4": "https://drive.google.com/file/d/1d9Nhkf0eRks1blEnX0G7ivbIiEjPhrV_/preview",
+        "5": "https://drive.google.com/file/d/18q_Es_GondQUUjuTseGS7-fz7-Azs6JP/preview",
+        "6": "https://drive.google.com/file/d/1bEE6ir4MRvMUlxYX4QQjH8PoWFCKa9sq/preview",
+        "7": "https://drive.google.com/file/d/1ssl1_ml8WHMuugflKnzSt6-tcXFJ9G-E/preview",
+        "8": "https://drive.google.com/file/d/1zUydQxcQsOQZjZmFzPh9Bc3A8vuhHEAE/preview",
+        "9": "https://drive.google.com/file/d/1Qnfd9lqzMmdvToD18GbqswmcKg6GYdUj/preview",
+        "10": "https://drive.google.com/file/d/18i5nB5aiQTsDNaJlozaNTXrgv-pJtfY9/preview",
+        "11": "https://drive.google.com/file/d/11w4DV_I1LjzISfBmkUWSHrb1-gtPr5fa/preview",
+        "12": "https://drive.google.com/file/d/1eIJzpEFhT1RN7hcbZwpINdmFdOQLS816/preview",
+        "13": "https://drive.google.com/file/d/15R1emgj95_zWxqF1tFJs0HFfXFgB00XG/preview"
+      }
+    }
   }
 };
 
+/* ═══ ÍCONOS POR SERVIDOR ═══ */
 const SERVER_ICONS = {
   "terabox": "🟦", "drive": "🟢", "mega": "🟥",
   "mediafire": "🟠", "netu": "🟣", "default": "🎬"
@@ -59,6 +79,7 @@ function serverIcon(name){
   return SERVER_ICONS.default;
 }
 
+/* ═══ UTILIDADES ═══ */
 function normalize(s){
   return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 }
@@ -77,7 +98,8 @@ function getAnimeLinks(title){
 
 /* ═══ ANIMES PERSONALIZADOS ═══ */
 const CUSTOM_ANIME = [
-  { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 25, score: "7.8", cover: "https://img.anili.st/media/9919" },
+  { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 27, score: "7.8", cover: "https://img.anili.st/media/9919" },
+  { title: "Overlord", genres: ["Action","Adventure","Fantasy"], episodes: 52, score: "8.0", cover: "https://img.anili.st/media/20832" },
   { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", cover: "https://img.anili.st/media/210" },
   { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", cover: "https://img.anili.st/media/269" },
   { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", cover: "https://img.anili.st/media/249" },
@@ -140,7 +162,7 @@ function fillGenres(){
   });
 }
 
-/* ═══ MODAL DE ANIME ═══ */
+/* ═══ MODAL DE ANIME (con soporte de temporadas) ═══ */
 function openAnime(a){
   const animeLinks = getAnimeLinks(a.title);
 
@@ -158,52 +180,59 @@ function openAnime(a){
     return;
   }
 
-  const servers = Object.keys(animeLinks);
+  // Detectar si tiene temporadas
+  const firstKey = Object.keys(animeLinks)[0];
+  const firstValue = animeLinks[firstKey];
+  const isSeasons = typeof firstValue === 'object' 
+                 && !Array.isArray(firstValue)
+                 && typeof Object.values(firstValue)[0] === 'object';
+
   modalContent.innerHTML = `
     <img class="modalCover" src="${esc(a.cover)}" alt="" onerror="this.style.display='none'">
     <h2>${esc(a.title)}</h2>
     <p>⭐ ${esc(a.score || '—')} &nbsp; • &nbsp; ${esc((a.genres||[]).join(', '))}</p>
     <div class="watchOptions">
-      <h3 class="watchTitle">▶ Elegir servidor</h3>
+      <h3 class="watchTitle">▶ Ver episodios</h3>
+      <div id="seasonTabsBox"></div>
+      <div id="serverTabsBox"></div>
+      <div class="episodes" id="episodesBox"></div>
+      <div id="playerBox"></div>
+    </div>`;
+
+  function showServers(linksObj){
+    const servers = Object.keys(linksObj);
+    const serverBox = document.getElementById('serverTabsBox');
+    if (!serverBox) return;
+
+    serverBox.innerHTML = `
       <div class="serverTabs">
         ${servers.map((srv, i) => `
           <button class="serverTab${i===0?' active':''}" data-server="${esc(srv)}">
             ${serverIcon(srv)} ${esc(srv)}
           </button>
         `).join('')}
-      </div>
-      <div class="episodes" id="episodesBox"></div>
-      <div id="playerBox"></div>
-    </div>
-  `;
+      </div>`;
+    showEpisodes(linksObj[servers[0]], servers[0]);
 
-  renderEpisodes(servers[0]);
+    serverBox.querySelectorAll('.serverTab').forEach(btn => {
+      btn.onclick = () => {
+        serverBox.querySelectorAll('.serverTab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        showEpisodes(linksObj[btn.dataset.server], btn.dataset.server);
+      };
+    });
+  }
 
-  modalContent.querySelectorAll('.serverTab').forEach(btn => {
-    btn.onclick = () => {
-      // 🔇 Detener video anterior al cambiar de servidor
-      const player = document.getElementById('playerBox');
-      if (player) player.innerHTML = '';
-
-      modalContent.querySelectorAll('.serverTab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderEpisodes(btn.dataset.server);
-    };
-  });
-
-  function renderEpisodes(serverName){
+  function showEpisodes(epsObj, serverName){
     const box = document.getElementById('episodesBox');
     if (!box) return;
-    const eps = animeLinks[serverName] || {};
-    const keys = Object.keys(eps).sort((x,y) => Number(x) - Number(y));
-
+    const keys = Object.keys(epsObj).sort((x,y) => Number(x) - Number(y));
     if (!keys.length){
       box.innerHTML = `<p class="noLinks">No hay episodios en ${esc(serverName)}.</p>`;
       return;
     }
-
     box.innerHTML = keys.map(num => `
-      <button class="episode" data-link="${esc(eps[num])}" data-num="${esc(num)}">
+      <button class="episode" data-link="${esc(epsObj[num])}" data-num="${esc(num)}">
         Episodio ${esc(num)}
       </button>
     `).join('');
@@ -220,9 +249,6 @@ function openAnime(a){
         if (box.parentNode) box.parentNode.insertBefore(player, box.nextSibling);
       }
 
-      // 🔇 Detener el video anterior antes de poner el nuevo
-      player.innerHTML = '';
-
       if (link.includes('drive.google.com')){
         const match = link.match(/\/d\/([^/]+)/);
         const id = match ? match[1] : '';
@@ -238,22 +264,39 @@ function openAnime(a){
     };
   }
 
+  // Si tiene temporadas
+  if (isSeasons){
+    const seasons = Object.keys(animeLinks);
+    const seasonBox = document.getElementById('seasonTabsBox');
+    seasonBox.innerHTML = `
+      <div class="seasonTabs">
+        ${seasons.map((s, i) => `
+          <button class="seasonTab${i===0?' active':''}" data-season="${esc(s)}">
+            🎬 ${esc(s)}
+          </button>
+        `).join('')}
+      </div>`;
+    showServers(animeLinks[seasons[0]]);
+
+    seasonBox.querySelectorAll('.seasonTab').forEach(btn => {
+      btn.onclick = () => {
+        seasonBox.querySelectorAll('.seasonTab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        showServers(animeLinks[btn.dataset.season]);
+      };
+    });
+  } else {
+    showServers(animeLinks);
+  }
+
   modal.classList.remove('hidden');
 }
 
-/* ═══ CERRAR MODAL (detiene el video) ═══ */
-function cerrarModal(){
-  const player = document.getElementById('playerBox');
-  if (player) player.innerHTML = '';      // 🔇 destruye el iframe → corta el audio
-  modalContent.innerHTML = '';             // limpia el contenido del modal
-  modal.classList.add('hidden');
-}
+/* ═══ Cerrar modal ═══ */
+document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.add('hidden'); });
 
-document.getElementById('closeModal').onclick = cerrarModal;
-modal.addEventListener('click', e => { if (e.target === modal) cerrarModal(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
-
-/* ═══ EVENTOS ═══ */
 searchInput.addEventListener('input', applyFilters);
 genreFilter.addEventListener('change', applyFilters);
 document.getElementById('heroListBtn').onclick = () => { searchInput.focus(); };
@@ -287,6 +330,7 @@ async function loadCatalog(){
 
     catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
 
+    // Quitar duplicados
     const vistos = new Set();
     catalogAnime = catalogAnime.filter(a => {
       if (vistos.has(a.title)) return false;
