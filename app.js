@@ -22,10 +22,6 @@ async function fetchMangaDex(endpoint){
   return await res.json();
 }
 
-function proxifyImage(url){
-  return `${PROXY_URL}/api/proxy?url=${encodeURIComponent(url)}`;
-}
-
 /* ═══ LINKS DE SERVIDORES (USO PERSONAL) ═══ */
 const LINKS = {
   "Blue Exorcist": {
@@ -71,7 +67,8 @@ const CUSTOM_ANIME = [
   { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", cover: "https://img.anili.st/media/20605" }
 ];
 
-/* ═══ MANHWAS PERSONALIZADOS ═══ */
+/* ═══ MANHWAS PERSONALIZADOS ═══
+   Déjalo vacío para usar solo los de MangaDex */
 const CUSTOM_MANHWA = [];
 
 let currentType = 'anime';
@@ -140,7 +137,6 @@ function fillGenres(){
 
 /* ═══ MODAL DE ANIME ═══ */
 function openAnime(a){
-  // Si viene de MangaDex → abrir lector de manhwa
   if (a.source === 'mangadex'){
     openMangaReader(a);
     return;
@@ -180,9 +176,7 @@ function openAnime(a){
       <div id="playerBox"></div>
     </div>
   `;
-
   renderEpisodes(servers[0]);
-
   modalContent.querySelectorAll('.serverTab').forEach(btn => {
     btn.onclick = () => {
       modalContent.querySelectorAll('.serverTab').forEach(b => b.classList.remove('active'));
@@ -196,12 +190,10 @@ function openAnime(a){
     if (!box) return;
     const eps = animeLinks[serverName] || {};
     const keys = Object.keys(eps).sort((x,y) => Number(x) - Number(y));
-
     if (!keys.length){
       box.innerHTML = `<p class="noLinks">No hay episodios en ${esc(serverName)}.</p>`;
       return;
     }
-
     box.innerHTML = keys.map(num => `
       <button class="episode" data-link="${esc(eps[num])}" data-num="${esc(num)}">
         Episodio ${esc(num)}
@@ -222,7 +214,6 @@ function openAnime(a){
           const box2 = document.getElementById('episodesBox');
           if (box2 && box2.parentNode) box2.parentNode.insertBefore(player, box2.nextSibling);
         }
-
         if (link.includes('drive.google.com')){
           const match = link.match(/\/d\/([^/]+)/);
           const id = match ? match[1] : '';
@@ -241,54 +232,59 @@ function openAnime(a){
               <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
             </div>
             <iframe src="https://hqq.tv/player/embed_player.php?vid=${vid}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+        } else if (link.includes('pixeldrain.com')){
+          const match = link.match(/\/(?:u|api\/file)\/([^/?]+)/);
+          const id = match ? match[1] : '';
+          player.innerHTML = `
+            <div class="playerHeader">
+              <span>▶ Episodio ${esc(num)}</span>
+              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+            </div>
+            <iframe src="https://pixeldrain.com/api/file/${id}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
         } else {
           window.open(link, '_blank', 'noopener');
         }
       };
     }
   }
-
   modal.classList.remove('hidden');
 }
 
 /* ═══ LECTOR DE MANHWA (MangaDex) ═══ */
-// 1er intento: español
-let feed = await fetchMangaDex(
-  `https://api.mangadex.org/manga/${manga.id}/feed?translatedLanguage[]=es-la&translatedLanguage[]=es&order[chapter]=asc&limit=500`
-);
-let chapters = (feed.data || []).filter(ch => !ch.attributes.externalUrl);
+async function openMangaReader(manga){
+  const proxify = (url) => `${PROXY_URL}/api/proxy?url=${encodeURIComponent(url)}`;
 
-// 2do intento: si no hay en español, cargar en inglés
-if (!chapters.length){
-  feed = await fetchMangaDex(
-    `https://api.mangadex.org/manga/${manga.id}/feed?translatedLanguage[]=en&order[chapter]=asc&limit=500`
-  );
-  chapters = (feed.data || []).filter(ch => !ch.attributes.externalUrl);
-}
+  modalContent.innerHTML = `
+    <img class="modalCover" src="${esc(manga.cover)}" alt="" onerror="this.style.display='none'">
+    <h2>${esc(manga.title)}</h2>
+    <p>${esc(manga.score)} ${manga.genres.length ? '• '+esc(manga.genres.slice(0,3).join(', ')) : ''}</p>
+    <div class="watchOptions">
+      <h3 class="watchTitle">▶ Capítulos</h3>
+      <div class="episodes" id="chaptersList">
+        <p class="noLinks">Cargando capítulos...</p>
+      </div>
+      <div id="mangaReaderBox"></div>
+    </div>`;
+  modal.classList.remove('hidden');
 
-// 3er intento: cualquier idioma
-if (!chapters.length){
-  feed = await fetchMangaDex(
-    `https://api.mangadex.org/manga/${manga.id}/feed?order[chapter]=asc&limit=500`
-  );
-  chapters = (feed.data || []).filter(ch => !ch.attributes.externalUrl);
-}
+  try {
+    const feed = await fetchMangaDex(
+      `https://api.mangadex.org/manga/${manga.id}/feed?translatedLanguage[]=es-la&translatedLanguage[]=es&translatedLanguage[]=en&order[chapter]=asc&limit=500&includeExternalUrl=0`
+    );
+    const chapters = (feed.data || []).filter(ch => !ch.attributes.externalUrl);
 
     if (!chapters.length){
-  document.getElementById('chaptersList').innerHTML =
-    '<p class="noLinks">Este manhwa no tiene capítulos disponibles en MangaDex.<br>Puede que solo exista como enlace externo.</p>';
-  return;
-}
+      document.getElementById('chaptersList').innerHTML =
+        '<p class="noLinks">No hay capítulos disponibles.</p>';
+      return;
+    }
 
     const listEl = document.getElementById('chaptersList');
-    listEl.innerHTML = chapters.map(ch => {
-  const lang = (ch.attributes.translatedLanguage || '').toUpperCase();
-  const flag = lang.startsWith('ES') ? '🇪🇸' : lang.startsWith('EN') ? '🇺🇸' : '🌐';
-  return `
-    <button class="episode" data-chapter-id="${ch.id}">
-      ${flag} Cap. ${ch.attributes.chapter || '?'}
-    </button>`;
-}).join('');
+    listEl.innerHTML = chapters.map(ch => `
+      <button class="episode" data-chapter-id="${ch.id}">
+        Cap. ${ch.attributes.chapter || '?'}
+      </button>
+    `).join('');
 
     listEl.onclick = async (e) => {
       const btn = e.target.closest('.episode');
@@ -301,12 +297,15 @@ if (!chapters.length){
         const serverData = await fetchMangaDex(`https://api.mangadex.org/at-home/server/${chapterId}`);
         const baseUrl = serverData.baseUrl;
         const hash = serverData.chapter.hash;
-        const hasSaver = serverData.chapter.dataSaver && serverData.chapter.dataSaver.length;
-        const pages = hasSaver ? serverData.chapter.dataSaver : serverData.chapter.data;
-        const folder = hasSaver ? 'data-saver' : 'data';
+        const pages = serverData.chapter.dataSaver && serverData.chapter.dataSaver.length
+          ? serverData.chapter.dataSaver
+          : serverData.chapter.data;
+        const folder = serverData.chapter.dataSaver && serverData.chapter.dataSaver.length
+          ? 'data-saver'
+          : 'data';
 
         const imageUrls = pages.map(filename =>
-          proxifyImage(`${baseUrl}/${folder}/${hash}/${filename}`)
+          proxify(`${baseUrl}/${folder}/${hash}/${filename}`)
         );
 
         readerBox.innerHTML = `
@@ -367,7 +366,6 @@ async function loadCatalog(){
 
     catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
 
-    // Manhwas desde MangaDex
     try {
       const mangaRes = await fetchMangaDex(
         'https://api.mangadex.org/manga?limit=50&includes[]=cover_art&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&originalLanguage[]=ko&hasAvailableChapters=true'
@@ -377,7 +375,7 @@ async function loadCatalog(){
       const deMangaDex = mangas.map(x => {
         const coverRel = (x.relationships || []).find(r => r.type === 'cover_art');
         const coverUrl = coverRel
-          ? proxifyImage(`https://uploads.mangadex.org/covers/${x.id}/${coverRel.attributes.fileName}.256.jpg`)
+          ? `${PROXY_URL}/api/proxy?url=${encodeURIComponent(`https://uploads.mangadex.org/covers/${x.id}/${coverRel.attributes.fileName}.256.jpg`)}`
           : '';
         return {
           id: x.id,
