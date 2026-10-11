@@ -22,6 +22,10 @@ async function fetchMangaDex(endpoint){
   return await res.json();
 }
 
+function proxifyImage(url){
+  return `${PROXY_URL}/api/proxy?url=${encodeURIComponent(url)}`;
+}
+
 /* ═══ LINKS DE SERVIDORES (USO PERSONAL) ═══ */
 const LINKS = {
   "Blue Exorcist": {
@@ -67,7 +71,7 @@ const CUSTOM_ANIME = [
   { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", cover: "https://img.anili.st/media/20605" }
 ];
 
-/* ═══ MANHWAS PERSONALIZADOS (los que aparecen destacados primero) ═══ */
+/* ═══ MANHWAS PERSONALIZADOS ═══ */
 const CUSTOM_MANHWA = [
   { title: "Solo Leveling", genres: ["Action","Fantasy","Adventure"], episodes: 179, score: "8.9", cover: "https://img.anili.st/media/105398" },
   { title: "The Beginning After the End", genres: ["Action","Fantasy","Adventure"], episodes: 200, score: "8.7", cover: "https://img.anili.st/media/113497" },
@@ -141,7 +145,7 @@ function fillGenres(){
 
 /* ═══ MODAL DE ANIME ═══ */
 function openAnime(a){
-  // Si viene de MangaDex, abrir lector de manhwa
+  // Si viene de MangaDex → abrir lector de manhwa
   if (a.source === 'mangadex'){
     openMangaReader(a);
     return;
@@ -181,7 +185,9 @@ function openAnime(a){
       <div id="playerBox"></div>
     </div>
   `;
+
   renderEpisodes(servers[0]);
+
   modalContent.querySelectorAll('.serverTab').forEach(btn => {
     btn.onclick = () => {
       modalContent.querySelectorAll('.serverTab').forEach(b => b.classList.remove('active'));
@@ -195,10 +201,12 @@ function openAnime(a){
     if (!box) return;
     const eps = animeLinks[serverName] || {};
     const keys = Object.keys(eps).sort((x,y) => Number(x) - Number(y));
+
     if (!keys.length){
       box.innerHTML = `<p class="noLinks">No hay episodios en ${esc(serverName)}.</p>`;
       return;
     }
+
     box.innerHTML = keys.map(num => `
       <button class="episode" data-link="${esc(eps[num])}" data-num="${esc(num)}">
         Episodio ${esc(num)}
@@ -219,6 +227,7 @@ function openAnime(a){
           const box2 = document.getElementById('episodesBox');
           if (box2 && box2.parentNode) box2.parentNode.insertBefore(player, box2.nextSibling);
         }
+
         if (link.includes('drive.google.com')){
           const match = link.match(/\/d\/([^/]+)/);
           const id = match ? match[1] : '';
@@ -228,19 +237,29 @@ function openAnime(a){
               <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
             </div>
             <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+        } else if (link.includes('hqq.tv') || link.includes('netu.tv')){
+          const match = link.match(/vid=([^&]+)/);
+          const vid = match ? match[1] : '';
+          player.innerHTML = `
+            <div class="playerHeader">
+              <span>▶ Episodio ${esc(num)}</span>
+              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+            </div>
+            <iframe src="https://hqq.tv/player/embed_player.php?vid=${vid}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
         } else {
           window.open(link, '_blank', 'noopener');
         }
       };
     }
   }
+
   modal.classList.remove('hidden');
 }
 
 /* ═══ LECTOR DE MANHWA (MangaDex) ═══ */
 async function openMangaReader(manga){
   modalContent.innerHTML = `
-    <img class="modalCover" src="${esc(manga.cover)}" alt="">
+    <img class="modalCover" src="${esc(manga.cover)}" alt="" onerror="this.style.display='none'">
     <h2>${esc(manga.title)}</h2>
     <p>${esc(manga.score)} ${manga.genres.length ? '• '+esc(manga.genres.slice(0,3).join(', ')) : ''}</p>
     <div class="watchOptions">
@@ -254,9 +273,9 @@ async function openMangaReader(manga){
 
   try {
     const feed = await fetchMangaDex(
-      `https://api.mangadex.org/manga/${manga.id}/feed?translatedLanguage[]=es-la&translatedLanguage[]=es&order[chapter]=asc&limit=200`
+      `https://api.mangadex.org/manga/${manga.id}/feed?translatedLanguage[]=es-la&translatedLanguage[]=es&order[chapter]=asc&limit=200&includeExternalUrl=0`
     );
-    const chapters = feed.data || [];
+    const chapters = (feed.data || []).filter(ch => !ch.attributes.externalUrl);
 
     if (!chapters.length){
       document.getElementById('chaptersList').innerHTML =
@@ -282,10 +301,12 @@ async function openMangaReader(manga){
         const serverData = await fetchMangaDex(`https://api.mangadex.org/at-home/server/${chapterId}`);
         const baseUrl = serverData.baseUrl;
         const hash = serverData.chapter.hash;
-        const pages = serverData.chapter.data;
+        const hasSaver = serverData.chapter.dataSaver && serverData.chapter.dataSaver.length;
+        const pages = hasSaver ? serverData.chapter.dataSaver : serverData.chapter.data;
+        const folder = hasSaver ? 'data-saver' : 'data';
 
         const imageUrls = pages.map(filename =>
-          `${baseUrl}/data/${hash}/${filename}`
+          proxifyImage(`${baseUrl}/${folder}/${hash}/${filename}`)
         );
 
         readerBox.innerHTML = `
@@ -324,7 +345,6 @@ async function loadCatalog(){
   try {
     const query = `query ($page: Int, $type: MediaType) { Page(page: $page, perPage: 50) { media(type: $type, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes chapters averageScore coverImage { large } } } }`;
 
-    // Anime desde AniList
     const animeTodas = [];
     for (const p of [1, 2]){
       const res = await fetch('https://graphql.anilist.co', {
@@ -357,7 +377,7 @@ async function loadCatalog(){
       const deMangaDex = mangas.map(x => {
         const coverRel = (x.relationships || []).find(r => r.type === 'cover_art');
         const coverUrl = coverRel
-          ? `https://uploads.mangadex.org/covers/${x.id}/${coverRel.attributes.fileName}.256.jpg`
+          ? proxifyImage(`https://uploads.mangadex.org/covers/${x.id}/${coverRel.attributes.fileName}.256.jpg`)
           : '';
         return {
           id: x.id,
@@ -376,7 +396,6 @@ async function loadCatalog(){
       catalogManhwa = [...CUSTOM_MANHWA];
     }
 
-    // Quitar duplicados
     const limpiar = arr => {
       const vistos = new Set();
       return arr.filter(a => {
@@ -399,7 +418,6 @@ async function loadCatalog(){
   fillGenres();
   applyFilters();
 
-  // Pestañas
   document.querySelectorAll('.typeTab').forEach(tab => {
     tab.onclick = () => {
       document.querySelectorAll('.typeTab').forEach(t => t.classList.remove('active'));
