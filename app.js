@@ -275,10 +275,10 @@ if (!chapters.length){
 }
 
     if (!chapters.length){
-      document.getElementById('chaptersList').innerHTML =
-        '<p class="noLinks">No hay capítulos en español disponibles.</p>';
-      return;
-    }
+  document.getElementById('chaptersList').innerHTML =
+    '<p class="noLinks">Este manhwa no tiene capítulos disponibles en MangaDex.<br>Puede que solo exista como enlace externo.</p>';
+  return;
+}
 
     const listEl = document.getElementById('chaptersList');
     listEl.innerHTML = chapters.map(ch => `
