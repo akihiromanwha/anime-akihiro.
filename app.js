@@ -281,11 +281,14 @@ if (!chapters.length){
 }
 
     const listEl = document.getElementById('chaptersList');
-    listEl.innerHTML = chapters.map(ch => `
-      <button class="episode" data-chapter-id="${ch.id}">
-        Cap. ${ch.attributes.chapter || '?'}
-      </button>
-    `).join('');
+    listEl.innerHTML = chapters.map(ch => {
+  const lang = (ch.attributes.translatedLanguage || '').toUpperCase();
+  const flag = lang.startsWith('ES') ? '🇪🇸' : lang.startsWith('EN') ? '🇺🇸' : '🌐';
+  return `
+    <button class="episode" data-chapter-id="${ch.id}">
+      ${flag} Cap. ${ch.attributes.chapter || '?'}
+    </button>`;
+}).join('');
 
     listEl.onclick = async (e) => {
       const btn = e.target.closest('.episode');
