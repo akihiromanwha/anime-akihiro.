@@ -14,12 +14,37 @@ const modalContent= document.getElementById('modalContent');
 
 /* ═══ LINKS DE SERVIDORES (USO PERSONAL) ═══ */
 const LINKS = {
-  "Blue Exorcist": {
+   "Blue Exorcist": {
     "Drive": {
       "1": "https://drive.google.com/file/d/1Pw-etcZRlrayTsEY1VPvOZf09YcyLDmF/preview",
       "2": "https://drive.google.com/file/d/1XEOvRpbEGPrRVNhAEn5acpJ9VA8r0F8L/preview",
       "3": "https://drive.google.com/file/d/1DQzgaCH0OnCwDGgVJHACrvH_ooN_ZeQf/preview",
-      "4": "https://drive.google.com/file/d/18U03kcXEcnpVeJHHYt_AlBAI9rhynYkk/preview"
+      "4": "https://drive.google.com/file/d/18U03kcXEcnpVeJHHYt_AlBAI9rhynYkk/preview",
+      "5": "https://drive.google.com/file/d/1frXC_lBxSMVT4_7vkE1yXF7M0uhlbCxI/preview",
+      "6": "https://drive.google.com/file/d/1coWHp7daQoj89NwIuUs6_5tUJGHzIgMT/preview",
+      "7": "https://drive.google.com/file/d/17THu33ZROHKTrxaFkua8cXBG98qGwxTt/preview",
+      "8": "https://drive.google.com/file/d/1B9tbCACH7DwDiEMnhP-mMVVFONliHQ3b/preview",
+      "9": "https://drive.google.com/file/d/13zcUdiJjqj3rabkZcp2PJOcTbpiiestY/preview",
+      "10": "https://drive.google.com/file/d/16xmxgzZly0HiP25_nt7DoNsS0RsrGNPu/preview",
+      "11": "https://drive.google.com/file/d/1M_8Ld3t-A4nLj-cVadwXTgMkrWl9O5w0/preview",
+      "12": "https://drive.google.com/file/d/1YDwKyqcp3mTr0ICb2GdsyYxfK2tlxppV/preview",
+      "13": "https://drive.google.com/file/d/1uOc04h1apo5MmejpRBF3D0T-lsjE8ic0/preview",
+      "14": "https://drive.google.com/file/d/1JFNutB3kYkis5OnHGblVVu0T7tMvi4T9/preview",
+      "15": "https://drive.google.com/file/d/1T09mDlhmvHfipHWr5Cs487t0J-g4BodV/preview",
+      "16": "https://drive.google.com/file/d/1rluRFAapA7_pRpcNr1qO0NrX7RxgKmg7/preview",
+      "17": "https://drive.google.com/file/d/1AdUXG5vJv_Dyr0PBas0Qzomq8p9Ai0sY/preview",
+      "18": "https://drive.google.com/file/d/1Z0vMMqyGuqg1iwH0szA_OKmDrhAQRhQB/preview",
+      "19": "https://drive.google.com/file/d/1FVpCQtXl6OHIC95ur5AbYrSyrGBvwyor/preview",
+      "20": "https://drive.google.com/file/d/1aogsK8s54sibJdCWrk8YX8SRrcyB7kWM/preview",
+      "21": "https://drive.google.com/file/d/1bzvj1XEWgI8Q0CKIXZPnzEJ1ZHku_ILf/preview",
+      "22": "https://drive.google.com/file/d/19-Sbg98zm5ZQxNY8WyY2W-_zAQJTqeom/preview",
+      "23": "https://drive.google.com/file/d/1kLFOLGuXCYzxerS21eovzkWD43LR-YUP/preview",
+      "24": "https://drive.google.com/file/d/13LGfJT7i8fSocN5DFQDQoCO-x_gMe2k2/preview",
+      "25": "https://drive.google.com/file/d/1Feot667h59Ts6qcZ-sRqKdp19A-Yob4O/preview",
+      "26": "https://drive.google.com/file/d/11xLLlV-c-q4D0YNHO7ZwDrXdFNv8NaKx/preview",
+      "27": "https://drive.google.com/file/d/1_TA1DNFLb2YE9NxfLqHv0ltTz6bm8OCG/preview"
+    }
+  },
     }
   }
 };
