@@ -3,8 +3,10 @@
    © 2026 AnimeAkihiroDaiky — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
+/* ===== Reset ===== */
 *{ box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ===== Tema ROJO + NEGRO ===== */
 :root{
   --bg: #0a0a0a;
   --bg2: #141414;
@@ -33,7 +35,7 @@ body{
   transition: background .25s, color .25s;
 }
 
-/* Header */
+/* ===== Header ===== */
 header{
   display: flex;
   align-items: center;
@@ -59,6 +61,7 @@ header{
   color: var(--text);
   font-size: .95rem;
   outline: none;
+  transition: border-color .15s;
 }
 .searchWrap input:focus{ border-color: var(--accent); }
 
@@ -70,16 +73,21 @@ header{
   border-radius: 10px;
   cursor: pointer;
   font-size: 1rem;
+  transition: background .15s;
 }
 .smallBtn:hover{ background: var(--card); }
 
-/* Hero */
+/* ===== Hero ===== */
 .hero{
   padding: 3rem 1.5rem;
   background: linear-gradient(135deg, rgba(229,9,20,.20), rgba(0,0,0,.4));
   border-bottom: 1px solid var(--border);
 }
-.hero h1{ font-size: clamp(1.6rem, 4vw, 2.6rem); line-height: 1.15; margin: .5rem 0 .8rem; }
+.hero h1{
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  line-height: 1.15;
+  margin: .5rem 0 .8rem;
+}
 .hero p{ color: var(--muted); max-width: 480px; }
 .tag{
   font-size: .78rem;
@@ -102,7 +110,7 @@ header{
 }
 .primary:hover{ transform: translateY(-2px); filter: brightness(1.1); }
 
-/* Toolbar */
+/* ===== Toolbar ===== */
 .toolbar{
   display: flex;
   align-items: center;
@@ -123,9 +131,14 @@ header{
 }
 .toolbar select:focus{ outline: none; border-color: var(--accent); }
 
-.status{ padding: 0 1.5rem 1rem; color: var(--muted); font-size: .9rem; }
+/* ===== Status ===== */
+.status{
+  padding: 0 1.5rem 1rem;
+  color: var(--muted);
+  font-size: .9rem;
+}
 
-/* Grid */
+/* ===== Grid ===== */
 .grid{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -153,9 +166,23 @@ header{
   background: var(--bg2);
   display: block;
 }
-.cardBody{ padding: .8rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
-.cardBody .title{ font-weight: 700; font-size: .95rem; line-height: 1.2; }
-.cardBody .meta{ font-size: .78rem; color: var(--muted); flex: 1; }
+.cardBody{
+  padding: .8rem;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  flex: 1;
+}
+.cardBody .title{
+  font-weight: 700;
+  font-size: .95rem;
+  line-height: 1.2;
+}
+.cardBody .meta{
+  font-size: .78rem;
+  color: var(--muted);
+  flex: 1;
+}
 .cardBody button{
   margin-top: .3rem;
   background: var(--accent);
@@ -170,7 +197,7 @@ header{
 }
 .cardBody button:hover{ filter: brightness(1.15); }
 
-/* Modal */
+/* ===== Modal ===== */
 .modal{
   position: fixed;
   inset: 0;
@@ -209,14 +236,20 @@ header{
   cursor: pointer;
   padding: .3rem .5rem;
   border-radius: 8px;
+  transition: background .15s;
 }
 .close:hover{ background: rgba(229,9,20,.2); }
 
-.modalCover{ width: 140px; border-radius: 10px; float: left; margin: 0 1rem .5rem 0; }
+.modalCover{
+  width: 140px;
+  border-radius: 10px;
+  float: left;
+  margin: 0 1rem .5rem 0;
+}
 #modalContent h2{ margin-bottom: .4rem; }
 #modalContent p{ color: var(--muted); font-size: .9rem; margin-bottom: .4rem; }
 
-/* Opciones */
+/* ===== Opciones de visualización ===== */
 .watchOptions{
   clear: both;
   margin-top: 1rem;
@@ -225,7 +258,43 @@ header{
 }
 .watchTitle{ margin: 0 0 .75rem; font-size: 1rem; }
 
-.serverTabs{ display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+/* ===== Selector de TEMPORADAS ===== */
+.seasonTabs{
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-bottom: .8rem;
+  padding-bottom: .8rem;
+  border-bottom: 1px solid var(--border);
+}
+.seasonTab{
+  background: rgba(229,9,20,.1);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  padding: .55rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: .9rem;
+  font-weight: 600;
+  transition: all .15s;
+}
+.seasonTab:hover{
+  background: rgba(229,9,20,.25);
+  transform: translateY(-1px);
+}
+.seasonTab.active{
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(229,9,20,.5);
+}
+
+/* ===== Selector de SERVIDORES ===== */
+.serverTabs{
+  display: flex;
+  gap: .4rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
 .serverTab{
   background: rgba(255,255,255,.06);
   border: 1px solid var(--border);
@@ -244,6 +313,7 @@ header{
   font-weight: 600;
 }
 
+/* ===== Episodios ===== */
 .episodes{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -270,6 +340,7 @@ header{
   transform: translateY(-1px);
 }
 
+/* ===== Sin links ===== */
 .noLinks{
   opacity: .7;
   font-size: .9rem;
@@ -286,7 +357,7 @@ header{
   font-size: .85em;
 }
 
-/* Reproductor */
+/* ===== Reproductor embebido ===== */
 #playerBox{ margin-top: 1rem; }
 #playerBox iframe{
   width: 100%;
@@ -310,10 +381,11 @@ header{
   border-radius: 8px;
   padding: .3rem .6rem;
   cursor: pointer;
+  transition: background .15s;
 }
 .closePlayer:hover{ background: rgba(229,9,20,.4); }
 
-/* Footer */
+/* ===== Footer ===== */
 .siteFooter{
   text-align: center;
   padding: 2rem 1rem;
@@ -323,17 +395,28 @@ header{
   opacity: .85;
 }
 .siteFooter p{ margin-bottom: .3rem; }
-.siteFooter a{ color: var(--accent); text-decoration: none; font-weight: 600; }
+.siteFooter a{
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
 .siteFooter a:hover{ text-decoration: underline; }
-.siteFooter .muted{ color: var(--muted); font-size: .78rem; opacity: .7; }
+.siteFooter .muted{
+  color: var(--muted);
+  font-size: .78rem;
+  opacity: .7;
+}
 
-/* Modo claro */
+/* ===== Modo claro (ajustes) ===== */
 body.light .serverTab{ background: rgba(0,0,0,.04); }
 body.light .episode{ background: rgba(0,0,0,.04); }
 body.light .noLinks code{ background: rgba(0,0,0,.08); }
+body.light .closePlayer{ background: rgba(229,9,20,.15); }
 
-/* Responsive */
+/* ===== Responsive ===== */
 @media (max-width: 520px){
   .modalCover{ width: 100px; }
   .grid{ grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .seasonTab{ padding: .45rem .8rem; font-size: .82rem; }
+  .serverTab{ padding: .4rem .7rem; font-size: .82rem; }
 }
