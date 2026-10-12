@@ -8,11 +8,17 @@ const searchInput = document.getElementById('searchInput');
 const animeGrid   = document.getElementById('animeGrid');
 const statusEl    = document.getElementById('status');
 const genreFilter = document.getElementById('genreFilter');
+const yearFilter  = document.getElementById('yearFilter');
 const sectionTitle= document.getElementById('sectionTitle');
+const resultsCount= document.getElementById('resultsCount');
 const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
-/* ═══ HERO — Imágenes rotativas ═══ */
+/* ═══ Filtros activos ═══ */
+let activeSeason = '';
+let activeDay = '';
+
+/* ═══ HERO ═══ */
 const HERO_IMAGES = [
   "https://img.anili.st/media/9919",
   "https://img.anili.st/media/20832",
@@ -46,32 +52,28 @@ const HERO_IMAGES = [
   setInterval(swap, 5500);
 })();
 
+/* ═══ Toggle del panel de filtros ═══ */
+const toggleFilters = document.getElementById('toggleFilters');
+const filterPanel = document.getElementById('filterPanel');
+if (toggleFilters && filterPanel){
+  toggleFilters.onclick = () => {
+    toggleFilters.classList.toggle('open');
+    filterPanel.classList.toggle('open');
+  };
+}
+
 /* ═══ LINKS DE SERVIDORES ═══ */
 const LINKS = {
   "Blue Exorcist": {
-    "Terabox": {
-      "1": "AQUI_LINK_TERABOX_EP1",
-      "2": "AQUI_LINK_TERABOX_EP2"
-    },
-    "Mega": {
-      "1": "AQUI_LINK_MEGA_EP1"
-    },
-    "Mediafire": {
-      "1": "AQUI_LINK_MEDIAFIRE_EP1"
-    }
+    "Terabox": { "1": "AQUI_LINK_TERABOX_EP1", "2": "AQUI_LINK_TERABOX_EP2" },
+    "Mega": { "1": "AQUI_LINK_MEGA_EP1" },
+    "Mediafire": { "1": "AQUI_LINK_MEDIAFIRE_EP1" }
   },
   "Overlord": {
     "Temporada 2": {
-      "Terabox": {
-        "1": "AQUI_LINK_TERABOX_T2_EP1",
-        "2": "AQUI_LINK_TERABOX_T2_EP2"
-      },
-      "Mega": {
-        "1": "AQUI_LINK_MEGA_T2_EP1"
-      },
-      "Mediafire": {
-        "1": "AQUI_LINK_MEDIAFIRE_T2_EP1"
-      }
+      "Terabox": { "1": "AQUI_LINK_TERABOX_T2_EP1" },
+      "Mega": { "1": "AQUI_LINK_MEGA_T2_EP1" },
+      "Mediafire": { "1": "AQUI_LINK_MEDIAFIRE_T2_EP1" }
     }
   }
 };
@@ -108,17 +110,31 @@ function getAnimeLinks(title){
   return null;
 }
 
+/* ═══ Días de la semana ═══ */
+const DAY_NAMES = {
+  0: 'Dom', 1: 'Lun', 2: 'Mar', 3: 'Mié',
+  4: 'Jue', 5: 'Vie', 6: 'Sáb'
+};
+
+/* ═══ Estaciones ═══ */
+const SEASON_NAMES = {
+  WINTER: 'Invierno',
+  SPRING: 'Primavera',
+  SUMMER: 'Verano',
+  FALL:   'Otoño'
+};
+
 /* ═══ Animes personalizados ═══ */
 const CUSTOM_ANIME = [
-  { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 27, score: "7.8", cover: "https://img.anili.st/media/9919" },
-  { title: "Overlord", genres: ["Action","Adventure","Fantasy"], episodes: 52, score: "8.0", cover: "https://img.anili.st/media/20832" },
-  { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", cover: "https://img.anili.st/media/210" },
-  { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", cover: "https://img.anili.st/media/269" },
-  { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", cover: "https://img.anili.st/media/249" },
-  { title: "Hunter x Hunter", genres: ["Action","Adventure","Fantasy"], episodes: 148, score: "9.0", cover: "https://img.anili.st/media/11061" },
-  { title: "Fullmetal Alchemist: Brotherhood", genres: ["Action","Adventure","Drama"], episodes: 64, score: "9.1", cover: "https://img.anili.st/media/5114" },
-  { title: "Death Note", genres: ["Mystery","Psychological","Thriller"], episodes: 37, score: "8.6", cover: "https://img.anili.st/media/1535" },
-  { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", cover: "https://img.anili.st/media/20605" }
+  { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 27, score: "7.8", cover: "https://img.anili.st/media/9919", season: "SPRING", year: 2024, day: 5 },
+  { title: "Overlord", genres: ["Action","Adventure","Fantasy"], episodes: 52, score: "8.0", cover: "https://img.anili.st/media/20832", season: "SUMMER", year: 2015, day: 2 },
+  { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", cover: "https://img.anili.st/media/210", season: "SPRING", year: 1989, day: 6 },
+  { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", cover: "https://img.anili.st/media/269", season: "FALL", year: 2004, day: 2 },
+  { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", cover: "https://img.anili.st/media/249", season: "FALL", year: 2000, day: 6 },
+  { title: "Hunter x Hunter", genres: ["Action","Adventure","Fantasy"], episodes: 148, score: "9.0", cover: "https://img.anili.st/media/11061", season: "FALL", year: 2011, day: 0 },
+  { title: "Fullmetal Alchemist: Brotherhood", genres: ["Action","Adventure","Drama"], episodes: 64, score: "9.1", cover: "https://img.anili.st/media/5114", season: "SPRING", year: 2009, day: 0 },
+  { title: "Death Note", genres: ["Mystery","Psychological","Thriller"], episodes: 37, score: "8.6", cover: "https://img.anili.st/media/1535", season: "FALL", year: 2006, day: 3 },
+  { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", cover: "https://img.anili.st/media/20605", season: "SUMMER", year: 2014, day: 4 }
 ];
 
 let catalog = [];
@@ -134,17 +150,22 @@ const fallback = [
 function render(list){
   animeGrid.innerHTML = '';
   if(!list.length){
-    animeGrid.innerHTML = '<p style="padding:1rem;color:#a0a0a0;">No encontramos ese título. Prueba otro nombre.</p>';
+    animeGrid.innerHTML = '<p style="padding:1rem;color:#a0a0a0;">No encontramos resultados con esos filtros.</p>';
     return;
   }
   list.forEach((a,i)=>{
     const card = document.createElement('article');
     card.className = 'card';
+    const dayBadge = (a.day !== undefined && a.day !== null) 
+      ? `<span class="dayBadge">${DAY_NAMES[a.day] || ''}</span>` 
+      : '';
+    const yearInfo = a.year ? ` • ${a.year}` : '';
     card.innerHTML = `
+      ${dayBadge}
       <img class="cover" src="${esc(a.cover)}" alt="${esc(a.title)}" onerror="this.style.display='none'">
       <div class="cardBody">
         <div class="title">${esc(a.title)}</div>
-        <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))} ${a.episodes?`• ${a.episodes} eps.`:''}</div>
+        <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))}${yearInfo} ${a.episodes?`• ${a.episodes} eps.`:''}</div>
         <button data-index="${i}">Ver episodios</button>
       </div>`;
     card.querySelector('button').onclick = () => openAnime(a);
@@ -152,15 +173,37 @@ function render(list){
   });
 }
 
+/* ═══ Aplicar filtros ═══ */
 function applyFilters(){
   const q = normalize(searchInput.value);
   const g = normalize(genreFilter.value);
+  const y = yearFilter.value;
+  const s = activeSeason;
+  const d = activeDay;
+
   const filtered = catalog.filter(a => {
     const text = normalize([a.title, ...(a.genres||[])].join(' '));
-    return (!q || text.includes(q)) && (!g || (a.genres||[]).some(x => normalize(x) === g));
+    if (q && !text.includes(q)) return false;
+    if (g && !(a.genres||[]).some(x => normalize(x) === g)) return false;
+
+    if (y){
+      if (y === '2010'){ if (!a.year || a.year < 2010 || a.year > 2014) return false; }
+      else if (y === '2005'){ if (!a.year || a.year < 2005 || a.year > 2009) return false; }
+      else if (y === '2000'){ if (!a.year || a.year >= 2005) return false; }
+      else { if (String(a.year) !== String(y)) return false; }
+    }
+
+    if (s && a.season !== s) return false;
+    if (d !== '' && Number(a.day) !== Number(d)) return false;
+
+    return true;
   });
+
   sectionTitle.textContent = q ? `Resultados para "${searchInput.value}"` : 'Animes populares';
-  statusEl.textContent = `${filtered.length} anime${filtered.length===1?'':'s'} encontrado${filtered.length===1?'':'s'}.`;
+  if (resultsCount){
+    resultsCount.textContent = `${filtered.length} resultado${filtered.length===1?'':'s'}`;
+  }
+  statusEl.textContent = '';
   render(filtered);
 }
 
@@ -174,7 +217,7 @@ function fillGenres(){
   });
 }
 
-/* ═══ Modal de anime (estilo player) ═══ */
+/* ═══ Modal de anime ═══ */
 function openAnime(a){
   const animeLinks = getAnimeLinks(a.title);
 
@@ -278,7 +321,6 @@ function openAnime(a){
         alert('⚠️ Episodio ' + num + ' aún sin link.\n\nVe a app.js y reemplaza:\n"' + link + '"');
         return;
       }
-
       window.open(link, '_blank', 'noopener');
     };
   }
@@ -311,18 +353,17 @@ function openAnime(a){
   modal.classList.remove('hidden');
 }
 
-/* ═══ Cerrar modal anime ═══ */
+/* ═══ Cerrar modal ═══ */
 document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.add('hidden'); });
 
-/* ═══ MODAL DE PERFIL ═══ */
+/* ═══ Modal de perfil ═══ */
 const profileModal = document.getElementById('profileModal');
 const profileBtn = document.getElementById('profileBtn');
 const closeProfile = document.getElementById('closeProfile');
 const profileName = document.getElementById('profileName');
 const profileNameInput = document.getElementById('profileNameInput');
-const profileAvatar = document.getElementById('profileAvatar');
 const saveProfile = document.getElementById('saveProfile');
 const themeState = document.getElementById('themeState');
 
@@ -338,7 +379,6 @@ profileBtn.onclick = () => {
   themeState.textContent = document.body.classList.contains('light') ? 'Claro' : 'Oscuro';
   profileModal.classList.remove('hidden');
 };
-
 closeProfile.onclick = () => profileModal.classList.add('hidden');
 profileModal.addEventListener('click', e => { if (e.target === profileModal) profileModal.classList.add('hidden'); });
 
@@ -361,10 +401,55 @@ document.getElementById('optTheme').onclick = () => {
   themeState.textContent = document.body.classList.contains('light') ? 'Claro' : 'Oscuro';
 };
 
-/* ═══ Eventos generales ═══ */
+/* ═══ Eventos de filtros ═══ */
 searchInput.addEventListener('input', applyFilters);
 genreFilter.addEventListener('change', applyFilters);
-document.getElementById('themeBtn').onclick = () => { 
+yearFilter.addEventListener('change', applyFilters);
+
+// Chips de estación
+document.querySelectorAll('[data-season]').forEach(chip => {
+  chip.onclick = () => {
+    const val = chip.dataset.season;
+    if (activeSeason === val){
+      activeSeason = '';
+      chip.classList.remove('active');
+    } else {
+      activeSeason = val;
+      document.querySelectorAll('[data-season]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    }
+    applyFilters();
+  };
+});
+
+// Chips de día
+document.querySelectorAll('[data-day]').forEach(chip => {
+  chip.onclick = () => {
+    const val = chip.dataset.day;
+    if (String(activeDay) === String(val)){
+      activeDay = '';
+      chip.classList.remove('active');
+    } else {
+      activeDay = val;
+      document.querySelectorAll('[data-day]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    }
+    applyFilters();
+  };
+});
+
+// Limpiar filtros
+document.getElementById('clearFilters').onclick = () => {
+  searchInput.value = '';
+  genreFilter.value = '';
+  yearFilter.value = '';
+  activeSeason = '';
+  activeDay = '';
+  document.querySelectorAll('.filterChip').forEach(c => c.classList.remove('active'));
+  applyFilters();
+};
+
+document.getElementById('themeBtn').onclick = () => {
   document.body.classList.toggle('light');
 };
 
@@ -372,7 +457,7 @@ document.getElementById('themeBtn').onclick = () => {
 async function loadCatalog(){
   statusEl.textContent = 'Cargando catálogo...';
   try {
-    const query = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore coverImage { large } } } }`;
+    const query = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore season seasonYear coverImage { large } nextAiringEpisode { airingAt episode } } } }`;
 
     const animeTodas = [];
     for (const p of [1, 2]){
@@ -386,13 +471,23 @@ async function loadCatalog(){
       await new Promise(r => setTimeout(r, 700));
     }
 
-    catalogAnime = animeTodas.map(x => ({
-      title: x.title?.english || x.title?.romaji || x.title?.native || 'Anime',
-      genres: x.genres || [],
-      episodes: x.episodes || 0,
-      score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
-      cover: x.coverImage?.large || ''
-    })).filter(x => x.title);
+    catalogAnime = animeTodas.map(x => {
+      let day = null;
+      if (x.nextAiringEpisode?.airingAt){
+        const d = new Date(x.nextAiringEpisode.airingAt * 1000);
+        day = d.getDay();
+      }
+      return {
+        title: x.title?.english || x.title?.romaji || x.title?.native || 'Anime',
+        genres: x.genres || [],
+        episodes: x.episodes || 0,
+        score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
+        cover: x.coverImage?.large || '',
+        season: x.season || null,
+        year: x.seasonYear || null,
+        day: day
+      };
+    }).filter(x => x.title);
 
     catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
 
