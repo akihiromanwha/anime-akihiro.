@@ -13,15 +13,44 @@ const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
 /* ════════════════════════════════════════════════════════════
+   🎬 HERO — Imágenes rotativas de animes
+   ════════════════════════════════════════════════════════════ */
+const HERO_IMAGES = [
+  "https://img.anili.st/media/9919",   // Blue Exorcist
+  "https://img.anili.st/media/20832",  // Overlord
+  "https://img.anili.st/media/210",    // Ranma 1/2
+  "https://img.anili.st/media/20605",  // Tokyo Ghoul
+  "https://img.anili.st/media/269",    // Bleach
+  "https://img.anili.st/media/11061"   // Hunter x Hunter
+];
+
+(function initHero(){
+  let idx = 0;
+  let useA = true;
+  function swap(){
+    const a = document.getElementById('heroBgA');
+    const b = document.getElementById('heroBgB');
+    if (!a || !b) return;
+    const img = HERO_IMAGES[idx];
+    if (useA){
+      a.style.backgroundImage = `url(${img})`;
+      a.classList.add('active');
+      b.classList.remove('active');
+    } else {
+      b.style.backgroundImage = `url(${img})`;
+      b.classList.add('active');
+      a.classList.remove('active');
+    }
+    useA = !useA;
+    idx = (idx + 1) % HERO_IMAGES.length;
+  }
+  swap();
+  setInterval(swap, 5500);
+})();
+
+/* ════════════════════════════════════════════════════════════
    📥 LINKS DE SERVIDORES (USO PERSONAL)
-   ------------------------------------------------------------
-   Servidores disponibles: Terabox, Mega, Mediafire
-   Formatos válidos por episodio:
-     • Terabox:   https://terabox.com/s/xxxxx
-     • Mega:      https://mega.nz/file/xxxxx
-     • Mediafire: https://mediafire.com/file/xxxxx
-   ------------------------------------------------------------
-   Para agregar un episodio:  "1": "link del capítulo 1",
+   Servidores: Terabox, Mega, Mediafire
    ════════════════════════════════════════════════════════════ */
 const LINKS = {
   "Blue Exorcist": {
@@ -52,7 +81,7 @@ const LINKS = {
   }
 };
 
-/* ═══ ÍCONOS POR SERVIDOR ═══ */
+/* ═══ Íconos por servidor ═══ */
 const SERVER_ICONS = {
   "terabox":   "🟦",
   "mega":      "🟥",
@@ -69,7 +98,7 @@ function serverIcon(name){
   return SERVER_ICONS.default;
 }
 
-/* ═══ UTILIDADES ═══ */
+/* ═══ Utilidades ═══ */
 function normalize(s){
   return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 }
@@ -86,7 +115,7 @@ function getAnimeLinks(title){
   return null;
 }
 
-/* ═══ ANIMES PERSONALIZADOS ═══ */
+/* ═══ Animes personalizados ═══ */
 const CUSTOM_ANIME = [
   { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 27, score: "7.8", cover: "https://img.anili.st/media/9919" },
   { title: "Overlord", genres: ["Action","Adventure","Fantasy"], episodes: 52, score: "8.0", cover: "https://img.anili.st/media/20832" },
@@ -108,7 +137,7 @@ const fallback = [
   {title:'Attack on Titan',genres:['Action','Drama'],episodes:89,score:9.0,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-8mQ2vR6sK1pL.jpg'}
 ];
 
-/* ═══ RENDER ═══ */
+/* ═══ Render ═══ */
 function render(list){
   animeGrid.innerHTML = '';
   if(!list.length){
@@ -152,7 +181,7 @@ function fillGenres(){
   });
 }
 
-/* ═══ MODAL DE ANIME ═══ */
+/* ═══ Modal de anime ═══ */
 function openAnime(a){
   const animeLinks = getAnimeLinks(a.title);
 
@@ -233,13 +262,11 @@ function openAnime(a){
       if (!btn) return;
       const link = btn.dataset.link;
 
-      // Si el link es un placeholder, avisar
       if (link.startsWith('AQUI_') || !link.startsWith('http')){
         alert('⚠️ Este episodio aún no tiene link configurado.\n\nVe a app.js y reemplaza:\n"' + link + '"\n\npor tu link real de ' + serverName + '.');
         return;
       }
 
-      // Todos los servidores abren en pestaña nueva
       window.open(link, '_blank', 'noopener');
     };
   }
@@ -281,7 +308,7 @@ genreFilter.addEventListener('change', applyFilters);
 document.getElementById('heroListBtn').onclick = () => { searchInput.focus(); };
 document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
-/* ═══ CARGA DEL CATÁLOGO ═══ */
+/* ═══ Carga del catálogo ═══ */
 async function loadCatalog(){
   statusEl.textContent = 'Cargando catálogo...';
   try {
