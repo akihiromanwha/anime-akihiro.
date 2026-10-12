@@ -12,55 +12,41 @@ const sectionTitle= document.getElementById('sectionTitle');
 const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
-/* ═══ LINKS DE SERVIDORES (USO PERSONAL) ═══ */
+/* ════════════════════════════════════════════════════════════
+   📥 LINKS DE SERVIDORES (USO PERSONAL)
+   ------------------------------------------------------------
+   Servidores disponibles: Terabox, Mega, Mediafire
+   Formatos válidos por episodio:
+     • Terabox:   https://terabox.com/s/xxxxx
+     • Mega:      https://mega.nz/file/xxxxx
+     • Mediafire: https://mediafire.com/file/xxxxx
+   ------------------------------------------------------------
+   Para agregar un episodio:  "1": "link del capítulo 1",
+   ════════════════════════════════════════════════════════════ */
 const LINKS = {
   "Blue Exorcist": {
-    "Drive": {
-      "1": "https://drive.google.com/file/d/1Pw-etcZRlrayTsEY1VPvOZf09YcyLDmF/preview",
-      "2": "https://drive.google.com/file/d/1XEOvRpbEGPrRVNhAEn5acpJ9VA8r0F8L/preview",
-      "3": "https://drive.google.com/file/d/1DQzgaCH0OnCwDGgVJHACrvH_ooN_ZeQf/preview",
-      "4": "https://drive.google.com/file/d/18U03kcXEcnpVeJHHYt_AlBAI9rhynYkk/preview",
-      "5": "https://drive.google.com/file/d/1frXC_1BxSMVT4_7vKE1yXF7M0uhlbcXI/preview",
-      "6": "https://drive.google.com/file/d/1coWlp7daQoJ89NwIuOs6_5tUJGHzIgMT/preview",
-      "7": "https://drive.google.com/file/d/17THu332ROHkTrxafKua8cXBG98q6wxTt/preview",
-      "8": "https://drive.google.com/file/d/1B9tbCACH7DwD1EMnhP-mWVFQN1iHQ3b/preview",
-      "9": "https://drive.google.com/file/d/13zcUdijjqj3rabkZcp2PJOcTbpiesty/preview",
-      "10": "https://drive.google.com/file/d/16xmxgzZLy0HIP25_nt7DOnsS0RsrGNPa/preview",
-      "11": "https://drive.google.com/file/d/1M_8Ld3t-A4nLj-cVadwXTgMkrW1905w0/preview",
-      "12": "https://drive.google.com/file/d/1YDwKycqp3Mtr0ICb2GdsyYxfK2tlxppV/preview",
-      "13": "https://drive.google.com/file/d/1uOc04h1apo5MmejpRBF3DOT-1sjE8ic0/preview",
-      "14": "https://drive.google.com/file/d/1JFNuTB3kYkiSs0nHGb1VU0T7tMvI4T9/preview",
-      "15": "https://drive.google.com/file/d/1T09mDlhmvHfiphWR5Cs487t0J-g4BodV/preview",
-      "16": "https://drive.google.com/file/d/1rIuRFAapA7_pRpcNr1qO0NrX7RxgKmg7/preview",
-      "17": "https://drive.google.com/file/d/1AdUXG5vJv-Dyr0PBas0Qzomq8p9Ai8sY/preview",
-      "18": "https://drive.google.com/file/d/1Z0vMMqyGuqq1iwH0szA_0KmDrhAQRhQB/preview",
-      "19": "https://drive.google.com/file/d/1fVpCQtX16OHIC95ur5AbYrSyrGbwvyor/preview",
-      "20": "https://drive.google.com/file/d/1aogsk8s54sibJdCWrk8YX8SRrcyB7kWM/preview",
-      "21": "https://drive.google.com/file/d/1bzvj1XEWgI8O0cKIXZPnzEJ1ZHku_Ilf/preview",
-      "22": "https://drive.google.com/file/d/19-Sbg98zm5ZQxNY8WyY2W-_zAQJTqeom/preview",
-      "23": "https://drive.google.com/file/d/1kLf0LGuXCYzxerS21eovzkWD43LR-YUP/preview",
-      "24": "https://drive.google.com/file/d/13LGfJT7i8fSocN5DFQDqoCO-x_gMe2k2/preview",
-      "25": "https://drive.google.com/file/d/1Feot667h59tS6qcz-sRqKdp19A-Yob40/preview",
-      "26": "https://drive.google.com/file/d/11xLL1V-c-q4D0YNHO7ZwDrXdFNv8NaKx/preview",
-      "27": "https://drive.google.com/file/d/1_TA1DNFLb2YE9NxfLqHv0ltTz6bm8O0G/preview"
+    "Terabox": {
+      "1": "AQUI_LINK_TERABOX_EP1",
+      "2": "AQUI_LINK_TERABOX_EP2"
+    },
+    "Mega": {
+      "1": "AQUI_LINK_MEGA_EP1"
+    },
+    "Mediafire": {
+      "1": "AQUI_LINK_MEDIAFIRE_EP1"
     }
   },
   "Overlord": {
     "Temporada 2": {
-      "Drive": {
-        "1": "https://drive.google.com/file/d/1kK8yop1NzCDp8mrgq9J5dZVg3JCZ7ub3/preview",
-        "2": "https://drive.google.com/file/d/1P16PwQysQqiWUnJOPqDJmRccRVBpofD9/preview",
-        "3": "https://drive.google.com/file/d/1MH1Eo7vP8gG_SLww2dMG8kOhHMbai4Fc/preview",
-        "4": "https://drive.google.com/file/d/1d9Nhkf0eRks1blEnX0G7ivbIiEjPhrV_/preview",
-        "5": "https://drive.google.com/file/d/18q_Es_GondQUUjuTseGS7-fz7-Azs6JP/preview",
-        "6": "https://drive.google.com/file/d/1bEE6ir4MRvMUlxYX4QQjH8PoWFCKa9sq/preview",
-        "7": "https://drive.google.com/file/d/1ssl1_ml8WHMuugflKnzSt6-tcXFJ9G-E/preview",
-        "8": "https://drive.google.com/file/d/1zUydQxcQsOQZjZmFzPh9Bc3A8vuhHEAE/preview",
-        "9": "https://drive.google.com/file/d/1Qnfd9lqzMmdvToD18GbqswmcKg6GYdUj/preview",
-        "10": "https://drive.google.com/file/d/18i5nB5aiQTsDNaJlozaNTXrgv-pJtfY9/preview",
-        "11": "https://drive.google.com/file/d/11w4DV_I1LjzISfBmkUWSHrb1-gtPr5fa/preview",
-        "12": "https://drive.google.com/file/d/1eIJzpEFhT1RN7hcbZwpINdmFdOQLS816/preview",
-        "13": "https://drive.google.com/file/d/15R1emgj95_zWxqF1tFJs0HFfXFgB00XG/preview"
+      "Terabox": {
+        "1": "AQUI_LINK_TERABOX_T2_EP1",
+        "2": "AQUI_LINK_TERABOX_T2_EP2"
+      },
+      "Mega": {
+        "1": "AQUI_LINK_MEGA_T2_EP1"
+      },
+      "Mediafire": {
+        "1": "AQUI_LINK_MEDIAFIRE_T2_EP1"
       }
     }
   }
@@ -68,8 +54,12 @@ const LINKS = {
 
 /* ═══ ÍCONOS POR SERVIDOR ═══ */
 const SERVER_ICONS = {
-  "terabox": "🟦", "drive": "🟢", "mega": "🟥",
-  "mediafire": "🟠", "netu": "🟣", "default": "🎬"
+  "terabox":   "🟦",
+  "mega":      "🟥",
+  "mediafire": "🟠",
+  "netu":      "🟣",
+  "pixeldrain":"⚫",
+  "default":   "🎬"
 };
 function serverIcon(name){
   const k = name.toLowerCase();
@@ -162,7 +152,7 @@ function fillGenres(){
   });
 }
 
-/* ═══ MODAL DE ANIME (con soporte de temporadas) ═══ */
+/* ═══ MODAL DE ANIME ═══ */
 function openAnime(a){
   const animeLinks = getAnimeLinks(a.title);
 
@@ -180,7 +170,6 @@ function openAnime(a){
     return;
   }
 
-  // Detectar si tiene temporadas
   const firstKey = Object.keys(animeLinks)[0];
   const firstValue = animeLinks[firstKey];
   const isSeasons = typeof firstValue === 'object' 
@@ -196,7 +185,6 @@ function openAnime(a){
       <div id="seasonTabsBox"></div>
       <div id="serverTabsBox"></div>
       <div class="episodes" id="episodesBox"></div>
-      <div id="playerBox"></div>
     </div>`;
 
   function showServers(linksObj){
@@ -227,10 +215,13 @@ function openAnime(a){
     const box = document.getElementById('episodesBox');
     if (!box) return;
     const keys = Object.keys(epsObj).sort((x,y) => Number(x) - Number(y));
+
     if (!keys.length){
-      box.innerHTML = `<p class="noLinks">No hay episodios en ${esc(serverName)}.</p>`;
+      box.innerHTML = `<p class="noLinks">No hay episodios en <b>${esc(serverName)}</b> todavía.<br>
+      Agrega los links en <code>LINKS</code> dentro de <code>app.js</code>.</p>`;
       return;
     }
+
     box.innerHTML = keys.map(num => `
       <button class="episode" data-link="${esc(epsObj[num])}" data-num="${esc(num)}">
         Episodio ${esc(num)}
@@ -241,30 +232,18 @@ function openAnime(a){
       const btn = e.target.closest('.episode');
       if (!btn) return;
       const link = btn.dataset.link;
-      const num  = btn.dataset.num;
-      let player = document.getElementById('playerBox');
-      if (!player){
-        player = document.createElement('div');
-        player.id = 'playerBox';
-        if (box.parentNode) box.parentNode.insertBefore(player, box.nextSibling);
+
+      // Si el link es un placeholder, avisar
+      if (link.startsWith('AQUI_') || !link.startsWith('http')){
+        alert('⚠️ Este episodio aún no tiene link configurado.\n\nVe a app.js y reemplaza:\n"' + link + '"\n\npor tu link real de ' + serverName + '.');
+        return;
       }
 
-      if (link.includes('drive.google.com')){
-        const match = link.match(/\/d\/([^/]+)/);
-        const id = match ? match[1] : '';
-        player.innerHTML = `
-          <div class="playerHeader">
-            <span>▶ Episodio ${esc(num)}</span>
-            <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
-          </div>
-          <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-      } else {
-        window.open(link, '_blank', 'noopener');
-      }
+      // Todos los servidores abren en pestaña nueva
+      window.open(link, '_blank', 'noopener');
     };
   }
 
-  // Si tiene temporadas
   if (isSeasons){
     const seasons = Object.keys(animeLinks);
     const seasonBox = document.getElementById('seasonTabsBox');
@@ -330,7 +309,6 @@ async function loadCatalog(){
 
     catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
 
-    // Quitar duplicados
     const vistos = new Set();
     catalogAnime = catalogAnime.filter(a => {
       if (vistos.has(a.title)) return false;
