@@ -4,20 +4,17 @@
    © 2026 AnimeAkihiroDaiky — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
-/* ===== Reset ===== */
 *{ box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ===== Tema DARK BLOOD ===== */
 :root{
   --bg: #080808;
   --bg2: #101010;
   --card: #141414;
   --text: #f5f5f5;
   --muted: #a3a3a3;
-  --accent: #dc143c;      /* carmesí */
-  --accent2: #a00d2b;     /* carmesí oscuro */
-  --gold: #d4af37;        /* dorado */
-  --gold-soft: rgba(212,175,55,.15);
+  --accent: #dc143c;
+  --accent2: #a00d2b;
+  --gold: #d4af37;
   --border: rgba(220,20,60,.15);
   --border-soft: rgba(255,255,255,.06);
 }
@@ -35,16 +32,12 @@ body.light{
 body{
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
-  background-image: 
-    radial-gradient(circle at 20% 0%, rgba(220,20,60,.08) 0%, transparent 40%),
-    radial-gradient(circle at 80% 100%, rgba(212,175,55,.05) 0%, transparent 40%);
-  background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
   transition: background .25s, color .25s;
 }
 
-/* ===== Header ===== */
+/* ═══ Header ═══ */
 header{
   display: flex;
   align-items: center;
@@ -64,7 +57,6 @@ body.light header{ background: rgba(255,255,255,.95); }
   font-weight: 800;
   font-size: 1.15rem;
   letter-spacing: .5px;
-  color: var(--text);
   text-shadow: 0 0 20px rgba(220,20,60,.3);
 }
 .logo span{
@@ -106,77 +98,123 @@ body.light header{ background: rgba(255,255,255,.95); }
   box-shadow: 0 0 15px rgba(212,175,55,.25);
 }
 
-/* ===== Hero ===== */
+/* ═══ HERO con fondo rotativo ═══ */
 .hero{
-  padding: 3.5rem 1.5rem;
-  background: 
-    linear-gradient(135deg, rgba(220,20,60,.15) 0%, rgba(0,0,0,.7) 60%, rgba(212,175,55,.08) 100%);
-  border-bottom: 1px solid var(--border);
   position: relative;
+  min-height: 460px;
+  padding: 5rem 1.5rem;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  isolation: isolate;
 }
-.hero::before{
+
+.heroBg{
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-size: cover;
+  background-position: center 25%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 1.6s ease-in-out, transform 8s linear;
+  filter: blur(4px) saturate(1.3) brightness(.7);
+  will-change: opacity, transform;
+}
+.heroBg.active{
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.hero::after{
   content: "";
   position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(220,20,60,.25) 0%, transparent 70%);
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(220,20,60,.35) 0%, transparent 55%),
+    linear-gradient(135deg, rgba(8,8,8,.5) 0%, rgba(8,8,8,.75) 40%, rgba(8,8,8,.95) 100%),
+    linear-gradient(180deg, rgba(8,8,8,.3) 0%, rgba(8,8,8,.4) 50%, var(--bg) 100%);
   pointer-events: none;
 }
-.hero h1{
-  font-size: clamp(1.6rem, 4vw, 2.6rem);
-  line-height: 1.15;
-  margin: .5rem 0 .8rem;
+
+.heroContent{
   position: relative;
-  text-shadow: 0 2px 20px rgba(0,0,0,.5);
+  z-index: 1;
+  max-width: 660px;
 }
-.hero p{ color: var(--muted); max-width: 480px; position: relative; }
+
+.hero h1{
+  font-size: clamp(1.9rem, 5.5vw, 3.2rem);
+  line-height: 1.12;
+  margin: .6rem 0 1rem;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  text-shadow: 
+    0 4px 30px rgba(0,0,0,.9),
+    0 0 60px rgba(220,20,60,.35);
+}
+
+.heroSub{
+  color: rgba(245,245,245,.85);
+  max-width: 480px;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-shadow: 0 2px 10px rgba(0,0,0,.8);
+}
 
 .tag{
-  font-size: .78rem;
+  font-size: .8rem;
   letter-spacing: 3px;
   color: var(--gold);
   font-weight: 700;
   text-transform: uppercase;
-  position: relative;
-  text-shadow: 0 0 10px rgba(212,175,55,.4);
+  text-shadow: 
+    0 0 15px rgba(212,175,55,.7),
+    0 2px 8px rgba(0,0,0,.9);
 }
 
 .primary{
-  margin-top: 1rem;
+  margin-top: 1.4rem;
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
   color: #fff;
   border: none;
-  padding: .75rem 1.4rem;
+  padding: .8rem 1.5rem;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   font-size: .95rem;
-  position: relative;
-  transition: all .2s;
-  box-shadow: 0 4px 20px rgba(220,20,60,.4), inset 0 1px 0 rgba(255,255,255,.15);
+  transition: all .25s;
+  box-shadow: 
+    0 4px 20px rgba(220,20,60,.5),
+    inset 0 1px 0 rgba(255,255,255,.15);
 }
 .primary:hover{
   transform: translateY(-2px);
-  box-shadow: 0 6px 28px rgba(220,20,60,.6), inset 0 1px 0 rgba(255,255,255,.2);
+  box-shadow: 
+    0 8px 30px rgba(220,20,60,.7),
+    inset 0 1px 0 rgba(255,255,255,.25);
   filter: brightness(1.1);
 }
 
-/* ===== Toolbar ===== */
+/* ═══ Toolbar + género ═══ */
 .toolbar{
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.5rem 1.5rem .5rem;
+  padding: 1.8rem 1.5rem .6rem;
   flex-wrap: wrap;
 }
+
 .toolbar h2{
-  font-size: 1.3rem;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: .3px;
   position: relative;
-  padding-left: 1rem;
+  padding-left: 1.1rem;
 }
 .toolbar h2::before{
   content: "";
@@ -184,41 +222,65 @@ body.light header{ background: rgba(255,255,255,.95); }
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 4px;
-  height: 70%;
+  width: 5px;
+  height: 75%;
   background: linear-gradient(180deg, var(--accent), var(--gold));
-  border-radius: 2px;
-  box-shadow: 0 0 10px rgba(220,20,60,.5);
+  border-radius: 3px;
+  box-shadow: 
+    0 0 12px rgba(220,20,60,.8),
+    0 0 24px rgba(220,20,60,.4);
 }
 
 .toolbar select{
-  padding: .55rem .9rem;
-  border-radius: 10px;
-  border: 1px solid var(--border-soft);
-  background: var(--bg2);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: .75rem 2.8rem .75rem 1.3rem;
+  border-radius: 999px;
+  border: 1px solid rgba(220,20,60,.35);
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 1.1rem center / 14px,
+    linear-gradient(135deg, rgba(220,20,60,.12), rgba(212,175,55,.06));
   color: var(--text);
   font-size: .9rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all .15s;
+  transition: all .25s;
+  box-shadow: 
+    0 2px 12px rgba(220,20,60,.15),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
+.toolbar select:hover{
+  border-color: var(--gold);
+  box-shadow: 
+    0 4px 22px rgba(220,20,60,.4),
+    inset 0 1px 0 rgba(255,255,255,.1);
+  transform: translateY(-1px);
 }
 .toolbar select:focus{
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(220,20,60,.15);
+  box-shadow: 
+    0 0 0 3px rgba(220,20,60,.25),
+    0 4px 20px rgba(220,20,60,.5);
+}
+.toolbar select option{
+  background: var(--card);
+  color: var(--text);
 }
 
-/* ===== Status ===== */
+/* ═══ Status ═══ */
 .status{
   padding: 0 1.5rem 1rem;
   color: var(--muted);
   font-size: .9rem;
 }
 
-/* ===== Grid ===== */
+/* ═══ Grid ═══ */
 .grid{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 1rem;
+  gap: 1.1rem;
   padding: 0 1.5rem 3rem;
 }
 .card{
@@ -297,7 +359,7 @@ body.light header{ background: rgba(255,255,255,.95); }
   transform: translateY(-1px);
 }
 
-/* ===== Modal ===== */
+/* ═══ Modal ═══ */
 .modal{
   position: fixed;
   inset: 0;
@@ -366,7 +428,7 @@ body.light header{ background: rgba(255,255,255,.95); }
 }
 #modalContent p{ color: var(--muted); font-size: .9rem; margin-bottom: .4rem; }
 
-/* ===== Opciones ===== */
+/* ═══ Opciones ═══ */
 .watchOptions{
   clear: both;
   margin-top: 1rem;
@@ -380,7 +442,6 @@ body.light header{ background: rgba(255,255,255,.95); }
   text-shadow: 0 0 10px rgba(212,175,55,.3);
 }
 
-/* ===== TEMPORADAS ===== */
 .seasonTabs{
   display: flex;
   gap: .5rem;
@@ -399,7 +460,6 @@ body.light header{ background: rgba(255,255,255,.95); }
   font-size: .9rem;
   font-weight: 600;
   transition: all .2s;
-  position: relative;
 }
 .seasonTab:hover{
   background: rgba(220,20,60,.2);
@@ -415,7 +475,6 @@ body.light header{ background: rgba(255,255,255,.95); }
     inset 0 1px 0 rgba(255,255,255,.2);
 }
 
-/* ===== SERVIDORES ===== */
 .serverTabs{
   display: flex;
   gap: .4rem;
@@ -445,7 +504,6 @@ body.light header{ background: rgba(255,255,255,.95); }
   box-shadow: 0 0 20px rgba(212,175,55,.5);
 }
 
-/* ===== Episodios ===== */
 .episodes{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -473,7 +531,6 @@ body.light header{ background: rgba(255,255,255,.95); }
   box-shadow: 0 4px 15px rgba(220,20,60,.4);
 }
 
-/* ===== Sin links ===== */
 .noLinks{
   opacity: .75;
   font-size: .9rem;
@@ -492,41 +549,7 @@ body.light header{ background: rgba(255,255,255,.95); }
   font-size: .85em;
 }
 
-/* ===== Reproductor ===== */
-#playerBox{ margin-top: 1rem; }
-#playerBox iframe{
-  width: 100%;
-  height: 400px;
-  border: none;
-  border-radius: 10px;
-  background: #000;
-  box-shadow: 0 0 30px rgba(220,20,60,.2);
-}
-.playerHeader{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: .5rem;
-  font-weight: 600;
-  font-size: .9rem;
-  color: var(--gold);
-}
-.closePlayer{
-  background: rgba(220,20,60,.2);
-  border: 1px solid var(--accent);
-  color: var(--text);
-  border-radius: 8px;
-  padding: .3rem .6rem;
-  cursor: pointer;
-  transition: all .15s;
-}
-.closePlayer:hover{
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 0 15px rgba(220,20,60,.5);
-}
-
-/* ===== Footer ===== */
+/* ═══ Footer ═══ */
 .siteFooter{
   text-align: center;
   padding: 2rem 1rem;
@@ -553,20 +576,21 @@ body.light header{ background: rgba(255,255,255,.95); }
   opacity: .7;
 }
 
-/* ===== Modo claro (ajustes) ===== */
-body.light{
-  background-image: 
-    radial-gradient(circle at 20% 0%, rgba(220,20,60,.06) 0%, transparent 40%),
-    radial-gradient(circle at 80% 100%, rgba(212,175,55,.05) 0%, transparent 40%);
-}
+/* ═══ Modo claro ═══ */
 body.light .serverTab{ background: rgba(0,0,0,.03); }
 body.light .episode{ background: rgba(0,0,0,.03); }
 body.light .noLinks code{ background: rgba(220,20,60,.1); }
 body.light .modalBox{
   background: linear-gradient(180deg, #fff 0%, #faf7f2 100%);
 }
+body.light .hero::after{
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(220,20,60,.25) 0%, transparent 55%),
+    linear-gradient(135deg, rgba(255,255,255,.5) 0%, rgba(250,247,242,.85) 100%);
+}
+body.light .hero h1{ text-shadow: 0 4px 30px rgba(255,255,255,.8); }
 
-/* ===== Scrollbar personalizada ===== */
+/* ═══ Scrollbar ═══ */
 ::-webkit-scrollbar{ width: 10px; height: 10px; }
 ::-webkit-scrollbar-track{ background: var(--bg); }
 ::-webkit-scrollbar-thumb{
@@ -578,11 +602,14 @@ body.light .modalBox{
   background: linear-gradient(180deg, var(--gold), var(--accent));
 }
 
-/* ===== Responsive ===== */
+/* ═══ Responsive ═══ */
 @media (max-width: 520px){
   .modalCover{ width: 100px; }
   .grid{ grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
   .seasonTab{ padding: .45rem .8rem; font-size: .82rem; }
   .serverTab{ padding: .4rem .7rem; font-size: .82rem; }
-  .hero{ padding: 2.5rem 1.2rem; }
+  .hero{ padding: 3rem 1.2rem; min-height: 380px; }
+  .hero h1{ font-size: 1.7rem; }
+  .heroSub{ font-size: .9rem; }
+  .toolbar h2{ font-size: 1.2rem; }
 }
