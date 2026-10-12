@@ -23,7 +23,8 @@
   <div class="searchWrap">
     <input id="searchInput" type="search" placeholder="Buscar anime...">
   </div>
-  <button id="themeBtn" class="smallBtn">☀️</button>
+  <button id="profileBtn" class="smallBtn" aria-label="Perfil">👤</button>
+  <button id="themeBtn" class="smallBtn" aria-label="Cambiar tema">☀️</button>
 </header>
 
 <main>
@@ -35,7 +36,6 @@
       <p class="tag">ANIME • MANGA • MANHWA</p>
       <h1>Tu mundo de anime,<br>manga y manhwa.</h1>
       <p class="heroSub">Busca tus series favoritas y consulta sus capítulos.</p>
-      <button id="heroListBtn" class="primary">❤️ Mi lista</button>
     </div>
   </section>
 
@@ -57,10 +57,57 @@
   <p class="muted">Los videos y portadas pertenecen a sus respectivos autores.</p>
 </footer>
 
+<!-- Modal de anime -->
 <div id="modal" class="modal hidden">
   <div class="modalBox">
     <button id="closeModal" class="close">✕</button>
     <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Modal de perfil -->
+<div id="profileModal" class="modal hidden">
+  <div class="modalBox profileBox">
+    <button id="closeProfile" class="close">✕</button>
+    <div class="profileHeader">
+      <div class="profileAvatar" id="profileAvatar">👤</div>
+      <div class="profileInfo">
+        <h2 id="profileName">Invitado</h2>
+        <p class="profileSub">Perfil personal</p>
+      </div>
+    </div>
+
+    <div class="profileSection">
+      <label class="profileLabel">Nombre de usuario</label>
+      <input type="text" id="profileNameInput" class="profileInput" placeholder="Escribe tu nombre..." maxlength="20">
+    </div>
+
+    <div class="profileSection">
+      <label class="profileLabel">Mi lista</label>
+      <div id="miListaBox" class="miListaBox">
+        <p class="profileEmpty">❤️ Aún no has agregado animes a tu lista.</p>
+      </div>
+    </div>
+
+    <div class="profileSection">
+      <label class="profileLabel">Preferencias</label>
+      <div class="profileOpts">
+        <div class="profileOpt" id="optTheme">
+          <span>🌗 Tema</span>
+          <span id="themeState">Oscuro</span>
+        </div>
+        <div class="profileOpt" id="optFirma">
+          <span>🔒 Protección</span>
+          <span>Activa</span>
+        </div>
+        <div class="profileOpt" id="optVersion">
+          <span>📦 Versión</span>
+          <span>1.0</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="profileSave" id="saveProfile">Guardar</button>
   </div>
 </div>
 
