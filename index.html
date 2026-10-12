@@ -39,11 +39,81 @@
     </div>
   </section>
 
+  <!-- ═══ DIRECTORIO CON FILTROS ═══ -->
+  <section class="directory">
+    <div class="directoryHeader">
+      <h2 class="directoryTitle">📂 Directorio</h2>
+      <button id="toggleFilters" class="toggleFilters">
+        <span>🔍 Filtrar</span>
+        <span class="toggleArrow">▼</span>
+      </button>
+    </div>
+
+    <div class="filterPanel" id="filterPanel">
+      <!-- Género -->
+      <div class="filterGroup">
+        <label class="filterLabel">Género</label>
+        <select id="genreFilter">
+          <option value="">Todos los géneros</option>
+        </select>
+      </div>
+
+      <!-- Año -->
+      <div class="filterGroup">
+        <label class="filterLabel">Año</label>
+        <select id="yearFilter">
+          <option value="">Todos los años</option>
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+          <option value="2018">2018</option>
+          <option value="2017">2017</option>
+          <option value="2016">2016</option>
+          <option value="2015">2015</option>
+          <option value="2010">2010-2014</option>
+          <option value="2005">2005-2009</option>
+          <option value="2000">Antes de 2005</option>
+        </select>
+      </div>
+
+      <!-- Estación del año -->
+      <div class="filterGroup">
+        <label class="filterLabel">Estación</label>
+        <div class="seasonRow">
+          <button class="filterChip" data-season="WINTER">❄️ Invierno</button>
+          <button class="filterChip" data-season="SPRING">🌸 Primavera</button>
+          <button class="filterChip" data-season="SUMMER">☀️ Verano</button>
+          <button class="filterChip" data-season="FALL">🍂 Otoño</button>
+        </div>
+      </div>
+
+      <!-- Día de emisión -->
+      <div class="filterGroup">
+        <label class="filterLabel">Día de emisión</label>
+        <div class="dayRow">
+          <button class="filterChip" data-day="1">Lun</button>
+          <button class="filterChip" data-day="2">Mar</button>
+          <button class="filterChip" data-day="3">Mié</button>
+          <button class="filterChip" data-day="4">Jue</button>
+          <button class="filterChip" data-day="5">Vie</button>
+          <button class="filterChip" data-day="6">Sáb</button>
+          <button class="filterChip" data-day="0">Dom</button>
+        </div>
+      </div>
+
+      <!-- Botón limpiar -->
+      <button id="clearFilters" class="clearFilters">✕ Limpiar filtros</button>
+    </div>
+  </section>
+
   <section class="toolbar">
     <h2 id="sectionTitle">Animes populares</h2>
-    <select id="genreFilter">
-      <option value="">Todos los géneros</option>
-    </select>
+    <span id="resultsCount" class="resultsCount"></span>
   </section>
 
   <section id="status" class="status">Cargando catálogo...</section>
@@ -83,13 +153,6 @@
     </div>
 
     <div class="profileSection">
-      <label class="profileLabel">Mi lista</label>
-      <div id="miListaBox" class="miListaBox">
-        <p class="profileEmpty">❤️ Aún no has agregado animes a tu lista.</p>
-      </div>
-    </div>
-
-    <div class="profileSection">
       <label class="profileLabel">Preferencias</label>
       <div class="profileOpts">
         <div class="profileOpt" id="optTheme">
@@ -112,9 +175,7 @@
 </div>
 
 <script>
-/* ════════════════════════════════════════════════════════════
-   ANIMEAKHIRODAIKY — Protección de contenido
-   ════════════════════════════════════════════════════════════ */
+/* ═══ Firma y protección ═══ */
 console.log('%c ANIMEAKHIRODAIKY ', 'background:#dc143c;color:#fff;font-size:22px;font-weight:bold;padding:10px 20px;border-radius:6px');
 console.log('%c© 2026 AnimeAkihiroDaiky — Todos los derechos reservados', 'color:#d4af37;font-size:13px');
 console.log('%c🔗 https://github.com/akihiromanwha', 'color:#dc143c;font-size:13px');
@@ -127,7 +188,6 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
   }
 });
-
 window._firma = "ANIMEAKHIRODAIKY-2026-BY-AKIHIROMANWHA";
 </script>
 
