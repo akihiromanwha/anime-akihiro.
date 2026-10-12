@@ -1,8 +1,18 @@
+<!--
+  ════════════════════════════════════════════════════════════
+   ANIMEAKHIRODAIKY
+   © 2026 AnimeAkihiroDaiky — Todos los derechos reservados
+   GitHub: https://github.com/akihiromanwha
+   ════════════════════════════════════════════════════════════
+-->
 <!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="AnimeAkihiroDaiky">
+<meta name="description" content="AnimeAkihiroDaiky — Tu mundo de anime, manga y manhwa.">
+<meta name="theme-color" content="#080808">
 <title>AnimeAkihiroDaiky</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -10,101 +20,109 @@
 
 <header>
   <div class="logo">Anime<span>AkihiroDaiky</span></div>
-  <input id="searchInput" type="search" placeholder="Buscar anime...">
-  <button id="profileBtn" class="iconBtn">👤</button>
-  <button id="themeBtn" class="iconBtn">☀️</button>
+  <div class="searchWrap">
+    <input id="searchInput" type="search" placeholder="Buscar anime...">
+  </div>
+  <button id="profileBtn" class="smallBtn" aria-label="Perfil">👤</button>
+  <button id="themeBtn" class="smallBtn" aria-label="Cambiar tema">☀️</button>
 </header>
 
-<section class="hero">
-  <div class="heroBg" id="heroBgA"></div>
-  <div class="heroBg" id="heroBgB"></div>
-  <div class="heroContent">
-    <p class="tag">ANIME • MANGA • MANHWA</p>
-    <h1>Tu mundo de anime</h1>
-    <p>Busca tus series favoritas.</p>
-  </div>
-</section>
+<main>
 
-<section class="directory">
-  <div class="directoryHead">
-    <h2>📂 Directorio</h2>
-    <button id="toggleFilters" class="btnFilter">🔍 Filtrar</button>
-  </div>
-
-  <div class="filterPanel" id="filterPanel">
-    <div class="filterRow">
-      <label>Género</label>
-      <select id="genreFilter">
-        <option value="">Todos</option>
-      </select>
+  <section class="hero">
+    <div class="heroBg" id="heroBgA"></div>
+    <div class="heroBg" id="heroBgB"></div>
+    <div class="heroContent">
+      <p class="tag">ANIME • MANGA • MANHWA</p>
+      <h1>Tu mundo de anime,<br>manga y manhwa.</h1>
+      <p class="heroSub">Busca tus series favoritas y consulta sus capítulos.</p>
     </div>
+  </section>
 
-    <div class="filterRow">
-      <label>Año</label>
-      <select id="yearFilter">
-        <option value="">Todos</option>
-        <option value="2026">2026</option>
-        <option value="2025">2025</option>
-        <option value="2024">2024</option>
-        <option value="2023">2023</option>
-        <option value="2022">2022</option>
-        <option value="2021">2021</option>
-        <option value="2020">2020</option>
-        <option value="2019">2019</option>
-        <option value="2018">2018</option>
-        <option value="2017">2017</option>
-        <option value="2016">2016</option>
-        <option value="2015">2015</option>
-      </select>
-    </div>
+  <section class="toolbar">
+    <h2 id="sectionTitle">Animes populares</h2>
+    <select id="genreFilter">
+      <option value="">Todos los géneros</option>
+    </select>
+  </section>
 
-    <div class="filterRow">
-      <label>Estación</label>
-      <select id="seasonFilter">
-        <option value="">Todas</option>
-        <option value="WINTER">❄️ Invierno</option>
-        <option value="SPRING">🌸 Primavera</option>
-        <option value="SUMMER">☀️ Verano</option>
-        <option value="FALL">🍂 Otoño</option>
-      </select>
-    </div>
+  <section id="status" class="status">Cargando catálogo...</section>
+  <section id="animeGrid" class="grid"></section>
+</main>
 
-    <div class="filterRow">
-      <label>Día</label>
-      <select id="dayFilter">
-        <option value="">Todos</option>
-        <option value="1">Lunes</option>
-        <option value="2">Martes</option>
-        <option value="3">Miércoles</option>
-        <option value="4">Jueves</option>
-        <option value="5">Viernes</option>
-        <option value="6">Sábado</option>
-        <option value="0">Domingo</option>
-      </select>
-    </div>
-
-    <button id="clearFilters" class="btnClear">✕ Limpiar filtros</button>
-  </div>
-</section>
-
-<section class="toolbar">
-  <h2 id="sectionTitle">Animes populares</h2>
-  <span id="resultsCount" class="resultsCount"></span>
-</section>
-
-<section id="status" class="status">Cargando catálogo...</section>
-<section id="animeGrid" class="grid"></section>
-
-<footer>
-  <p>© 2026 <b>AnimeAkihiroDaiky</b></p>
+<footer class="siteFooter">
+  <p>© 2026 <b>AnimeAkihiroDaiky</b> — Hecho por 
+    <a href="https://github.com/akihiromanwha" target="_blank" rel="noopener">akihiromanwha</a>
+  </p>
+  <p class="muted">Los videos y portadas pertenecen a sus respectivos autores.</p>
 </footer>
 
+<!-- Modal de anime -->
 <div id="modal" class="modal hidden">
-  <div class="modalBox">
+  <div class="modalBox modalPlayer">
     <button id="closeModal" class="close">✕</button>
     <div id="modalContent"></div>
   </div>
 </div>
+
+<!-- Modal de perfil -->
+<div id="profileModal" class="modal hidden">
+  <div class="modalBox profileBox">
+    <button id="closeProfile" class="close">✕</button>
+    <div class="profileHeader">
+      <div class="profileAvatar" id="profileAvatar">👤</div>
+      <div class="profileInfo">
+        <h2 id="profileName">Invitado</h2>
+        <p class="profileSub">Perfil personal</p>
+      </div>
+    </div>
+
+    <div class="profileSection">
+      <label class="profileLabel">Nombre de usuario</label>
+      <input type="text" id="profileNameInput" class="profileInput" placeholder="Escribe tu nombre..." maxlength="20">
+    </div>
+
+    <div class="profileSection">
+      <label class="profileLabel">Preferencias</label>
+      <div class="profileOpts">
+        <div class="profileOpt" id="optTheme">
+          <span>🌗 Tema</span>
+          <span id="themeState">Oscuro</span>
+        </div>
+        <div class="profileOpt">
+          <span>🔒 Protección</span>
+          <span>Activa</span>
+        </div>
+        <div class="profileOpt">
+          <span>📦 Versión</span>
+          <span>1.0</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="profileSave" id="saveProfile">Guardar</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   ANIMEAKHIRODAIKY — Protección de contenido
+   ════════════════════════════════════════════════════════════ */
+console.log('%c ANIMEAKHIRODAIKY ', 'background:#dc143c;color:#fff;font-size:22px;font-weight:bold;padding:10px 20px;border-radius:6px');
+console.log('%c© 2026 AnimeAkihiroDaiky — Todos los derechos reservados', 'color:#d4af37;font-size:13px');
+console.log('%c🔗 https://github.com/akihiromanwha', 'color:#dc143c;font-size:13px');
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
+      (e.ctrlKey && e.key.toLowerCase() === 'u')){
+    e.preventDefault();
+  }
+});
+
+window._firma = "ANIMEAKHIRODAIKY-2026-BY-AKIHIROMANWHA";
+</script>
 
 <script src="app.js"></script>
 </body>
