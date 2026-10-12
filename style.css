@@ -1,7 +1,6 @@
 /* ════════════════════════════════════════════════════════════
    ANIMEAKHIRODAIKY — style.css
-   Tema: DARK BLOOD (Negro + Carmesí + Dorado)
-   © 2026 AnimeAkihiroDaiky — Todos los derechos reservados
+   Tema: DARK BLOOD + Modal estilo Player
    ════════════════════════════════════════════════════════════ */
 
 *{ box-sizing: border-box; margin: 0; padding: 0; }
@@ -137,9 +136,7 @@ body.light header{ background: rgba(255,255,255,.95); }
     linear-gradient(180deg, rgba(8,8,8,.3) 0%, rgba(8,8,8,.4) 50%, var(--bg) 100%);
   pointer-events: none;
 }
-
 .heroContent{ position: relative; z-index: 1; max-width: 660px; }
-
 .hero h1{
   font-size: clamp(1.9rem, 5.5vw, 3.2rem);
   line-height: 1.12;
@@ -290,7 +287,7 @@ body.light header{ background: rgba(255,255,255,.95); }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   MODAL MINIMALISTA OSCURO
+   MODAL ESTILO PLAYER (inspirado en TioAnime)
    ═══════════════════════════════════════════════════════════ */
 .modal{
   position: fixed;
@@ -314,11 +311,11 @@ body.light header{ background: rgba(255,255,255,.95); }
 .modalBox{
   background: #0d0d0d;
   border-radius: 18px;
-  max-width: 560px;
+  max-width: 620px;
   width: 100%;
-  max-height: 88vh;
+  max-height: 90vh;
   overflow-y: auto;
-  padding: 1.75rem;
+  padding: 0;
   position: relative;
   border: 1px solid rgba(220,20,60,.2);
   animation: popIn .25s cubic-bezier(.4,0,.2,1);
@@ -328,86 +325,119 @@ body.light header{ background: rgba(255,255,255,.95); }
     0 0 80px rgba(220,20,60,.12);
 }
 
-/* Scrollbar del modal */
 .modalBox::-webkit-scrollbar{ width: 6px; }
 .modalBox::-webkit-scrollbar-track{ background: transparent; }
 .modalBox::-webkit-scrollbar-thumb{
   background: rgba(220,20,60,.4);
   border-radius: 3px;
 }
-.modalBox::-webkit-scrollbar-thumb:hover{ background: var(--accent); }
 
 .close{
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.08);
-  color: var(--muted);
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.1);
+  color: #f5f5f5;
   font-size: 1rem;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all .2s;
+  z-index: 5;
 }
 .close:hover{
-  background: rgba(220,20,60,.15);
+  background: rgba(220,20,60,.3);
   border-color: var(--accent);
   color: var(--accent);
   transform: rotate(90deg);
 }
 
-.modalCover{
-  width: 110px;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 12px;
-  float: left;
-  margin: 0 1.2rem .8rem 0;
-  box-shadow: 0 10px 30px rgba(0,0,0,.6);
-  border: 1px solid rgba(220,20,60,.15);
-}
-
-#modalContent h2{
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: .4rem;
-  letter-spacing: -.3px;
-  color: var(--text);
-}
-#modalContent > p{
-  color: var(--muted);
-  font-size: .88rem;
-  margin-bottom: .4rem;
-  line-height: 1.5;
-}
-
-/* ═══ Opciones dentro del modal ═══ */
-.watchOptions{
-  clear: both;
-  margin-top: 1.4rem;
-  padding-top: 1.2rem;
-  border-top: 1px solid rgba(255,255,255,.05);
-}
-.watchTitle{
-  margin: 0 0 .8rem;
-  font-size: .8rem;
-  font-weight: 700;
-  color: var(--gold);
-  letter-spacing: 2px;
-  text-transform: uppercase;
+/* ═══ Barra superior del player ═══ */
+.playerTopBar{
   display: flex;
   align-items: center;
-  gap: .4rem;
+  gap: .7rem;
+  padding: 1rem 1.4rem;
+  background: linear-gradient(180deg, rgba(220,20,60,.15) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(255,255,255,.05);
 }
-.watchTitle::before{
+.playerIcon{
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 8px rgba(220,20,60,.6));
+}
+.playerTitle{
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -.2px;
+  color: var(--text);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ═══ Cuerpo del modal ═══ */
+.modalBody{
+  padding: 1.2rem 1.4rem 1.4rem;
+}
+
+/* ═══ Info del anime ═══ */
+.animeInfo{
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.animeInfoCover{
+  width: 80px;
+  height: 115px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+  border: 1px solid rgba(220,20,60,.2);
+  box-shadow: 0 6px 20px rgba(0,0,0,.5);
+}
+.animeInfoText{ flex: 1; min-width: 0; }
+.animeInfoText h3{
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: .3rem;
+  color: var(--text);
+}
+.animeInfoText .infoMeta{
+  font-size: .82rem;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-bottom: .3rem;
+}
+.animeInfoText .infoMeta .star{
+  color: var(--gold);
+  font-weight: 700;
+}
+
+/* ═══ Selector de temporada (pills) ═══ */
+.sectionTitle{
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: .7rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.sectionTitle::before{
   content: "";
   width: 3px;
-  height: 14px;
+  height: 12px;
   background: var(--accent);
   border-radius: 2px;
   box-shadow: 0 0 8px rgba(220,20,60,.6);
@@ -417,93 +447,129 @@ body.light header{ background: rgba(255,255,255,.95); }
   display: flex;
   gap: .4rem;
   flex-wrap: wrap;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255,255,255,.05);
+  margin-bottom: 1.2rem;
 }
 .seasonTab{
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
   color: var(--muted);
-  padding: .5rem 1rem;
-  border-radius: 8px;
+  padding: .55rem 1rem;
+  border-radius: 10px;
   cursor: pointer;
   font-size: .85rem;
   font-weight: 600;
   transition: all .2s;
+  position: relative;
 }
 .seasonTab:hover{
-  border-color: var(--accent);
+  border-color: rgba(220,20,60,.4);
   color: var(--text);
+  transform: translateY(-1px);
 }
 .seasonTab.active{
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  background: linear-gradient(135deg, rgba(220,20,60,.25) 0%, rgba(160,13,43,.15) 100%);
+  border-color: var(--accent);
   color: #fff;
-  border-color: transparent;
-  box-shadow: 0 4px 15px rgba(220,20,60,.4);
+  box-shadow: 
+    0 0 15px rgba(220,20,60,.35),
+    inset 0 1px 0 rgba(255,255,255,.1);
 }
 
+/* ═══ Servidores tipo "OPCIÓN 1, 2, 3" ═══ */
 .serverTabs{
   display: flex;
-  gap: .4rem;
+  gap: .5rem;
   flex-wrap: wrap;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 }
 .serverTab{
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 82px;
+  padding: .6rem .8rem;
+  border-radius: 10px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
   color: var(--muted);
-  padding: .5rem .9rem;
-  border-radius: 8px;
   cursor: pointer;
-  font-size: .85rem;
-  font-weight: 600;
   transition: all .2s;
+  font-family: inherit;
+}
+.serverTab .serverLabel{
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: .7;
+  margin-bottom: .15rem;
+}
+.serverTab .serverName{
+  font-size: .92rem;
+  font-weight: 800;
+  color: var(--text);
   display: flex;
   align-items: center;
-  gap: .4rem;
+  gap: .3rem;
 }
 .serverTab:hover{
-  border-color: var(--gold);
-  color: var(--gold);
+  border-color: rgba(212,175,55,.5);
+  background: rgba(212,175,55,.05);
+  transform: translateY(-2px);
 }
 .serverTab.active{
-  background: rgba(212,175,55,.12);
+  background: linear-gradient(135deg, rgba(212,175,55,.2) 0%, rgba(220,20,60,.1) 100%);
   border-color: var(--gold);
-  color: var(--gold);
-  box-shadow: 0 0 12px rgba(212,175,55,.2);
+  box-shadow: 
+    0 4px 20px rgba(212,175,55,.25),
+    inset 0 1px 0 rgba(255,255,255,.1);
 }
+.serverTab.active .serverLabel{ color: var(--gold); opacity: 1; }
+.serverTab.active .serverName{ color: #fff; }
 
+/* ═══ Lista de episodios ═══ */
 .episodes{
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
   gap: .5rem;
-  margin-top: .8rem;
+  margin-top: .3rem;
 }
 .episode{
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .3rem;
   text-align: center;
-  padding: .7rem .4rem;
+  padding: .75rem .5rem;
   border-radius: 10px;
   background: rgba(255,255,255,.03);
   border: 1px solid rgba(255,255,255,.06);
   color: var(--text);
   text-decoration: none;
   font-size: .85rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all .18s;
+  font-family: inherit;
 }
 .episode:hover{
-  background: rgba(220,20,60,.15);
+  background: linear-gradient(135deg, rgba(220,20,60,.2) 0%, rgba(160,13,43,.1) 100%);
   border-color: var(--accent);
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(220,20,60,.3);
+  box-shadow: 0 6px 18px rgba(220,20,60,.35);
 }
+.episode::before{
+  content: "▶";
+  font-size: .65rem;
+  opacity: .5;
+}
+.episode:hover::before{ opacity: 1; }
 
+/* ═══ Estado sin links ═══ */
 .noLinks{
-  padding: 1.2rem;
+  padding: 1.5rem 1.2rem;
   text-align: center;
   border: 1px dashed rgba(220,20,60,.25);
   border-radius: 12px;
@@ -520,11 +586,11 @@ body.light header{ background: rgba(255,255,255,.95); }
   font-size: .85em;
 }
 
-/* ═══ MODAL DE PERFIL ═══ */
+/* ═══ Modal de perfil ═══ */
 .profileBox{
   max-width: 480px;
+  padding: 1.75rem;
 }
-
 .profileHeader{
   display: flex;
   align-items: center;
@@ -545,22 +611,13 @@ body.light header{ background: rgba(255,255,255,.95); }
   box-shadow: 0 6px 20px rgba(220,20,60,.4);
   flex-shrink: 0;
 }
-.profileInfo h2{
-  font-size: 1.25rem;
-  font-weight: 800;
-  margin-bottom: .2rem;
-}
-.profileSub{
-  color: var(--muted);
-  font-size: .82rem;
-}
+.profileInfo h2{ font-size: 1.25rem; font-weight: 800; margin-bottom: .2rem; }
+.profileSub{ color: var(--muted); font-size: .82rem; }
 
-.profileSection{
-  margin-bottom: 1.4rem;
-}
+.profileSection{ margin-bottom: 1.4rem; }
 .profileLabel{
   display: block;
-  font-size: .75rem;
+  font-size: .72rem;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -578,31 +635,20 @@ body.light header{ background: rgba(255,255,255,.95); }
   outline: none;
   transition: all .2s;
 }
-.profileInput::placeholder{ color: rgba(163,163,163,.6); }
 .profileInput:focus{
   border-color: var(--accent);
   background: rgba(220,20,60,.05);
   box-shadow: 0 0 0 3px rgba(220,20,60,.15);
 }
-
 .miListaBox{
   padding: 1.2rem;
   border: 1px dashed rgba(255,255,255,.1);
   border-radius: 12px;
   background: rgba(255,255,255,.02);
 }
-.profileEmpty{
-  color: var(--muted);
-  font-size: .85rem;
-  text-align: center;
-  line-height: 1.6;
-}
+.profileEmpty{ color: var(--muted); font-size: .85rem; text-align: center; line-height: 1.6; }
 
-.profileOpts{
-  display: flex;
-  flex-direction: column;
-  gap: .5rem;
-}
+.profileOpts{ display: flex; flex-direction: column; gap: .5rem; }
 .profileOpt{
   display: flex;
   justify-content: space-between;
@@ -619,11 +665,7 @@ body.light header{ background: rgba(255,255,255,.95); }
   border-color: rgba(220,20,60,.3);
   background: rgba(220,20,60,.05);
 }
-.profileOpt span:last-child{
-  color: var(--muted);
-  font-size: .82rem;
-  font-weight: 600;
-}
+.profileOpt span:last-child{ color: var(--muted); font-size: .82rem; font-weight: 600; }
 
 .profileSave{
   width: 100%;
@@ -656,16 +698,8 @@ body.light header{ background: rgba(255,255,255,.95); }
   background: linear-gradient(180deg, transparent 0%, rgba(220,20,60,.05) 100%);
 }
 .siteFooter p{ margin-bottom: .3rem; }
-.siteFooter a{
-  color: var(--gold);
-  text-decoration: none;
-  font-weight: 600;
-  transition: all .15s;
-}
-.siteFooter a:hover{
-  color: var(--accent);
-  text-shadow: 0 0 10px rgba(220,20,60,.5);
-}
+.siteFooter a{ color: var(--gold); text-decoration: none; font-weight: 600; }
+.siteFooter a:hover{ color: var(--accent); text-shadow: 0 0 10px rgba(220,20,60,.5); }
 .siteFooter .muted{ color: var(--muted); font-size: .78rem; opacity: .7; }
 
 /* ═══ Modo claro ═══ */
@@ -675,19 +709,15 @@ body.light .hero::after{
     linear-gradient(135deg, rgba(255,255,255,.5) 0%, rgba(250,247,242,.85) 100%);
 }
 body.light .hero h1{ text-shadow: 0 4px 30px rgba(255,255,255,.8); }
-body.light .modalBox{
-  background: #fff;
-  border-color: rgba(220,20,60,.2);
-}
-body.light .watchTitle{ color: #b8941e; }
-body.light .seasonTab{ border-color: rgba(0,0,0,.1); color: #666; }
-body.light .seasonTab.active{ color: #fff; }
-body.light .serverTab{ border-color: rgba(0,0,0,.1); color: #666; }
+body.light .modalBox{ background: #fff; }
+body.light .playerTopBar{ background: linear-gradient(180deg, rgba(220,20,60,.1) 0%, transparent 100%); }
+body.light .close{ background: rgba(255,255,255,.9); color: #1a1a1a; border-color: rgba(0,0,0,.1); }
+body.light .seasonTab{ background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.1); color: #666; }
+body.light .serverTab{ background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.1); color: #666; }
+body.light .serverTab .serverName{ color: #1a1a1a; }
 body.light .episode{ background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.08); color: #1a1a1a; }
-body.light .profileOpt{ background: rgba(0,0,0,.03); }
-body.light .miListaBox{ background: rgba(0,0,0,.02); }
 
-/* ═══ Scrollbar general ═══ */
+/* ═══ Scrollbar ═══ */
 ::-webkit-scrollbar{ width: 10px; height: 10px; }
 ::-webkit-scrollbar-track{ background: var(--bg); }
 ::-webkit-scrollbar-thumb{
@@ -701,13 +731,13 @@ body.light .miListaBox{ background: rgba(0,0,0,.02); }
 
 /* ═══ Responsive ═══ */
 @media (max-width: 520px){
-  .modalCover{ width: 90px; height: 130px; }
   .grid{ grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
   .seasonTab{ padding: .45rem .8rem; font-size: .82rem; }
-  .serverTab{ padding: .45rem .7rem; font-size: .82rem; }
+  .serverTab{ min-width: 72px; padding: .5rem .6rem; }
   .hero{ padding: 3rem 1.2rem; min-height: 380px; }
   .hero h1{ font-size: 1.7rem; }
   .heroSub{ font-size: .9rem; }
   .toolbar h2{ font-size: 1.2rem; }
-  .modalBox{ padding: 1.2rem; }
+  .modalBody{ padding: 1rem; }
+  .animeInfoCover{ width: 65px; height: 95px; }
 }
