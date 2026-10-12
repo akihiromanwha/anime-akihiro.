@@ -12,9 +12,7 @@ const sectionTitle= document.getElementById('sectionTitle');
 const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
-/* ════════════════════════════════════════════════════════════
-   🎬 HERO — Imágenes rotativas de animes
-   ════════════════════════════════════════════════════════════ */
+/* ═══ HERO — Imágenes rotativas ═══ */
 const HERO_IMAGES = [
   "https://img.anili.st/media/9919",   // Blue Exorcist
   "https://img.anili.st/media/20832",  // Overlord
@@ -48,10 +46,7 @@ const HERO_IMAGES = [
   setInterval(swap, 5500);
 })();
 
-/* ════════════════════════════════════════════════════════════
-   📥 LINKS DE SERVIDORES (USO PERSONAL)
-   Servidores: Terabox, Mega, Mediafire
-   ════════════════════════════════════════════════════════════ */
+/* ═══ LINKS DE SERVIDORES ═══ */
 const LINKS = {
   "Blue Exorcist": {
     "Terabox": {
@@ -81,7 +76,6 @@ const LINKS = {
   }
 };
 
-/* ═══ Íconos por servidor ═══ */
 const SERVER_ICONS = {
   "terabox":   "🟦",
   "mega":      "🟥",
@@ -98,7 +92,6 @@ function serverIcon(name){
   return SERVER_ICONS.default;
 }
 
-/* ═══ Utilidades ═══ */
 function normalize(s){
   return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 }
@@ -191,7 +184,7 @@ function openAnime(a){
       <h2>${esc(a.title)}</h2>
       <p>⭐ ${esc(a.score || '—')} &nbsp; • &nbsp; ${esc((a.genres||[]).join(', '))}</p>
       <div class="watchOptions">
-        <h3 class="watchTitle">▶ Ver episodios</h3>
+        <h3 class="watchTitle">Ver episodios</h3>
         <p class="noLinks">Este anime aún no tiene links configurados.<br>
         Agrégalo en <code>LINKS</code> dentro de <code>app.js</code>.</p>
       </div>`;
@@ -210,7 +203,7 @@ function openAnime(a){
     <h2>${esc(a.title)}</h2>
     <p>⭐ ${esc(a.score || '—')} &nbsp; • &nbsp; ${esc((a.genres||[]).join(', '))}</p>
     <div class="watchOptions">
-      <h3 class="watchTitle">▶ Ver episodios</h3>
+      <h3 class="watchTitle">Ver episodios</h3>
       <div id="seasonTabsBox"></div>
       <div id="serverTabsBox"></div>
       <div class="episodes" id="episodesBox"></div>
@@ -278,7 +271,7 @@ function openAnime(a){
       <div class="seasonTabs">
         ${seasons.map((s, i) => `
           <button class="seasonTab${i===0?' active':''}" data-season="${esc(s)}">
-            🎬 ${esc(s)}
+            ${esc(s)}
           </button>
         `).join('')}
       </div>`;
@@ -298,15 +291,76 @@ function openAnime(a){
   modal.classList.remove('hidden');
 }
 
-/* ═══ Cerrar modal ═══ */
+/* ═══ Cerrar modal anime ═══ */
 document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.add('hidden'); });
 
+/* ═══ MODAL DE PERFIL ═══ */
+const profileModal = document.getElementById('profileModal');
+const profileBtn = document.getElementById('profileBtn');
+const closeProfile = document.getElementById('closeProfile');
+const profileName = document.getElementById('profileName');
+const profileNameInput = document.getElementById('profileNameInput');
+const profileAvatar = document.getElementById('profileAvatar');
+const saveProfile = document.getElementById('saveProfile');
+const themeState = document.getElementById('themeState');
+
+// Cargar datos guardados
+const savedName = localStorage.getItem('anime_name') || '';
+const savedAvatar = localStorage.getItem('anime_avatar') || '👤';
+if (savedName){
+  profileName.textContent = savedName;
+  profileNameInput.value = savedName;
+}
+if (savedAvatar){
+  profileAvatar.textContent = savedAvatar;
+  // Si hay una inicial, mostrarla en el avatar del header
+  if (savedName) profileBtn.textContent = savedAvatar;
+}
+
+// Abrir perfil
+profileBtn.onclick = () => {
+  profileNameInput.value = profileName.textContent === 'Invitado' ? '' : profileName.textContent;
+  themeState.textContent = document.body.classList.contains('light') ? 'Claro' : 'Oscuro';
+  profileModal.classList.remove('hidden');
+};
+
+// Cerrar perfil
+closeProfile.onclick = () => profileModal.classList.add('hidden');
+profileModal.addEventListener('click', e => { if (e.target === profileModal) profileModal.classList.add('hidden'); });
+
+// Guardar perfil
+saveProfile.onclick = () => {
+  const name = profileNameInput.value.trim();
+  if (name){
+    profileName.textContent = name;
+    localStorage.setItem('anime_name', name);
+    // Cambiar avatar del header por la inicial
+    profileBtn.textContent = name.charAt(0).toUpperCase();
+  } else {
+    profileName.textContent = 'Invitado';
+    localStorage.removeItem('anime_name');
+    profileBtn.textContent = '👤';
+  }
+  profileModal.classList.add('hidden');
+};
+
+// Click en el tema desde el perfil
+document.getElementById('optTheme').onclick = () => {
+  document.body.classList.toggle('light');
+  themeState.textContent = document.body.classList.contains('light') ? 'Claro' : 'Oscuro';
+};
+
+/* ═══ Eventos generales ═══ */
 searchInput.addEventListener('input', applyFilters);
 genreFilter.addEventListener('change', applyFilters);
-document.getElementById('heroListBtn').onclick = () => { searchInput.focus(); };
-document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
+document.getElementById('themeBtn').onclick = () => { 
+  document.body.classList.toggle('light');
+  if (!profileModal.classList.contains('hidden')){
+    themeState.textContent = document.body.classList.contains('light') ? 'Claro' : 'Oscuro';
+  }
+};
 
 /* ═══ Carga del catálogo ═══ */
 async function loadCatalog(){
