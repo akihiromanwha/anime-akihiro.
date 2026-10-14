@@ -1,0 +1,20 @@
+{
+  "name": "AnimeAkihiroDaiky",
+  "short_name": "AnimeAkihiro",
+  "description": "Tu mundo de anime, manga y manhwa",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080808",
+  "theme_color": "#dc143c",
+  "scope": "./",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
