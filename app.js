@@ -1,28 +1,599 @@
-"The Seven Deadly Sins": {
-  "Drive": {
-    "1": "https://drive.google.com/file/d/1pPpZu-YHdWfLL16lhWf_Cx1mR_ooVPBf/preview",
-    "2": "https://drive.google.com/file/d/1f6Ioc2wVQWQWUmCZIssrwn7BWpgWG075/preview",
-    "3": "https://drive.google.com/file/d/1zkCigw0VFWAt5-s0J8A-1qYB2WpL3grf/preview",
-    "4": "https://drive.google.com/file/d/1RBFIPZboNAOIxpEcSYf41lKH2R8LZETj/preview",
-    "5": "https://drive.google.com/file/d/14e145iN3ZiNfh4Iqq3q53sFVpux5j-E2/preview",
-    "6": "https://drive.google.com/file/d/1DlNQlKbpqqgXOoIWnqmEBBJu-GOkDbqO/preview",
-    "7": "https://drive.google.com/file/d/1atJ9IaNUs9H1K1V4xWFCkewauTK6R8dK/preview",
-    "8": "https://drive.google.com/file/d/1iPGQeMiqBJPP1QjRzqGUt9Ic4hLawvYu/preview",
-    "9": "https://drive.google.com/file/d/1zHdk6HjFd8byN4P16flklsAN7lgqfZkP/preview",
-    "10": "https://drive.google.com/file/d/1MVsO3-oEKrbuqeIGOQ5PdOyUnxVmqSeJ/preview",
-    "11": "https://drive.google.com/file/d/1YU3Hgm_r2EbxArZHcGT8OyshdrG3AmkG/preview",
-    "12": "https://drive.google.com/file/d/1-OI_I_w0QJeCftpDUTzNgfKPAIs1Y6t9/preview",
-    "13": "https://drive.google.com/file/d/1Y2TjbVupPfBcFb9NtI4nPUU2xwZPir7H/preview",
-    "14": "https://drive.google.com/file/d/15I6craRG71Nv17A8JCKyfFAYbYKas92n/preview",
-    "15": "https://drive.google.com/file/d/1wC06_XaEOkZgriH6y17QsO1g2zDzQGQB/preview",
-    "16": "https://drive.google.com/file/d/1xyCxzmfCoeP-_cVI-cybRs_o5LXJ8M8B/preview",
-    "17": "https://drive.google.com/file/d/1aCsxpYzI9iX_P212Ws3RvD6LYelw0tsM/preview",
-    "18": "https://drive.google.com/file/d/1lJq4rZB0dS2J_SiZUgprtZrJaZMJyWCl/preview",
-    "19": "https://drive.google.com/file/d/1sZC-19DU4Crb2lRTimYYgk9SUTr49-6k/preview",
-    "20": "https://drive.google.com/file/d/1btaVxAq5On0MN0gsWDz72wzbLj-RuutK/preview",
-    "21": "https://drive.google.com/file/d/1yK-1eSHcWGUK5gaGNh6mny0hOLtjNdTs/preview",
-    "22": "https://drive.google.com/file/d/1blulkTyYo-YCnJfWi7hyha2Qs2yynD3d/preview",
-    "23": "https://drive.google.com/file/d/138xmbqBi_dKlsqZOwgnDO4FKMbmf14XO/preview",
-    "24": "https://drive.google.com/file/d/1dnb5JROpG7XhxUOLKYexc0H-HgKp6_QF/preview"
+/* ════════════════════════════════════════════════════════════
+   ANIMEAKHIRODAIKY — app.js
+   © 2026 AnimeAkihiroDaiky — Todos los derechos reservados
+   GitHub: https://github.com/akihiromanwha
+   ════════════════════════════════════════════════════════════ */
+
+const searchInput = document.getElementById('searchInput');
+const animeGrid   = document.getElementById('animeGrid');
+const statusEl    = document.getElementById('status');
+const genreFilter = document.getElementById('genreFilter');
+const sortFilter  = document.getElementById('sortFilter');
+const sectionTitle= document.getElementById('sectionTitle');
+const modal       = document.getElementById('modal');
+const modalContent= document.getElementById('modalContent');
+
+/* ═══ HERO rotativo ═══ */
+const HERO_IMAGES = [
+  "https://img.anili.st/media/9919",
+  "https://img.anili.st/media/20832",
+  "https://img.anili.st/media/210",
+  "https://img.anili.st/media/20605",
+  "https://img.anili.st/media/269",
+  "https://img.anili.st/media/11061"
+];
+
+(function initHero(){
+  let idx = 0;
+  let useA = true;
+  function swap(){
+    const a = document.getElementById('heroBgA');
+    const b = document.getElementById('heroBgB');
+    if (!a || !b) return;
+    const img = HERO_IMAGES[idx];
+    if (useA){
+      a.style.backgroundImage = `url(${img})`;
+      a.classList.add('active');
+      b.classList.remove('active');
+    } else {
+      b.style.backgroundImage = `url(${img})`;
+      b.classList.add('active');
+      a.classList.remove('active');
+    }
+    useA = !useA;
+    idx = (idx + 1) % HERO_IMAGES.length;
   }
-},
+  swap();
+  setInterval(swap, 5500);
+})();
+
+/* ════════════════════════════════════════════════════════════
+   💾 LOCALSTORAGE — Historial y Vistos
+   ════════════════════════════════════════════════════════════ */
+
+/* --- HISTORIAL --- */
+function getHistory(){
+  try { return JSON.parse(localStorage.getItem('anime_history') || '[]'); }
+  catch(e){ return []; }
+}
+function saveHistory(list){
+  localStorage.setItem('anime_history', JSON.stringify(list));
+}
+function addToHistory(title, ep, cover){
+  let h = getHistory();
+  h = h.filter(x => x.title !== title);
+  h.unshift({ title, ep: String(ep), cover: cover || '', time: Date.now() });
+  h = h.slice(0, 15);
+  saveHistory(h);
+  renderHistory();
+}
+function clearHistory(){
+  localStorage.removeItem('anime_history');
+  renderHistory();
+}
+
+/* --- VISTOS --- */
+function getSeen(){
+  try { return JSON.parse(localStorage.getItem('anime_seen') || '{}'); }
+  catch(e){ return {}; }
+}
+function saveSeen(obj){
+  localStorage.setItem('anime_seen', JSON.stringify(obj));
+}
+function isSeen(title, ep){
+  const s = getSeen();
+  return !!(s[title] && s[title].includes(String(ep)));
+}
+function markAsSeen(title, ep){
+  const s = getSeen();
+  if (!s[title]) s[title] = [];
+  const num = String(ep);
+  if (!s[title].includes(num)) s[title].push(num);
+  saveSeen(s);
+}
+function totalSeenCount(){
+  const s = getSeen();
+  return Object.values(s).reduce((acc, arr) => acc + arr.length, 0);
+}
+function clearSeen(){
+  localStorage.removeItem('anime_seen');
+  updateSeenCount();
+}
+
+/* ═══ Render del historial ═══ */
+function renderHistory(){
+  const section = document.getElementById('historySection');
+  const grid = document.getElementById('historyGrid');
+  if (!section || !grid) return;
+
+  const h = getHistory();
+  if (!h.length){
+    section.classList.add('hidden');
+    return;
+  }
+  section.classList.remove('hidden');
+
+  grid.innerHTML = h.map(item => {
+    const cover = item.cover || (catalog.find(a => a.title === item.title) || {}).cover || '';
+    return `
+      <div class="historyCard" data-title="${esc(item.title)}">
+        <img src="${esc(cover)}" alt="" onerror="this.style.display='none'">
+        <div class="historyInfo">
+          <div class="historyTitle">${esc(item.title)}</div>
+          <div class="historyEp">Episodio ${esc(item.ep)}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  grid.querySelectorAll('.historyCard').forEach(card => {
+    card.onclick = () => {
+      const title = card.dataset.title;
+      const anime = catalog.find(a => a.title === title);
+      if (anime) openAnime(anime);
+    };
+  });
+}
+
+/* ═══ LINKS DE SERVIDORES ═══ */
+const LINKS = {
+  "Blue Exorcist": {
+    "Terabox": { "1": "AQUI_LINK_TERABOX_EP1", "2": "AQUI_LINK_TERABOX_EP2" },
+    "Mega": { "1": "AQUI_LINK_MEGA_EP1" },
+    "Mediafire": { "1": "AQUI_LINK_MEDIAFIRE_EP1" }
+  },
+  "Overlord": {
+    "Temporada 2": {
+      "Terabox": { "1": "AQUI_LINK_TERABOX_T2_EP1" },
+      "Mega": { "1": "AQUI_LINK_MEGA_T2_EP1" },
+      "Mediafire": { "1": "AQUI_LINK_MEDIAFIRE_T2_EP1" }
+    }
+  },
+  "Blood Lad": {
+    "Terabox": {
+      "1": "https://1024terabox.com/s/1SrOBd6ZnpoQZMkinzMjfaQ",
+      "2": "https://1024terabox.com/s/1j1q1Q7PdKnAwNYJFKWiW8Q",
+      "3": "https://1024terabox.com/s/1kvD32FuptXudTV4cwziyug",
+      "4": "https://1024terabox.com/s/1Oo4EjJz-MVzvuzKgDyMr7w",
+      "5": "https://1024terabox.com/s/11DlJfZqeitlWEVYa0Urv8g",
+      "6": "https://1024terabox.com/s/1RgFWiI2xj-dhbWb1DQPrGQ",
+      "7": "https://1024terabox.com/s/16kkM3LND-OgcHqz0gF5B4A",
+      "8": "https://1024terabox.com/s/1w2y73FmI2YCzRb72RdWZeg",
+      "9": "https://1024terabox.com/s/1kXyOiawXFF7wjWk-ls00cg",
+      "10": "https://1024terabox.com/s/1I0fAabkE6dQXW2S0JZZCBw"
+    }
+  },
+  "100-man no Inochi no Ue ni Ore wa Tatteiru": {
+    "Terabox": {
+      "1": "AQUI_LINK_TERABOX_100MAN_EP1",
+      "2": "AQUI_LINK_TERABOX_100MAN_EP2"
+    },
+    "Drive": {
+      "1": "AQUI_LINK_DRIVE_100MAN_EP1",
+      "2": "AQUI_LINK_DRIVE_100MAN_EP2"
+    }
+  },
+  "The Seven Deadly Sins": {
+    "Drive": {
+      "1": "https://drive.google.com/file/d/1pPpZu-YHdWfLL16lhWf_Cx1mR_ooVPBf/preview",
+      "2": "https://drive.google.com/file/d/1f6Ioc2wVQWQWUmCZIssrwn7BWpgWG075/preview",
+      "3": "https://drive.google.com/file/d/1zkCigw0VFWAt5-s0J8A-1qYB2WpL3grf/preview",
+      "4": "https://drive.google.com/file/d/1RBFIPZboNAOIxpEcSYf41lKH2R8LZETj/preview",
+      "5": "https://drive.google.com/file/d/14e145iN3ZiNfh4Iqq3q53sFVpux5j-E2/preview",
+      "6": "https://drive.google.com/file/d/1DlNQlKbpqqgXOoIWnqmEBBJu-GOkDbqO/preview",
+      "7": "https://drive.google.com/file/d/1atJ9IaNUs9H1K1V4xWFCkewauTK6R8dK/preview",
+      "8": "https://drive.google.com/file/d/1iPGQeMiqBJPP1QjRzqGUt9Ic4hLawvYu/preview",
+      "9": "https://drive.google.com/file/d/1zHdk6HjFd8byN4P16flklsAN7lgqfZkP/preview",
+      "10": "https://drive.google.com/file/d/1MVsO3-oEKrbuqeIGOQ5PdOyUnxVmqSeJ/preview",
+      "11": "https://drive.google.com/file/d/1YU3Hgm_r2EbxArZHcGT8OyshdrG3AmkG/preview",
+      "12": "https://drive.google.com/file/d/1-OI_I_w0QJeCftpDUTzNgfKPAIs1Y6t9/preview",
+      "13": "https://drive.google.com/file/d/1Y2TjbVupPfBcFb9NtI4nPUU2xwZPir7H/preview",
+      "14": "https://drive.google.com/file/d/15I6craRG71Nv17A8JCKyfFAYbYKas92n/preview",
+      "15": "https://drive.google.com/file/d/1wC06_XaEOkZgriH6y17QsO1g2zDzQGQB/preview",
+      "16": "https://drive.google.com/file/d/1xyCxzmfCoeP-_cVI-cybRs_o5LXJ8M8B/preview",
+      "17": "https://drive.google.com/file/d/1aCsxpYzI9iX_P212Ws3RvD6LYelw0tsM/preview",
+      "18": "https://drive.google.com/file/d/1lJq4rZB0dS2J_SiZUgprtZrJaZMJyWCl/preview",
+      "19": "https://drive.google.com/file/d/1sZC-19DU4Crb2lRTimYYgk9SUTr49-6k/preview",
+      "20": "https://drive.google.com/file/d/1btaVxAq5On0MN0gsWDz72wzbLj-RuutK/preview",
+      "21": "https://drive.google.com/file/d/1yK-1eSHcWGUK5gaGNh6mny0hOLtjNdTs/preview",
+      "22": "https://drive.google.com/file/d/1blulkTyYo-YCnJfWi7hyha2Qs2yynD3d/preview",
+      "23": "https://drive.google.com/file/d/138xmbqBi_dKlsqZOwgnDO4FKMbmf14XO/preview",
+      "24": "https://drive.google.com/file/d/1dnb5JROpG7XhxUOLKYexc0H-HgKp6_QF/preview"
+    }
+  }
+};
+
+/* ═══ Iconos por servidor ═══ */
+const SERVER_ICONS = {
+  "terabox": "🟦",
+  "drive": "🟢",
+  "mega": "🟥",
+  "mediafire": "🟠",
+  "netu": "🟣",
+  "pixeldrain": "⚫",
+  "default": "🎬"
+};
+function serverIcon(name){
+  const k = name.toLowerCase();
+  for (const [key, icon] of Object.entries(SERVER_ICONS)){
+    if (k.includes(key)) return icon;
+  }
+  return SERVER_ICONS.default;
+}
+
+/* ═══ Utilidades ═══ */
+function normalize(s){
+  return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+}
+function esc(s){
+  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function getAnimeLinks(title){
+  if (!title) return null;
+  if (LINKS[title]) return LINKS[title];
+  const n = normalize(title);
+  for (const [k, v] of Object.entries(LINKS)){
+    if (normalize(k) === n) return v;
+  }
+  return null;
+}
+function parseScore(s){
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+
+/* ═══ Animes personalizados ═══ */
+const CUSTOM_ANIME = [
+  { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 27, score: "7.8", year: 2024, cover: "https://img.anili.st/media/9919" },
+  { title: "Overlord", genres: ["Action","Adventure","Fantasy"], episodes: 52, score: "8.0", year: 2015, cover: "https://img.anili.st/media/20832" },
+  { title: "Blood Lad", genres: ["Action","Comedy","Supernatural","Vampire"], episodes: 10, score: "7.3", year: 2013, cover: "https://img.anili.st/media/11633" },
+  { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy","Drama"], episodes: 24, score: "7.3", year: 2020, cover: "https://img.anili.st/media/114753" },
+  { title: "The Seven Deadly Sins", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "8.1", year: 2014, cover: "https://img.anili.st/media/20789" },
+  { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", year: 1989, cover: "https://img.anili.st/media/210" },
+  { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", year: 2004, cover: "https://img.anili.st/media/269" },
+  { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", year: 2000, cover: "https://img.anili.st/media/249" },
+  { title: "Hunter x Hunter", genres: ["Action","Adventure","Fantasy"], episodes: 148, score: "9.0", year: 2011, cover: "https://img.anili.st/media/11061" },
+  { title: "Fullmetal Alchemist: Brotherhood", genres: ["Action","Adventure","Drama"], episodes: 64, score: "9.1", year: 2009, cover: "https://img.anili.st/media/5114" },
+  { title: "Death Note", genres: ["Mystery","Psychological","Thriller"], episodes: 37, score: "8.6", year: 2006, cover: "https://img.anili.st/media/1535" },
+  { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", year: 2014, cover: "https://img.anili.st/media/20605" }
+];
+
+let catalog = [];
+let catalogAnime = [];
+
+const fallback = [
+  {title:'Naruto',genres:['Action','Adventure'],episodes:220,score:8.1,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20-9zXJ6z0g7n8R.jpg'},
+  {title:'One Piece',genres:['Action','Adventure'],episodes:1100,score:8.7,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-0pQwJfYc7m9L.jpg'},
+  {title:'Attack on Titan',genres:['Action','Drama'],episodes:89,score:9.0,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-8mQ2vR6sK1pL.jpg'}
+];
+
+/* ═══ Render ═══ */
+function render(list){
+  animeGrid.innerHTML = '';
+  if(!list.length){
+    animeGrid.innerHTML = '<p style="padding:1rem;color:#a0a0a0;">No encontramos ese título.</p>';
+    return;
+  }
+  list.forEach((a,i)=>{
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      <img class="cover" src="${esc(a.cover)}" alt="${esc(a.title)}" onerror="this.style.display='none'">
+      <div class="cardBody">
+        <div class="title">${esc(a.title)}</div>
+        <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))} ${a.episodes?`• ${a.episodes} eps.`:''}</div>
+        <button data-index="${i}">Ver episodios</button>
+      </div>`;
+    card.querySelector('button').onclick = () => openAnime(a);
+    animeGrid.appendChild(card);
+  });
+}
+
+function applyFilters(){
+  const q = normalize(searchInput.value);
+  const g = normalize(genreFilter.value);
+  const sort = sortFilter ? sortFilter.value : 'default';
+
+  let filtered = catalog.filter(a => {
+    const text = normalize([a.title, ...(a.genres||[])].join(' '));
+    return (!q || text.includes(q)) && (!g || (a.genres||[]).some(x => normalize(x) === g));
+  });
+
+  // ═══ ORDENAR ═══
+  if (sort === 'az')          filtered.sort((a,b) => a.title.localeCompare(b.title));
+  else if (sort === 'za')     filtered.sort((a,b) => b.title.localeCompare(a.title));
+  else if (sort === 'yearNew')filtered.sort((a,b) => (b.year||0) - (a.year||0));
+  else if (sort === 'yearOld')filtered.sort((a,b) => (a.year||0) - (b.year||0));
+  else if (sort === 'score')  filtered.sort((a,b) => parseScore(b.score) - parseScore(a.score));
+
+  sectionTitle.textContent = q ? `Resultados para "${searchInput.value}"` : 'Animes populares';
+  statusEl.textContent = `${filtered.length} anime${filtered.length===1?'':'s'} encontrado${filtered.length===1?'':'s'}.`;
+  render(filtered);
+}
+
+function fillGenres(){
+  const set = new Set();
+  catalog.forEach(a => (a.genres||[]).forEach(g => set.add(g)));
+  [...set].sort().forEach(g => {
+    const o = document.createElement('option');
+    o.value = g; o.textContent = g;
+    genreFilter.appendChild(o);
+  });
+}
+
+/* ═══ Modal de anime ═══ */
+function openAnime(a){
+  const animeLinks = getAnimeLinks(a.title);
+
+  if (!animeLinks || !Object.keys(animeLinks).length){
+    modalContent.innerHTML = `
+      <div class="playerTopBar">
+        <span class="playerIcon">🎬</span>
+        <span class="playerTitle">${esc(a.title)}</span>
+      </div>
+      <div class="modalBody">
+        <div class="animeInfo">
+          <img class="animeInfoCover" src="${esc(a.cover)}" alt="" onerror="this.style.display='none'">
+          <div class="animeInfoText">
+            <h3>${esc(a.title)}</h3>
+            <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} &nbsp;•&nbsp; ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
+          </div>
+        </div>
+        <p class="sectionTitle">Ver episodios</p>
+        <p class="noLinks">Este anime aún no tiene links configurados.<br>
+        Agrégalo en <code>LINKS</code> dentro de <code>app.js</code>.</p>
+      </div>`;
+    modal.classList.remove('hidden');
+    return;
+  }
+
+  const firstKey = Object.keys(animeLinks)[0];
+  const firstValue = animeLinks[firstKey];
+  const isSeasons = typeof firstValue === 'object' 
+                 && !Array.isArray(firstValue)
+                 && typeof Object.values(firstValue)[0] === 'object';
+
+  modalContent.innerHTML = `
+    <div class="playerTopBar">
+      <span class="playerIcon">🎬</span>
+      <span class="playerTitle">${esc(a.title)}</span>
+    </div>
+    <div class="modalBody">
+      <div class="animeInfo">
+        <img class="animeInfoCover" src="${esc(a.cover)}" alt="" onerror="this.style.display='none'">
+        <div class="animeInfoText">
+          <h3>${esc(a.title)}</h3>
+          <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} &nbsp;•&nbsp; ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
+          <p class="infoMeta">Selecciona servidor y episodio</p>
+        </div>
+      </div>
+      <div id="seasonTabsBox"></div>
+      <p class="sectionTitle">Servidores</p>
+      <div id="serverTabsBox"></div>
+      <p class="sectionTitle">Episodios</p>
+      <div class="episodes" id="episodesBox"></div>
+    </div>`;
+
+  function showServers(linksObj){
+    const servers = Object.keys(linksObj);
+    const serverBox = document.getElementById('serverTabsBox');
+    if (!serverBox) return;
+    serverBox.innerHTML = `
+      <div class="serverTabs">
+        ${servers.map((srv, i) => `
+          <button class="serverTab${i===0?' active':''}" data-server="${esc(srv)}">
+            <span class="serverLabel">Opción ${i+1}</span>
+            <span class="serverName">${serverIcon(srv)} ${esc(srv)}</span>
+          </button>
+        `).join('')}
+      </div>`;
+    showEpisodes(linksObj[servers[0]], servers[0]);
+    serverBox.querySelectorAll('.serverTab').forEach(btn => {
+      btn.onclick = () => {
+        serverBox.querySelectorAll('.serverTab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        showEpisodes(linksObj[btn.dataset.server], btn.dataset.server);
+      };
+    });
+  }
+
+  function showEpisodes(epsObj, serverName){
+    const box = document.getElementById('episodesBox');
+    if (!box) return;
+    const keys = Object.keys(epsObj).sort((x,y) => Number(x) - Number(y));
+    if (!keys.length){
+      box.innerHTML = `<p class="noLinks">No hay episodios en <b>${esc(serverName)}</b>.</p>`;
+      return;
+    }
+    box.innerHTML = keys.map(num => {
+      const seen = isSeen(a.title, num);
+      return `
+        <button class="episode${seen ? ' seen' : ''}" data-link="${esc(epsObj[num])}" data-num="${esc(num)}">
+          ${esc(num)}
+        </button>`;
+    }).join('');
+
+    box.onclick = (e) => {
+      const btn = e.target.closest('.episode');
+      if (!btn) return;
+      const link = btn.dataset.link;
+      const num = btn.dataset.num;
+
+      if (link.startsWith('AQUI_') || !link.startsWith('http')){
+        alert('⚠️ Episodio ' + num + ' aún sin link.\n\nVe a app.js y reemplaza:\n"' + link + '"');
+        return;
+      }
+
+      // 📺 Guardar en historial + marcar como visto
+      addToHistory(a.title, num, a.cover);
+      markAsSeen(a.title, num);
+      updateSeenCount();
+
+      // Actualizar el botón visualmente
+      btn.classList.add('seen');
+
+      // 🎬 Reproducir
+      if (link.includes('drive.google.com')){
+        const match = link.match(/\/d\/([^/]+)/);
+        const id = match ? match[1] : '';
+        let player = document.getElementById('playerBox');
+        if (!player){
+          player = document.createElement('div');
+          player.id = 'playerBox';
+          if (box.parentNode) box.parentNode.insertBefore(player, box.nextSibling);
+        }
+        player.innerHTML = `
+          <div class="playerHeader">
+            <span>▶ Episodio ${esc(num)}</span>
+            <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+          </div>
+          <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+      } else {
+        window.open(link, '_blank', 'noopener');
+      }
+    };
+  }
+
+  if (isSeasons){
+    const seasons = Object.keys(animeLinks);
+    const seasonBox = document.getElementById('seasonTabsBox');
+    seasonBox.innerHTML = `
+      <p class="sectionTitle">Temporadas</p>
+      <div class="seasonTabs">
+        ${seasons.map((s, i) => `
+          <button class="seasonTab${i===0?' active':''}" data-season="${esc(s)}">${esc(s)}</button>
+        `).join('')}
+      </div>`;
+    showServers(animeLinks[seasons[0]]);
+    seasonBox.querySelectorAll('.seasonTab').forEach(btn => {
+      btn.onclick = () => {
+        seasonBox.querySelectorAll('.seasonTab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        showServers(animeLinks[btn.dataset.season]);
+      };
+    });
+  } else {
+    showServers(animeLinks);
+  }
+
+  modal.classList.remove('hidden');
+}
+
+/* ═══ Cerrar modal ═══ */
+document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.add('hidden'); });
+
+/* ═══ Botón limpiar historial ═══ */
+document.getElementById('clearHistory').onclick = () => {
+  if (confirm('¿Borrar todo el historial?')) clearHistory();
+};
+
+/* ═══ Perfil ═══ */
+const profileModal = document.getElementById('profileModal');
+const profileBtn = document.getElementById('profileBtn');
+const closeProfile = document.getElementById('closeProfile');
+const profileName = document.getElementById('profileName');
+const profileNameInput = document.getElementById('profileNameInput');
+const saveProfile = document.getElementById('saveProfile');
+const themeState = document.getElementById('themeState');
+const seenCountEl = document.getElementById('seenCount');
+
+function updateSeenCount(){
+  if (seenCountEl) seenCountEl.textContent = totalSeenCount();
+}
+
+const savedName = localStorage.getItem('anime_name') || '';
+if (savedName){
+  profileName.textContent = savedName;
+  profileNameInput.value = savedName;
+  profileBtn.textContent = savedName.charAt(0).toUpperCase();
+}
+
+profileBtn.onclick = () => {
+  profileNameInput.value = profileName.textContent === 'Invitado' ? '' : profileName.textContent;
+  themeState.textContent = document.body.classList.contains('light') ? 'Claro' : 'Oscuro';
+  updateSeenCount();
+  profileModal.classList.remove('hidden');
+};
+closeProfile.onclick = () => profileModal.classList.add('hidden');
+profileModal.addEventListener('click', e => { if (e.target === profileModal) profileModal.classList.add('hidden'); });
+
+saveProfile.onclick = () => {
+  const name = profileNameInput.value.trim();
+  if (name){
+    profileName.textContent = name;
+    localStorage.setItem('anime_name', name);
+    profileBtn.textContent = name.charAt(0).toUpperCase();
+  } else {
+    profileName.textContent = 'Invitado';
+    localStorage.removeItem('anime_name');
+    profileBtn.textContent = '👤';
+  }
+  profileModal.classList.add('hidden');
+};
+
+document.getElementById('optTheme').onclick = () => {
+  document.body.classList.toggle('light');
+  themeState.textContent = document.body.classList.contains('light') ? 'Claro' : 'Oscuro';
+};
+
+document.getElementById('optClearSeen').onclick = () => {
+  if (confirm('¿Borrar la marca de vistos de todos los animes?')){
+    clearSeen();
+    alert('✅ Vistos limpiados');
+  }
+};
+
+/* ═══ Eventos ═══ */
+searchInput.addEventListener('input', applyFilters);
+genreFilter.addEventListener('change', applyFilters);
+if (sortFilter) sortFilter.addEventListener('change', applyFilters);
+document.getElementById('themeBtn').onclick = () => { 
+  document.body.classList.toggle('light');
+};
+
+/* ═══ Cargar catálogo ═══ */
+async function loadCatalog(){
+  statusEl.textContent = 'Cargando catálogo...';
+  try {
+    const query = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore seasonYear coverImage { large } } } }`;
+    const animeTodas = [];
+    for (const p of [1, 2]){
+      const res = await fetch('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables: { page: p } })
+      });
+      const data = await res.json();
+      animeTodas.push(...(data?.data?.Page?.media || []));
+      await new Promise(r => setTimeout(r, 700));
+    }
+    catalogAnime = animeTodas.map(x => ({
+      title: x.title?.english || x.title?.romaji || x.title?.native || 'Anime',
+      genres: x.genres || [],
+      episodes: x.episodes || 0,
+      score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
+      year: x.seasonYear || null,
+      cover: x.coverImage?.large || ''
+    })).filter(x => x.title);
+
+    catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
+
+    const vistos = new Set();
+    catalogAnime = catalogAnime.filter(a => {
+      if (vistos.has(a.title)) return false;
+      vistos.add(a.title);
+      return true;
+    });
+    catalog = catalogAnime;
+  } catch(e) {
+    console.error('Error:', e);
+    catalog = [...CUSTOM_ANIME, ...fallback];
+    statusEl.textContent = 'Catálogo de respaldo cargado.';
+  }
+  fillGenres();
+  applyFilters();
+  renderHistory();
+  updateSeenCount();
+}
+loadCatalog();
