@@ -190,6 +190,34 @@ const LINKS = {
       "23": "https://drive.google.com/file/d/138xmbqBi_dKlsqZOwgnDO4FKMbmf14XO/preview",
       "24": "https://drive.google.com/file/d/1dnb5JROpG7XhxUOLKYexc0H-HgKp6_QF/preview"
     }
+  },
+  "Jujutsu Kaisen": {
+    "Drive": {
+      "1": "https://drive.google.com/file/d/1MKpnI8y5HNIgJRD5EhVTeZhFt-oGLJrx/preview",
+      "2": "https://drive.google.com/file/d/1zMkb-KIsQem6ENOmwbvpzZXQzT4SeNCn/preview",
+      "3": "https://drive.google.com/file/d/12di4rm9bkwjn9kHuOHM3jU0B8cOrXnEN/preview",
+      "4": "https://drive.google.com/file/d/1AQEDd2ifWdvW33gPq3lPsVE6r3xWr1Vk/preview",
+      "5": "https://drive.google.com/file/d/1Ttkx7A0mFP2VlzqRn088ZgB_rtyxDHkL/preview",
+      "6": "https://drive.google.com/file/d/1Pm2dCQdf3lqn4unEzwZJid6Qg7aaqg2f/preview",
+      "7": "https://drive.google.com/file/d/1x5uvxrM-mmNZ9yai3iawLAG5fdJRECxP/preview",
+      "8": "https://drive.google.com/file/d/1kT3W-uMbPgL3sbJmObfl3zKepnCM_rDy/preview",
+      "9": "https://drive.google.com/file/d/1hy7Ihhv2JL5MZOQ5hg3uKMeZ1_L2qR9l/preview",
+      "10": "https://drive.google.com/file/d/1UBeVtNowUxNKGOHjxxhObjzQlAn0iliM/preview",
+      "11": "https://drive.google.com/file/d/1EHtS6_5IzdojjBamhQWpQr-3ybEEzmir/preview",
+      "12": "https://drive.google.com/file/d/16vsiKOxSI-OmD94fTZQXzx9yFl1_vJnw/preview",
+      "13": "https://drive.google.com/file/d/1PORkM3BKvm4vbx62XEbHIeheZ0feBRm5/preview",
+      "14": "https://drive.google.com/file/d/1KjfBxvQGE740PStbGRV4hmKPmYdFZit0/preview",
+      "15": "https://drive.google.com/file/d/1m9-JLClhJETAngWmvnxCBnkEdWaFOLTn/preview",
+      "16": "https://drive.google.com/file/d/1NUoAzAspn-U8UBUk6dq3yRQxOLFHkRyq/preview",
+      "17": "https://drive.google.com/file/d/1FGdIxVdFQTbUzgMLOqkF1AASO_eGGreB/preview",
+      "18": "https://drive.google.com/file/d/1Fo08LWsVDNhLeoaAkfyDo3FsbTYDCJMK/preview",
+      "19": "https://drive.google.com/file/d/1_7q5dhehjQ7LTcCOSwRm6p-UbdV5xODQ/preview",
+      "20": "https://drive.google.com/file/d/1hCU-X46SAWM-0RODBywCqkH36RcTc0yc/preview",
+      "21": "https://drive.google.com/file/d/19uMc_9lRpxArezYDYa7FWoL6yuoOw3Kp/preview",
+      "22": "https://drive.google.com/file/d/1zd91GPoL0UMENy_u-QY1f8hmObHlShXO/preview",
+      "23": "https://drive.google.com/file/d/1cQaLFhR5_IzYnR4_7XoyHbw1G3ih-mdN/preview",
+      "24": "https://drive.google.com/file/d/1zTMk99bwXc1ahYO2K_YORwYVRsjzgDsk/preview"
+    }
   }
 };
 
@@ -232,6 +260,7 @@ const CUSTOM_ANIME = [
   { title: "Blood Lad", genres: ["Action","Comedy","Supernatural","Vampire"], episodes: 10, score: "7.3", year: 2013, cover: "https://img.anili.st/media/11633" },
   { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy","Drama"], episodes: 24, score: "7.3", year: 2020, cover: "https://img.anili.st/media/114753" },
   { title: "The Seven Deadly Sins", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "8.1", year: 2014, cover: "https://img.anili.st/media/20789" },
+  { title: "Jujutsu Kaisen", genres: ["Action","Fantasy","Supernatural"], episodes: 24, score: "8.6", year: 2020, cover: "https://img.anili.st/media/113415" },
   { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", year: 1989, cover: "https://img.anili.st/media/210" },
   { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", year: 2004, cover: "https://img.anili.st/media/269" },
   { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", year: 2000, cover: "https://img.anili.st/media/249" },
