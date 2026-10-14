@@ -49,11 +49,31 @@
     </div>
   </section>
 
+  <!-- ═══ HISTORIAL / CONTINUAR VIENDO ═══ -->
+  <section id="historySection" class="history hidden">
+    <div class="historyHead">
+      <h2>📺 Continuar viendo</h2>
+      <button id="clearHistory" class="clearBtn">Limpiar</button>
+    </div>
+    <div id="historyGrid" class="historyGrid"></div>
+  </section>
+
+  <!-- ═══ TOOLBAR CON FILTROS Y ORDEN ═══ -->
   <section class="toolbar">
     <h2 id="sectionTitle">Animes populares</h2>
-    <select id="genreFilter">
-      <option value="">Todos los géneros</option>
-    </select>
+    <div class="toolbarRight">
+      <select id="sortFilter" aria-label="Ordenar por">
+        <option value="default">Ordenar por...</option>
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+        <option value="yearNew">Más recientes</option>
+        <option value="yearOld">Más antiguos</option>
+        <option value="score">Mejor puntuados</option>
+      </select>
+      <select id="genreFilter">
+        <option value="">Todos los géneros</option>
+      </select>
+    </div>
   </section>
 
   <section id="status" class="status">Cargando catálogo...</section>
@@ -99,13 +119,17 @@
           <span>🌗 Tema</span>
           <span id="themeState">Oscuro</span>
         </div>
+        <div class="profileOpt" id="optClearSeen">
+          <span>🧹 Limpiar vistos</span>
+          <span id="seenCount">0</span>
+        </div>
         <div class="profileOpt">
           <span>🔒 Protección</span>
           <span>Activa</span>
         </div>
         <div class="profileOpt">
           <span>📦 Versión</span>
-          <span>1.0</span>
+          <span>1.1</span>
         </div>
       </div>
     </div>
