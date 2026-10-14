@@ -1,21 +1,19 @@
 /* ════════════════════════════════════════════════════════════
-   ANIMEAKHIRODAIKY — app.js v2
+   ANIMEAKHIRODAIKY — app.js
    © 2026 AnimeAkihiroDaiky — Todos los derechos reservados
+   GitHub: https://github.com/akihiromanwha
    ════════════════════════════════════════════════════════════ */
 
 const searchInput = document.getElementById('searchInput');
 const animeGrid   = document.getElementById('animeGrid');
 const statusEl    = document.getElementById('status');
 const genreFilter = document.getElementById('genreFilter');
-const yearFilter  = document.getElementById('yearFilter');
-const seasonFilter= document.getElementById('seasonFilter');
-const statusFilter= document.getElementById('statusFilter');
 const sortFilter  = document.getElementById('sortFilter');
 const sectionTitle= document.getElementById('sectionTitle');
 const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
-/* ═══ HERO ═══ */
+/* ═══ HERO rotativo ═══ */
 const HERO_IMAGES = [
   "https://img.anili.st/media/9919",
   "https://img.anili.st/media/20832",
@@ -83,7 +81,7 @@ function clearSeen(){
   updateSeenCount();
 }
 
-/* ═══ Historial render ═══ */
+/* ═══ Render historial ═══ */
 function renderHistory(){
   const section = document.getElementById('historySection');
   const grid = document.getElementById('historyGrid');
@@ -110,20 +108,8 @@ function renderHistory(){
   });
 }
 
-/* ═══ LINKS ═══ */
+/* ═══ LINKS DE SERVIDORES ═══ */
 const LINKS = {
-  "Blue Exorcist": {
-    "Terabox": { "1": "AQUI_LINK_TERABOX_EP1", "2": "AQUI_LINK_TERABOX_EP2" },
-    "Mega": { "1": "AQUI_LINK_MEGA_EP1" },
-    "Mediafire": { "1": "AQUI_LINK_MEDIAFIRE_EP1" }
-  },
-  "Overlord": {
-    "Temporada 2": {
-      "Terabox": { "1": "AQUI_LINK_TERABOX_T2_EP1" },
-      "Mega": { "1": "AQUI_LINK_MEGA_T2_EP1" },
-      "Mediafire": { "1": "AQUI_LINK_MEDIAFIRE_T2_EP1" }
-    }
-  },
   "Blood Lad": {
     "Terabox": {
       "1": "https://1024terabox.com/s/1SrOBd6ZnpoQZMkinzMjfaQ",
@@ -137,10 +123,6 @@ const LINKS = {
       "9": "https://1024terabox.com/s/1kXyOiawXFF7wjWk-ls00cg",
       "10": "https://1024terabox.com/s/1I0fAabkE6dQXW2S0JZZCBw"
     }
-  },
-  "100-man no Inochi no Ue ni Ore wa Tatteiru": {
-    "Terabox": { "1": "AQUI_LINK_TERABOX_100MAN_EP1" },
-    "Drive": { "1": "AQUI_LINK_DRIVE_100MAN_EP1" }
   },
   "The Seven Deadly Sins": {
     "Drive": {
@@ -200,22 +182,23 @@ const LINKS = {
   }
 };
 
+/* ═══ Iconos por servidor ═══ */
 const SERVER_ICONS = {
-  "terabox":"🟦","drive":"🟢","mega":"🟥","mediafire":"🟠",
-  "netu":"🟣","pixeldrain":"⚫","default":"🎬"
+  "terabox": "🟦",
+  "drive": "🟢",
+  "mega": "🟥",
+  "mediafire": "🟠",
+  "netu": "🟣",
+  "pixeldrain": "⚫",
+  "default": "🎬"
 };
 function serverIcon(name){
   const k = name.toLowerCase();
-  for (const [key, icon] of Object.entries(SERVER_ICONS)) if (k.includes(key)) return icon;
+  for (const [key, icon] of Object.entries(SERVER_ICONS)){
+    if (k.includes(key)) return icon;
+  }
   return SERVER_ICONS.default;
 }
-
-/* ═══ STATUS NOMBRES ═══ */
-const STATUS_NAMES = {
-  "RELEASING":        { label: "En emisión", icon: "🔴", css: "releasing" },
-  "FINISHED":         { label: "Terminado",  icon: "✅", css: "finished" },
-  "NOT_YET_RELEASED": { label: "Próximo",    icon: "⏳", css: "upcoming" }
-};
 
 /* ═══ Utilidades ═══ */
 function normalize(s){
@@ -240,19 +223,19 @@ function parseScore(s){
 
 /* ═══ Animes personalizados ═══ */
 const CUSTOM_ANIME = [
-  { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 27, score: "7.8", year: 2024, season: "SPRING", status: "FINISHED", cover: "https://img.anili.st/media/9919" },
-  { title: "Overlord", genres: ["Action","Adventure","Fantasy"], episodes: 52, score: "8.0", year: 2015, season: "SUMMER", status: "FINISHED", cover: "https://img.anili.st/media/20832" },
-  { title: "Blood Lad", genres: ["Action","Comedy","Supernatural"], episodes: 10, score: "7.3", year: 2013, season: "SUMMER", status: "FINISHED", cover: "https://img.anili.st/media/11633" },
-  { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy","Drama"], episodes: 24, score: "7.3", year: 2020, season: "FALL", status: "FINISHED", cover: "https://img.anili.st/media/114753" },
-  { title: "The Seven Deadly Sins", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "8.1", year: 2014, season: "FALL", status: "FINISHED", cover: "https://img.anili.st/media/20789" },
-  { title: "Jujutsu Kaisen", genres: ["Action","Fantasy","Supernatural"], episodes: 24, score: "8.6", year: 2020, season: "FALL", status: "FINISHED", cover: "https://img.anili.st/media/113415" },
-  { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", year: 1989, season: "SPRING", status: "FINISHED", cover: "https://img.anili.st/media/210" },
-  { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", year: 2004, season: "FALL", status: "FINISHED", cover: "https://img.anili.st/media/269" },
-  { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", year: 2000, season: "FALL", status: "FINISHED", cover: "https://img.anili.st/media/249" },
-  { title: "Hunter x Hunter", genres: ["Action","Adventure","Fantasy"], episodes: 148, score: "9.0", year: 2011, season: "FALL", status: "FINISHED", cover: "https://img.anili.st/media/11061" },
-  { title: "Fullmetal Alchemist: Brotherhood", genres: ["Action","Adventure","Drama"], episodes: 64, score: "9.1", year: 2009, season: "SPRING", status: "FINISHED", cover: "https://img.anili.st/media/5114" },
-  { title: "Death Note", genres: ["Mystery","Psychological","Thriller"], episodes: 37, score: "8.6", year: 2006, season: "FALL", status: "FINISHED", cover: "https://img.anili.st/media/1535" },
-  { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", year: 2014, season: "SUMMER", status: "FINISHED", cover: "https://img.anili.st/media/20605" }
+  { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 27, score: "7.8", year: 2024, cover: "https://img.anili.st/media/9919" },
+  { title: "Overlord", genres: ["Action","Adventure","Fantasy"], episodes: 52, score: "8.0", year: 2015, cover: "https://img.anili.st/media/20832" },
+  { title: "Blood Lad", genres: ["Action","Comedy","Supernatural"], episodes: 10, score: "7.3", year: 2013, cover: "https://img.anili.st/media/11633" },
+  { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "7.3", year: 2020, cover: "https://img.anili.st/media/114753" },
+  { title: "The Seven Deadly Sins", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "8.1", year: 2014, cover: "https://img.anili.st/media/20789" },
+  { title: "Jujutsu Kaisen", genres: ["Action","Fantasy","Supernatural"], episodes: 24, score: "8.6", year: 2020, cover: "https://img.anili.st/media/113415" },
+  { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", year: 1989, cover: "https://img.anili.st/media/210" },
+  { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", year: 2004, cover: "https://img.anili.st/media/269" },
+  { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", year: 2000, cover: "https://img.anili.st/media/249" },
+  { title: "Hunter x Hunter", genres: ["Action","Adventure","Fantasy"], episodes: 148, score: "9.0", year: 2011, cover: "https://img.anili.st/media/11061" },
+  { title: "Fullmetal Alchemist: Brotherhood", genres: ["Action","Adventure","Drama"], episodes: 64, score: "9.1", year: 2009, cover: "https://img.anili.st/media/5114" },
+  { title: "Death Note", genres: ["Mystery","Psychological","Thriller"], episodes: 37, score: "8.6", year: 2006, cover: "https://img.anili.st/media/1535" },
+  { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", year: 2014, cover: "https://img.anili.st/media/20605" }
 ];
 
 let catalog = [];
@@ -268,23 +251,14 @@ const fallback = [
 function render(list){
   animeGrid.innerHTML = '';
   if(!list.length){
-    animeGrid.innerHTML = '<p style="padding:1rem;color:#a0a0a0;">No encontramos resultados con esos filtros.</p>';
+    animeGrid.innerHTML = '<p style="padding:1rem;color:#a0a0a0;">No encontramos ese título.</p>';
     return;
   }
   list.forEach((a,i)=>{
     const card = document.createElement('article');
     card.className = 'card';
-
-    const yearBadge = a.year ? `<span class="badgeYear">${a.year}</span>` : '';
-    const st = STATUS_NAMES[a.status];
-    const statusBadge = st ? `<span class="badgeStatus ${st.css}">${st.icon} ${st.label}</span>` : '';
-
     card.innerHTML = `
-      <div class="cardCoverWrap">
-        ${yearBadge}
-        ${statusBadge}
-        <img class="cover" src="${esc(a.cover)}" alt="${esc(a.title)}" onerror="this.style.display='none'">
-      </div>
+      <img class="cover" src="${esc(a.cover)}" alt="${esc(a.title)}" onerror="this.style.display='none'">
       <div class="cardBody">
         <div class="title">${esc(a.title)}</div>
         <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))} ${a.episodes?`• ${a.episodes} eps.`:''}</div>
@@ -295,36 +269,15 @@ function render(list){
   });
 }
 
-/* ═══ Filtros ═══ */
-function updateActiveFiltersBadge(){
-  const badge = document.getElementById('activeFiltersCount');
-  if (!badge) return;
-  let count = 0;
-  if (genreFilter.value) count++;
-  if (yearFilter.value) count++;
-  if (seasonFilter.value) count++;
-  if (statusFilter.value) count++;
-  if (sortFilter.value && sortFilter.value !== 'default') count++;
-  if (count > 0){ badge.textContent = count; badge.classList.remove('hidden'); }
-  else badge.classList.add('hidden');
-}
-
+/* ═══ Filtros y orden ═══ */
 function applyFilters(){
   const q = normalize(searchInput.value);
   const g = normalize(genreFilter.value);
-  const y = yearFilter.value;
-  const s = seasonFilter.value;
-  const st = statusFilter.value;
   const sort = sortFilter ? sortFilter.value : 'default';
 
   let filtered = catalog.filter(a => {
     const text = normalize([a.title, ...(a.genres||[])].join(' '));
-    if (q && !text.includes(q)) return false;
-    if (g && !(a.genres||[]).some(x => normalize(x) === g)) return false;
-    if (y && String(a.year) !== String(y)) return false;
-    if (s && a.season !== s) return false;
-    if (st && a.status !== st) return false;
-    return true;
+    return (!q || text.includes(q)) && (!g || (a.genres||[]).some(x => normalize(x) === g));
   });
 
   if (sort === 'az')           filtered.sort((a,b) => a.title.localeCompare(b.title));
@@ -335,7 +288,6 @@ function applyFilters(){
 
   sectionTitle.textContent = q ? `Resultados para "${searchInput.value}"` : 'Animes populares';
   statusEl.textContent = `${filtered.length} anime${filtered.length===1?'':'s'} encontrado${filtered.length===1?'':'s'}.`;
-  updateActiveFiltersBadge();
   render(filtered);
 }
 
@@ -346,15 +298,6 @@ function fillGenres(){
     const o = document.createElement('option');
     o.value = g; o.textContent = g;
     genreFilter.appendChild(o);
-  });
-}
-function fillYears(){
-  const set = new Set();
-  catalog.forEach(a => { if (a.year) set.add(a.year); });
-  [...set].sort((a,b) => b - a).forEach(y => {
-    const o = document.createElement('option');
-    o.value = y; o.textContent = y;
-    yearFilter.appendChild(o);
   });
 }
 
@@ -374,7 +317,6 @@ function openAnime(a){
           <div class="animeInfoText">
             <h3>${esc(a.title)}</h3>
             <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
-            <p class="infoMeta">${a.year||''} ${a.season?'• '+a.season:''}</p>
           </div>
         </div>
         <p class="sectionTitle">Ver episodios</p>
@@ -386,7 +328,8 @@ function openAnime(a){
 
   const firstKey = Object.keys(animeLinks)[0];
   const firstValue = animeLinks[firstKey];
-  const isSeasons = typeof firstValue === 'object' && !Array.isArray(firstValue)
+  const isSeasons = typeof firstValue === 'object' 
+                 && !Array.isArray(firstValue)
                  && typeof Object.values(firstValue)[0] === 'object';
 
   modalContent.innerHTML = `
@@ -400,7 +343,7 @@ function openAnime(a){
         <div class="animeInfoText">
           <h3>${esc(a.title)}</h3>
           <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
-          <p class="infoMeta">${a.year||''} ${a.season?'• '+a.season:''} ${a.status?'• '+(STATUS_NAMES[a.status]?STATUS_NAMES[a.status].label:''):''}</p>
+          <p class="infoMeta">Selecciona servidor y episodio</p>
         </div>
       </div>
       <div id="seasonTabsBox"></div>
@@ -460,7 +403,7 @@ function openAnime(a){
       const num = btn.dataset.num;
 
       if (link.startsWith('AQUI_') || !link.startsWith('http')){
-        alert('⚠️ Episodio ' + num + ' aún sin link.\n\nVe a app.js y reemplaza:\n"' + link + '"');
+        alert('⚠️ Episodio ' + num + ' aún sin link.');
         return;
       }
 
@@ -566,30 +509,10 @@ document.getElementById('optClearSeen').onclick = () => {
   if (confirm('¿Borrar la marca de vistos?')){ clearSeen(); alert('✅ Limpiado'); }
 };
 
-/* ═══ Toggle filtros ═══ */
-const toggleFilters = document.getElementById('toggleFilters');
-const filtersPanel = document.getElementById('filtersPanel');
-toggleFilters.onclick = () => {
-  filtersPanel.classList.toggle('open');
-  toggleFilters.classList.toggle('open');
-};
-
 /* ═══ Eventos ═══ */
 searchInput.addEventListener('input', applyFilters);
 genreFilter.addEventListener('change', applyFilters);
-yearFilter.addEventListener('change', applyFilters);
-seasonFilter.addEventListener('change', applyFilters);
-statusFilter.addEventListener('change', applyFilters);
-sortFilter.addEventListener('change', applyFilters);
-document.getElementById('clearFilters').onclick = () => {
-  searchInput.value = '';
-  genreFilter.value = '';
-  yearFilter.value = '';
-  seasonFilter.value = '';
-  statusFilter.value = '';
-  sortFilter.value = 'default';
-  applyFilters();
-};
+if (sortFilter) sortFilter.addEventListener('change', applyFilters);
 document.getElementById('themeBtn').onclick = () => {
   document.body.classList.toggle('light');
 };
@@ -598,7 +521,7 @@ document.getElementById('themeBtn').onclick = () => {
 async function loadCatalog(){
   statusEl.textContent = 'Cargando catálogo...';
   try {
-    const query = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore season seasonYear status coverImage { large } } } }`;
+    const query = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore seasonYear coverImage { large } } } }`;
     const animeTodas = [];
     for (const p of [1, 2]){
       const res = await fetch('https://graphql.anilist.co', {
@@ -616,8 +539,6 @@ async function loadCatalog(){
       episodes: x.episodes || 0,
       score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
       year: x.seasonYear || null,
-      season: x.season || null,
-      status: x.status || null,
       cover: x.coverImage?.large || ''
     })).filter(x => x.title);
 
@@ -636,7 +557,6 @@ async function loadCatalog(){
     statusEl.textContent = 'Catálogo de respaldo cargado.';
   }
   fillGenres();
-  fillYears();
   applyFilters();
   renderHistory();
   updateSeenCount();
