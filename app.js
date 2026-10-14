@@ -47,18 +47,12 @@ const HERO_IMAGES = [
   setInterval(swap, 5500);
 })();
 
-/* ════════════════════════════════════════════════════════════
-   💾 LOCALSTORAGE — Historial y Vistos
-   ════════════════════════════════════════════════════════════ */
-
-/* --- HISTORIAL --- */
+/* ═══ LOCALSTORAGE ═══ */
 function getHistory(){
   try { return JSON.parse(localStorage.getItem('anime_history') || '[]'); }
   catch(e){ return []; }
 }
-function saveHistory(list){
-  localStorage.setItem('anime_history', JSON.stringify(list));
-}
+function saveHistory(list){ localStorage.setItem('anime_history', JSON.stringify(list)); }
 function addToHistory(title, ep, cover){
   let h = getHistory();
   h = h.filter(x => x.title !== title);
@@ -72,14 +66,11 @@ function clearHistory(){
   renderHistory();
 }
 
-/* --- VISTOS --- */
 function getSeen(){
   try { return JSON.parse(localStorage.getItem('anime_seen') || '{}'); }
   catch(e){ return {}; }
 }
-function saveSeen(obj){
-  localStorage.setItem('anime_seen', JSON.stringify(obj));
-}
+function saveSeen(obj){ localStorage.setItem('anime_seen', JSON.stringify(obj)); }
 function isSeen(title, ep){
   const s = getSeen();
   return !!(s[title] && s[title].includes(String(ep)));
@@ -100,7 +91,7 @@ function clearSeen(){
   updateSeenCount();
 }
 
-/* ═══ Render del historial ═══ */
+/* ═══ Render historial ═══ */
 function renderHistory(){
   const section = document.getElementById('historySection');
   const grid = document.getElementById('historyGrid');
@@ -134,7 +125,7 @@ function renderHistory(){
   });
 }
 
-/* ═══ LINKS DE SERVIDORES ═══ */
+/* ═══ LINKS ═══ */
 const LINKS = {
   "Blue Exorcist": {
     "Terabox": { "1": "AQUI_LINK_TERABOX_EP1", "2": "AQUI_LINK_TERABOX_EP2" },
@@ -202,15 +193,9 @@ const LINKS = {
   }
 };
 
-/* ═══ Iconos por servidor ═══ */
 const SERVER_ICONS = {
-  "terabox": "🟦",
-  "drive": "🟢",
-  "mega": "🟥",
-  "mediafire": "🟠",
-  "netu": "🟣",
-  "pixeldrain": "⚫",
-  "default": "🎬"
+  "terabox": "🟦", "drive": "🟢", "mega": "🟥",
+  "mediafire": "🟠", "netu": "🟣", "pixeldrain": "⚫", "default": "🎬"
 };
 function serverIcon(name){
   const k = name.toLowerCase();
@@ -220,7 +205,6 @@ function serverIcon(name){
   return SERVER_ICONS.default;
 }
 
-/* ═══ Utilidades ═══ */
 function normalize(s){
   return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 }
@@ -298,12 +282,11 @@ function applyFilters(){
     return (!q || text.includes(q)) && (!g || (a.genres||[]).some(x => normalize(x) === g));
   });
 
-  // ═══ ORDENAR ═══
-  if (sort === 'az')          filtered.sort((a,b) => a.title.localeCompare(b.title));
-  else if (sort === 'za')     filtered.sort((a,b) => b.title.localeCompare(a.title));
-  else if (sort === 'yearNew')filtered.sort((a,b) => (b.year||0) - (a.year||0));
-  else if (sort === 'yearOld')filtered.sort((a,b) => (a.year||0) - (b.year||0));
-  else if (sort === 'score')  filtered.sort((a,b) => parseScore(b.score) - parseScore(a.score));
+  if (sort === 'az')           filtered.sort((a,b) => a.title.localeCompare(b.title));
+  else if (sort === 'za')      filtered.sort((a,b) => b.title.localeCompare(a.title));
+  else if (sort === 'yearNew') filtered.sort((a,b) => (b.year||0) - (a.year||0));
+  else if (sort === 'yearOld') filtered.sort((a,b) => (a.year||0) - (b.year||0));
+  else if (sort === 'score')   filtered.sort((a,b) => parseScore(b.score) - parseScore(a.score));
 
   sectionTitle.textContent = q ? `Resultados para "${searchInput.value}"` : 'Animes populares';
   statusEl.textContent = `${filtered.length} anime${filtered.length===1?'':'s'} encontrado${filtered.length===1?'':'s'}.`;
@@ -320,7 +303,7 @@ function fillGenres(){
   });
 }
 
-/* ═══ Modal de anime ═══ */
+/* ═══ Modal ═══ */
 function openAnime(a){
   const animeLinks = getAnimeLinks(a.title);
 
@@ -335,12 +318,11 @@ function openAnime(a){
           <img class="animeInfoCover" src="${esc(a.cover)}" alt="" onerror="this.style.display='none'">
           <div class="animeInfoText">
             <h3>${esc(a.title)}</h3>
-            <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} &nbsp;•&nbsp; ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
+            <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
           </div>
         </div>
         <p class="sectionTitle">Ver episodios</p>
-        <p class="noLinks">Este anime aún no tiene links configurados.<br>
-        Agrégalo en <code>LINKS</code> dentro de <code>app.js</code>.</p>
+        <p class="noLinks">Este anime aún no tiene links configurados.<br>Agrégalo en <code>LINKS</code> en <code>app.js</code>.</p>
       </div>`;
     modal.classList.remove('hidden');
     return;
@@ -362,7 +344,7 @@ function openAnime(a){
         <img class="animeInfoCover" src="${esc(a.cover)}" alt="" onerror="this.style.display='none'">
         <div class="animeInfoText">
           <h3>${esc(a.title)}</h3>
-          <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} &nbsp;•&nbsp; ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
+          <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
           <p class="infoMeta">Selecciona servidor y episodio</p>
         </div>
       </div>
@@ -371,6 +353,7 @@ function openAnime(a){
       <div id="serverTabsBox"></div>
       <p class="sectionTitle">Episodios</p>
       <div class="episodes" id="episodesBox"></div>
+      <div id="playerBox"></div>
     </div>`;
 
   function showServers(linksObj){
@@ -398,7 +381,10 @@ function openAnime(a){
 
   function showEpisodes(epsObj, serverName){
     const box = document.getElementById('episodesBox');
+    const player = document.getElementById('playerBox');
     if (!box) return;
+    if (player) player.innerHTML = '';
+
     const keys = Object.keys(epsObj).sort((x,y) => Number(x) - Number(y));
     if (!keys.length){
       box.innerHTML = `<p class="noLinks">No hay episodios en <b>${esc(serverName)}</b>.</p>`;
@@ -423,30 +409,21 @@ function openAnime(a){
         return;
       }
 
-      // 📺 Guardar en historial + marcar como visto
       addToHistory(a.title, num, a.cover);
       markAsSeen(a.title, num);
       updateSeenCount();
-
-      // Actualizar el botón visualmente
       btn.classList.add('seen');
 
-      // 🎬 Reproducir
       if (link.includes('drive.google.com')){
         const match = link.match(/\/d\/([^/]+)/);
         const id = match ? match[1] : '';
-        let player = document.getElementById('playerBox');
-        if (!player){
-          player = document.createElement('div');
-          player.id = 'playerBox';
-          if (box.parentNode) box.parentNode.insertBefore(player, box.nextSibling);
-        }
         player.innerHTML = `
           <div class="playerHeader">
             <span>▶ Episodio ${esc(num)}</span>
             <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
           </div>
           <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+        player.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       } else {
         window.open(link, '_blank', 'noopener');
       }
@@ -483,7 +460,6 @@ document.getElementById('closeModal').onclick = () => modal.classList.add('hidde
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.add('hidden'); });
 
-/* ═══ Botón limpiar historial ═══ */
 document.getElementById('clearHistory').onclick = () => {
   if (confirm('¿Borrar todo el historial?')) clearHistory();
 };
