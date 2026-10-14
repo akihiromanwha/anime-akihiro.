@@ -12,7 +12,7 @@ const sectionTitle= document.getElementById('sectionTitle');
 const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
-/* ═══ HERO ═══ */
+/* ═══ HERO rotativo ═══ */
 const HERO_IMAGES = [
   "https://img.anili.st/media/9919",
   "https://img.anili.st/media/20832",
@@ -46,7 +46,7 @@ const HERO_IMAGES = [
   setInterval(swap, 5500);
 })();
 
-/* ═══ LINKS ═══ */
+/* ═══ LINKS DE SERVIDORES ═══ */
 const LINKS = {
   "Blue Exorcist": {
     "Terabox": { "1": "AQUI_LINK_TERABOX_EP1", "2": "AQUI_LINK_TERABOX_EP2" },
@@ -59,12 +59,31 @@ const LINKS = {
       "Mega": { "1": "AQUI_LINK_MEGA_T2_EP1" },
       "Mediafire": { "1": "AQUI_LINK_MEDIAFIRE_T2_EP1" }
     }
+  },
+  "Blood Lad": {
+    "Terabox": {
+      "1": "https://1024terabox.com/s/1SrOBd6ZnpoQZMkinzMjfaQ",
+      "2": "https://1024terabox.com/s/1j1q1Q7PdKnAwNYJFKWiW8Q",
+      "3": "https://1024terabox.com/s/1kvD32FuptXudTV4cwziyug",
+      "4": "https://1024terabox.com/s/1Oo4EjJz-MVzvuzKgDyMr7w",
+      "5": "https://1024terabox.com/s/11DlJfZqeitlWEVYa0Urv8g",
+      "6": "https://1024terabox.com/s/1RgFWiI2xj-dhbWb1DQPrGQ",
+      "7": "https://1024terabox.com/s/16kkM3LND-OgcHqz0gF5B4A",
+      "8": "https://1024terabox.com/s/1w2y73FmI2YCzRb72RdWZeg",
+      "9": "https://1024terabox.com/s/1kXyOiawXFF7wjWk-ls00cg",
+      "10": "https://1024terabox.com/s/1I0fAabkE6dQXW2S0JZZCBw"
+    }
   }
 };
 
+/* ═══ Iconos por servidor ═══ */
 const SERVER_ICONS = {
-  "terabox": "🟦", "mega": "🟥", "mediafire": "🟠",
-  "netu": "🟣", "pixeldrain": "⚫", "default": "🎬"
+  "terabox": "🟦",
+  "mega": "🟥",
+  "mediafire": "🟠",
+  "netu": "🟣",
+  "pixeldrain": "⚫",
+  "default": "🎬"
 };
 function serverIcon(name){
   const k = name.toLowerCase();
@@ -74,6 +93,7 @@ function serverIcon(name){
   return SERVER_ICONS.default;
 }
 
+/* ═══ Utilidades ═══ */
 function normalize(s){
   return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 }
@@ -94,6 +114,8 @@ function getAnimeLinks(title){
 const CUSTOM_ANIME = [
   { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 27, score: "7.8", cover: "https://img.anili.st/media/9919" },
   { title: "Overlord", genres: ["Action","Adventure","Fantasy"], episodes: 52, score: "8.0", cover: "https://img.anili.st/media/20832" },
+  { title: "Blood Lad", genres: ["Action","Comedy","Supernatural","Vampire"], episodes: 10, score: "7.3", cover: "https://img.anili.st/media/11633" },
+  { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy","Drama"], episodes: 24, score: "7.3", cover: "https://img.anili.st/media/114753" },
   { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", cover: "https://img.anili.st/media/210" },
   { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", cover: "https://img.anili.st/media/269" },
   { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", cover: "https://img.anili.st/media/249" },
