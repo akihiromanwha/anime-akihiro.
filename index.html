@@ -15,7 +15,6 @@
 <meta name="theme-color" content="#080808">
 <title>AnimeAkihiroDaiky</title>
 
-<!-- ═══ PWA (App) ═══ -->
 <link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -24,7 +23,7 @@
 <link rel="icon" type="image/png" href="akhanime.png">
 <link rel="apple-touch-icon" href="akhanime.png">
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style2.css">
 </head>
 <body>
 
@@ -44,12 +43,12 @@
     <div class="heroBg" id="heroBgB"></div>
     <div class="heroContent">
       <p class="tag">ANIME • MANGA • MANHWA</p>
-      <h1>Tu mundo de anime,<br>manga y manhwa.</h1>
+      <h1>Tu mundo de anime</h1>
       <p class="heroSub">Busca tus series favoritas y consulta sus capítulos.</p>
     </div>
   </section>
 
-  <!-- Historial / Continuar viendo -->
+  <!-- Historial -->
   <section id="historySection" class="history hidden">
     <div class="historyHead">
       <h2>📺 Continuar viendo</h2>
@@ -58,20 +57,66 @@
     <div id="historyGrid" class="historyGrid"></div>
   </section>
 
+  <!-- Toolbar con filtros -->
   <section class="toolbar">
-    <h2 id="sectionTitle">Animes populares</h2>
-    <div class="toolbarRight">
-      <select id="sortFilter" aria-label="Ordenar por">
-        <option value="default">Ordenar por...</option>
-        <option value="az">A → Z</option>
-        <option value="za">Z → A</option>
-        <option value="yearNew">Más recientes</option>
-        <option value="yearOld">Más antiguos</option>
-        <option value="score">Mejor puntuados</option>
-      </select>
-      <select id="genreFilter">
-        <option value="">Todos los géneros</option>
-      </select>
+    <div class="toolbarHead">
+      <h2 id="sectionTitle">Animes populares</h2>
+      <button id="toggleFilters" class="btnFilters">
+        <span>🔍 Filtros</span>
+        <span id="activeFiltersCount" class="badge hidden">0</span>
+      </button>
+    </div>
+
+    <!-- Panel de filtros -->
+    <div class="filtersPanel" id="filtersPanel">
+      <div class="filterRow">
+        <label class="filterLabel">Género</label>
+        <select id="genreFilter">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <div class="filterRow">
+        <label class="filterLabel">Año</label>
+        <select id="yearFilter">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <div class="filterRow">
+        <label class="filterLabel">Temporada</label>
+        <select id="seasonFilter">
+          <option value="">Todas</option>
+          <option value="WINTER">❄️ Invierno</option>
+          <option value="SPRING">🌸 Primavera</option>
+          <option value="SUMMER">☀️ Verano</option>
+          <option value="FALL">🍂 Otoño</option>
+        </select>
+      </div>
+
+      <div class="filterRow">
+        <label class="filterLabel">Estado</label>
+        <select id="statusFilter">
+          <option value="">Todos</option>
+          <option value="RELEASING">🔴 En emisión</option>
+          <option value="FINISHED">✅ Terminado</option>
+          <option value="NOT_YET_RELEASED">⏳ Próximamente</option>
+        </select>
+      </div>
+
+      <div class="filterRow">
+        <label class="filterLabel">Ordenar</label>
+        <select id="sortFilter">
+          <option value="default">Relevancia</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+          <option value="yearNew">Más recientes</option>
+          <option value="yearOld">Más antiguos</option>
+          <option value="score">Mejor puntuados</option>
+        </select>
+      </div>
+
+      <button id="clearFilters" class="clearFilters">✕ Limpiar filtros</button>
     </div>
   </section>
 
@@ -126,7 +171,7 @@
         </div>
         <div class="profileOpt">
           <span>📦 Versión</span>
-          <span>1.1</span>
+          <span>2.0</span>
         </div>
       </div>
     </div>
