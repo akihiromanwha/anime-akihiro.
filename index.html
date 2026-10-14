@@ -14,6 +14,16 @@
 <meta name="description" content="AnimeAkihiroDaiky — Tu mundo de anime, manga y manhwa.">
 <meta name="theme-color" content="#080808">
 <title>AnimeAkihiroDaiky</title>
+
+<!-- ═══ PWA (App) ═══ -->
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AnimeAkihiro">
+<link rel="icon" type="image/png" href="akhanime.png">
+<link rel="apple-touch-icon" href="akhanime.png">
+
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -122,6 +132,17 @@ document.addEventListener('keydown', e => {
 });
 
 window._firma = "ANIMEAKHIRODAIKY-2026-BY-AKIHIROMANWHA";
+</script>
+
+<!-- ═══ Service Worker (App offline) ═══ -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('✅ App lista — Service Worker activo'))
+      .catch(err => console.log('❌ Error SW:', err));
+  });
+}
 </script>
 
 <script src="app.js"></script>
