@@ -445,6 +445,7 @@ function openAnime(a){
       updateSeenCount();
       btn.classList.add('seen');
 
+      // 🎬 DRIVE → reproductor dentro del modal
       if (link.includes('drive.google.com')){
         const match = link.match(/\/d\/([^/]+)/);
         const id = match ? match[1] : '';
@@ -455,7 +456,19 @@ function openAnime(a){
           </div>
           <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
         player.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      } else {
+      }
+      // 🟦 TERABOX → reproductor "puente" dentro del modal
+      else if (link.includes('terabox.com') || link.includes('1024terabox.com')){
+        player.innerHTML = `
+          <div class="playerHeader">
+            <span>▶ Episodio ${esc(num)} — Terabox</span>
+            <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+          </div>
+          <iframe src="https://sannjay.tech/TeraBox/player.html?url=${encodeURIComponent(link)}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+        player.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      // 🌐 OTROS → pestaña nueva
+      else {
         window.open(link, '_blank', 'noopener');
       }
     };
