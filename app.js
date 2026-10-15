@@ -179,6 +179,38 @@ const LINKS = {
       "23": "https://drive.google.com/file/d/1cQaLFhR5_IzYnR4_7XoyHbw1G3ih-mdN/preview",
       "24": "https://drive.google.com/file/d/1zTMk99bwXc1ahYO2K_YORwYVRsjzgDsk/preview"
     }
+  },
+  "DanMachi": {
+    "Temporada 1": {
+      "Drive": {
+        "1": "https://drive.google.com/file/d/1zPG1b1j5DDmaBr_AXlIxoP2eXlRkJ8fi/preview",
+        "2": "https://drive.google.com/file/d/1PmbNhAqn8K4BAduzt0PzLfSLpB-HVNrh/preview",
+        "3": "https://drive.google.com/file/d/1ygyPKGc8yjpV7BYFz2DoU9i_QtKhkd_P/preview",
+        "4": "https://drive.google.com/file/d/1SOTIpsPT5p9FRj8XQDexApZlWP0jqL2n/preview",
+        "5": "https://drive.google.com/file/d/1COMLe6vcEgyWXNs5Pxrgmn43FfizNxsr/preview",
+        "6": "https://drive.google.com/file/d/1aAtqniBvyF3R88lu6P52rx6i_MNrpFK0/preview",
+        "7": "https://drive.google.com/file/d/1sl80epcMafCpNj-wYTV8DZq3SWNEd323/preview",
+        "8": "https://drive.google.com/file/d/1F3lAQgRbrubrBxXbPKcbebTpb3g4lylE/preview",
+        "9": "https://drive.google.com/file/d/1NSlIBsYu9A7dTs5WZAZuvTFYEqQ9Q-Z7/preview",
+        "10": "https://drive.google.com/file/d/1XWa9C7IoGeVfF5ZCdU5oHYeHfjt8imuZ/preview",
+        "11": "https://drive.google.com/file/d/10SBTX269uM2hP0mCsM8W-ziWDjm2q6TY/preview"
+      }
+    },
+    "Temporada 2": {
+      "Drive": {
+        "1": "AQUI_LINK_T2_EP1"
+      }
+    },
+    "Temporada 3": {
+      "Drive": {
+        "1": "AQUI_LINK_T3_EP1"
+      }
+    },
+    "Temporada 4": {
+      "Drive": {
+        "1": "AQUI_LINK_T4_EP1"
+      }
+    }
   }
 };
 
@@ -229,6 +261,7 @@ const CUSTOM_ANIME = [
   { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "7.3", year: 2020, cover: "https://img.anili.st/media/114753" },
   { title: "The Seven Deadly Sins", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "8.1", year: 2014, cover: "https://img.anili.st/media/20789" },
   { title: "Jujutsu Kaisen", genres: ["Action","Fantasy","Supernatural"], episodes: 24, score: "8.6", year: 2020, cover: "https://img.anili.st/media/113415" },
+  { title: "DanMachi", genres: ["Action","Adventure","Fantasy","Romance"], episodes: 59, score: "7.6", year: 2015, cover: "https://img.anili.st/media/20920" },
   { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", year: 1989, cover: "https://img.anili.st/media/210" },
   { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", year: 2004, cover: "https://img.anili.st/media/269" },
   { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", year: 2000, cover: "https://img.anili.st/media/249" },
