@@ -1,5 +1,5 @@
 /* Service Worker — AnimeAkihiroDaiky */
-const CACHE_NAME = 'anime-akihiro-v6'.
+const CACHE_NAME = 'anime-akihiro-v10'.
 const URLS = ['./', './index.html', './style.css', './app.js', './manifest.json'];
 
 self.addEventListener('install', e => {
