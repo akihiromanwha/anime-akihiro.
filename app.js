@@ -1,6 +1,6 @@
 /* ════════════════════════════════════════════════════════════
-   ANIMEAKHIRODAIKY — app.js
-   © 2026 AnimeAkihiroDaiky — Todos los derechos reservados
+   AKIHIRODAIKYANIME — app.js
+   © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    GitHub: https://github.com/akihiromanwha
    ════════════════════════════════════════════════════════════ */
 
@@ -13,7 +13,9 @@ const sectionTitle= document.getElementById('sectionTitle');
 const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
-/* ═══ HERO rotativo ═══ */
+let currentType = 'series';
+
+/* ═══ HERO ═══ */
 const HERO_IMAGES = [
   "https://img.anili.st/media/9919",
   "https://img.anili.st/media/20832",
@@ -81,7 +83,7 @@ function clearSeen(){
   updateSeenCount();
 }
 
-/* ═══ Render historial ═══ */
+/* ═══ Historial ═══ */
 function renderHistory(){
   const section = document.getElementById('historySection');
   const grid = document.getElementById('historyGrid');
@@ -90,7 +92,7 @@ function renderHistory(){
   if (!h.length){ section.classList.add('hidden'); return; }
   section.classList.remove('hidden');
   grid.innerHTML = h.map(item => {
-    const cover = item.cover || (catalog.find(a => a.title === item.title) || {}).cover || '';
+    const cover = item.cover || (catalogAll.find(a => a.title === item.title) || {}).cover || '';
     return `
       <div class="historyCard" data-title="${esc(item.title)}">
         <img src="${esc(cover)}" alt="" onerror="this.style.display='none'">
@@ -102,13 +104,21 @@ function renderHistory(){
   }).join('');
   grid.querySelectorAll('.historyCard').forEach(card => {
     card.onclick = () => {
-      const anime = catalog.find(a => a.title === card.dataset.title);
+      const anime = catalogAll.find(a => a.title === card.dataset.title);
       if (anime) openAnime(anime);
     };
   });
 }
 
-/* ═══ LINKS DE SERVIDORES ═══ */
+/* ═══ Próximos a subir ═══ */
+const SOON_ANIME = [
+  { title: "Sword Art Online", cover: "https://img.anili.st/media/11757", note: "Próximamente" },
+  { title: "Tokyo Ghoul", cover: "https://img.anili.st/media/20605", note: "Próximamente" },
+  { title: "Attack on Titan", cover: "https://img.anili.st/media/16498", note: "Próximamente" },
+  { title: "Noragami", cover: "https://img.anili.st/media/20447", note: "Próximamente" }
+];
+
+/* ═══ LINKS ═══ */
 const LINKS = {
   "Blood Lad": {
     "Terabox": {
@@ -196,33 +206,16 @@ const LINKS = {
         "11": "https://drive.google.com/file/d/10SBTX269uM2hP0mCsM8W-ziWDjm2q6TY/preview"
       }
     },
-    "Temporada 2": {
-      "Drive": {
-        "1": "AQUI_LINK_T2_EP1"
-      }
-    },
-    "Temporada 3": {
-      "Drive": {
-        "1": "AQUI_LINK_T3_EP1"
-      }
-    },
-    "Temporada 4": {
-      "Drive": {
-        "1": "AQUI_LINK_T4_EP1"
-      }
-    }
+    "Temporada 2": { "Drive": { "1": "AQUI_LINK_T2_EP1" } },
+    "Temporada 3": { "Drive": { "1": "AQUI_LINK_T3_EP1" } },
+    "Temporada 4": { "Drive": { "1": "AQUI_LINK_T4_EP1" } }
   }
 };
 
-/* ═══ Iconos por servidor ═══ */
+/* ═══ Iconos ═══ */
 const SERVER_ICONS = {
-  "terabox": "🟦",
-  "drive": "🟢",
-  "mega": "🟥",
-  "mediafire": "🟠",
-  "netu": "🟣",
-  "pixeldrain": "⚫",
-  "default": "🎬"
+  "terabox": "🟦", "drive": "🟢", "mega": "🟥",
+  "mediafire": "🟠", "netu": "🟣", "pixeldrain": "⚫", "default": "🎬"
 };
 function serverIcon(name){
   const k = name.toLowerCase();
@@ -253,8 +246,8 @@ function parseScore(s){
   return isNaN(n) ? 0 : n;
 }
 
-/* ═══ Animes personalizados ═══ */
-const CUSTOM_ANIME = [
+/* ═══ Catálogos ═══ */
+const CUSTOM_SERIES = [
   { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 27, score: "7.8", year: 2024, cover: "https://img.anili.st/media/9919" },
   { title: "Overlord", genres: ["Action","Adventure","Fantasy"], episodes: 52, score: "8.0", year: 2015, cover: "https://img.anili.st/media/20832" },
   { title: "Blood Lad", genres: ["Action","Comedy","Supernatural"], episodes: 10, score: "7.3", year: 2013, cover: "https://img.anili.st/media/11633" },
@@ -271,8 +264,28 @@ const CUSTOM_ANIME = [
   { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", year: 2014, cover: "https://img.anili.st/media/20605" }
 ];
 
+const CUSTOM_MOVIES = [
+  { title: "Jujutsu Kaisen 0", genres: ["Action","Fantasy","Supernatural"], episodes: 1, score: "8.4", year: 2021, cover: "https://img.anili.st/media/131573" },
+  { title: "Demon Slayer: Mugen Train", genres: ["Action","Fantasy","Supernatural"], episodes: 1, score: "8.6", year: 2020, cover: "https://img.anili.st/media/112151" },
+  { title: "Your Name", genres: ["Romance","Drama","Supernatural"], episodes: 1, score: "8.7", year: 2016, cover: "https://img.anili.st/media/21519" },
+  { title: "A Silent Voice", genres: ["Drama","Romance"], episodes: 1, score: "8.9", year: 2016, cover: "https://img.anili.st/media/20954" },
+  { title: "Weathering with You", genres: ["Romance","Drama","Supernatural"], episodes: 1, score: "8.3", year: 2019, cover: "https://img.anili.st/media/106286" },
+  { title: "Spirited Away", genres: ["Adventure","Fantasy","Family"], episodes: 1, score: "8.8", year: 2001, cover: "https://img.anili.st/media/199" },
+  { title: "Princess Mononoke", genres: ["Action","Adventure","Fantasy"], episodes: 1, score: "8.7", year: 1997, cover: "https://img.anili.st/media/164" },
+  { title: "Howl's Moving Castle", genres: ["Adventure","Fantasy","Romance"], episodes: 1, score: "8.7", year: 2004, cover: "https://img.anili.st/media/431" },
+  { title: "My Neighbor Totoro", genres: ["Adventure","Fantasy","Family"], episodes: 1, score: "8.3", year: 1988, cover: "https://img.anili.st/media/523" },
+  { title: "Akira", genres: ["Action","Sci-Fi","Supernatural"], episodes: 1, score: "8.2", year: 1988, cover: "https://img.anili.st/media/47" },
+  { title: "Ghost in the Shell", genres: ["Action","Sci-Fi","Psychological"], episodes: 1, score: "8.3", year: 1995, cover: "https://img.anili.st/media/43" },
+  { title: "Perfect Blue", genres: ["Psychological","Thriller","Drama"], episodes: 1, score: "8.7", year: 1998, cover: "https://img.anili.st/media/437" },
+  { title: "Paprika", genres: ["Sci-Fi","Psychological","Thriller"], episodes: 1, score: "8.4", year: 2006, cover: "https://img.anili.st/media/1943" },
+  { title: "The Girl Who Leapt Through Time", genres: ["Romance","Sci-Fi","Drama"], episodes: 1, score: "8.5", year: 2006, cover: "https://img.anili.st/media/2236" },
+  { title: "Wolf Children", genres: ["Drama","Fantasy","Family"], episodes: 1, score: "8.6", year: 2012, cover: "https://img.anili.st/media/12355" }
+];
+
+let catalogSeries = [];
+let catalogMovies = [];
+let catalogAll = [];
 let catalog = [];
-let catalogAnime = [];
 
 const fallback = [
   {title:'Naruto',genres:['Action','Adventure'],episodes:220,score:8.1,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20-9zXJ6z0g7n8R.jpg'},
@@ -290,19 +303,21 @@ function render(list){
   list.forEach((a,i)=>{
     const card = document.createElement('article');
     card.className = 'card';
+    const readyBadge = LINKS[a.title] ? `<span class="badgeReady">Listo</span>` : '';
     card.innerHTML = `
+      ${readyBadge}
       <img class="cover" src="${esc(a.cover)}" alt="${esc(a.title)}" onerror="this.style.display='none'">
       <div class="cardBody">
         <div class="title">${esc(a.title)}</div>
-        <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))} ${a.episodes?`• ${a.episodes} eps.`:''}</div>
-        <button data-index="${i}">Ver episodios</button>
+        <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))} ${a.episodes && a.episodes > 1 ? `• ${a.episodes} eps.` : ''}</div>
+        <button data-index="${i}">${currentType === 'movies' ? 'Ver película' : 'Ver episodios'}</button>
       </div>`;
     card.querySelector('button').onclick = () => openAnime(a);
     animeGrid.appendChild(card);
   });
 }
 
-/* ═══ Filtros y orden ═══ */
+/* ═══ Filtros ═══ */
 function applyFilters(){
   const q = normalize(searchInput.value);
   const g = normalize(genreFilter.value);
@@ -319,12 +334,16 @@ function applyFilters(){
   else if (sort === 'yearOld') filtered.sort((a,b) => (a.year||0) - (b.year||0));
   else if (sort === 'score')   filtered.sort((a,b) => parseScore(b.score) - parseScore(a.score));
 
-  sectionTitle.textContent = q ? `Resultados para "${searchInput.value}"` : 'Animes populares';
-  statusEl.textContent = `${filtered.length} anime${filtered.length===1?'':'s'} encontrado${filtered.length===1?'':'s'}.`;
+  const isMovies = currentType === 'movies';
+  sectionTitle.textContent = q 
+    ? `Resultados para "${searchInput.value}"` 
+    : (isMovies ? '🎬 Películas populares' : 'Animes populares');
+  statusEl.textContent = `${filtered.length} ${isMovies ? 'película' : 'anime'}${filtered.length===1?'':'s'} encontrado${filtered.length===1?'':'s'}.`;
   render(filtered);
 }
 
 function fillGenres(){
+  genreFilter.innerHTML = '<option value="">Todos los géneros</option>';
   const set = new Set();
   catalog.forEach(a => (a.genres||[]).forEach(g => set.add(g)));
   [...set].sort().forEach(g => {
@@ -337,11 +356,12 @@ function fillGenres(){
 /* ═══ Modal ═══ */
 function openAnime(a){
   const animeLinks = getAnimeLinks(a.title);
+  const isMovie = currentType === 'movies';
 
   if (!animeLinks || !Object.keys(animeLinks).length){
     modalContent.innerHTML = `
       <div class="playerTopBar">
-        <span class="playerIcon">🎬</span>
+        <span class="playerIcon">${isMovie ? '🎬' : '🎞️'}</span>
         <span class="playerTitle">${esc(a.title)}</span>
       </div>
       <div class="modalBody">
@@ -352,8 +372,8 @@ function openAnime(a){
             <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
           </div>
         </div>
-        <p class="sectionTitle">Ver episodios</p>
-        <p class="noLinks">Este anime aún no tiene links configurados.<br>Agrégalo en <code>LINKS</code> en <code>app.js</code>.</p>
+        <p class="sectionTitle">Ver ${isMovie ? 'película' : 'episodios'}</p>
+        <p class="noLinks">Este título aún no tiene links configurados.<br>Agrégalo en <code>LINKS</code> en <code>app.js</code>.</p>
       </div>`;
     modal.classList.remove('hidden');
     return;
@@ -367,7 +387,7 @@ function openAnime(a){
 
   modalContent.innerHTML = `
     <div class="playerTopBar">
-      <span class="playerIcon">🎬</span>
+      <span class="playerIcon">${isMovie ? '🎬' : '🎞️'}</span>
       <span class="playerTitle">${esc(a.title)}</span>
     </div>
     <div class="modalBody">
@@ -376,13 +396,13 @@ function openAnime(a){
         <div class="animeInfoText">
           <h3>${esc(a.title)}</h3>
           <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
-          <p class="infoMeta">Selecciona servidor y episodio</p>
+          <p class="infoMeta">Selecciona servidor</p>
         </div>
       </div>
       <div id="seasonTabsBox"></div>
       <p class="sectionTitle">Servidores</p>
       <div id="serverTabsBox"></div>
-      <p class="sectionTitle">Episodios</p>
+      <p class="sectionTitle">${isMovie ? 'Película' : 'Episodios'}</p>
       <div class="episodes" id="episodesBox"></div>
       <div id="playerBox"></div>
     </div>`;
@@ -418,14 +438,15 @@ function openAnime(a){
 
     const keys = Object.keys(epsObj).sort((x,y) => Number(x) - Number(y));
     if (!keys.length){
-      box.innerHTML = `<p class="noLinks">No hay episodios en <b>${esc(serverName)}</b>.</p>`;
+      box.innerHTML = `<p class="noLinks">No hay contenido en <b>${esc(serverName)}</b>.</p>`;
       return;
     }
     box.innerHTML = keys.map(num => {
       const seen = isSeen(a.title, num);
+      const label = isMovie ? 'Ver' : esc(num);
       return `
         <button class="episode${seen ? ' seen' : ''}" data-link="${esc(epsObj[num])}" data-num="${esc(num)}">
-          ${esc(num)}
+          ${label}
         </button>`;
     }).join('');
 
@@ -436,33 +457,28 @@ function openAnime(a){
       const num = btn.dataset.num;
 
       if (link.startsWith('AQUI_') || !link.startsWith('http')){
-        alert('⚠️ Episodio ' + num + ' aún sin link.');
+        alert('⚠️ Aún sin link configurado.');
         return;
       }
 
-      addToHistory(a.title, num, a.cover);
+      addToHistory(a.title, isMovie ? 'Película' : num, a.cover);
       markAsSeen(a.title, num);
       updateSeenCount();
       btn.classList.add('seen');
 
-      // 🎬 DRIVE → reproductor dentro del modal
       if (link.includes('drive.google.com')){
         const match = link.match(/\/d\/([^/]+)/);
         const id = match ? match[1] : '';
         player.innerHTML = `
           <div class="playerHeader">
-            <span>▶ Episodio ${esc(num)}</span>
+            <span>▶ ${isMovie ? 'Película' : 'Episodio ' + esc(num)}</span>
             <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
           </div>
           <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
         player.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-      // 🟦 TERABOX → pestaña nueva (más confiable)
-      else if (link.includes('terabox.com') || link.includes('1024terabox.com')){
+      } else if (link.includes('terabox.com') || link.includes('1024terabox.com')){
         window.open(link, '_blank', 'noopener');
-      }
-      // 🌐 OTROS → pestaña nueva
-      else {
+      } else {
         window.open(link, '_blank', 'noopener');
       }
     };
@@ -493,7 +509,7 @@ function openAnime(a){
   modal.classList.remove('hidden');
 }
 
-/* ═══ Cerrar modales ═══ */
+/* ═══ Cerrar ═══ */
 document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.add('hidden'); });
@@ -549,31 +565,44 @@ document.getElementById('optClearSeen').onclick = () => {
   if (confirm('¿Borrar la marca de vistos?')){ clearSeen(); alert('✅ Limpiado'); }
 };
 
+/* ═══ Toggle Series / Películas ═══ */
+document.querySelectorAll('.typeBtn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.typeBtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentType = btn.dataset.type;
+    catalog = currentType === 'movies' ? catalogMovies : catalogSeries;
+    genreFilter.innerHTML = '<option value="">Todos los géneros</option>';
+    fillGenres();
+    if (sortFilter) sortFilter.value = 'default';
+    applyFilters();
+  };
+});
+
 /* ═══ Eventos ═══ */
 searchInput.addEventListener('input', applyFilters);
 genreFilter.addEventListener('change', applyFilters);
 if (sortFilter) sortFilter.addEventListener('change', applyFilters);
-document.getElementById('themeBtn').onclick = () => {
-  document.body.classList.toggle('light');
-};
+document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
 /* ═══ Cargar catálogo ═══ */
 async function loadCatalog(){
   statusEl.textContent = 'Cargando catálogo...';
   try {
-    const query = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore seasonYear coverImage { large } } } }`;
-    const animeTodas = [];
+    // ═══ SERIES ═══
+    const querySeries = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, format_not: MOVIE, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore seasonYear coverImage { large } } } }`;
+    const seriesTodas = [];
     for (const p of [1, 2]){
       const res = await fetch('https://graphql.anilist.co', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, variables: { page: p } })
+        body: JSON.stringify({ query: querySeries, variables: { page: p } })
       });
       const data = await res.json();
-      animeTodas.push(...(data?.data?.Page?.media || []));
+      seriesTodas.push(...(data?.data?.Page?.media || []));
       await new Promise(r => setTimeout(r, 700));
     }
-    catalogAnime = animeTodas.map(x => ({
+    catalogSeries = seriesTodas.map(x => ({
       title: x.title?.english || x.title?.romaji || x.title?.native || 'Anime',
       genres: x.genres || [],
       episodes: x.episodes || 0,
@@ -581,24 +610,61 @@ async function loadCatalog(){
       year: x.seasonYear || null,
       cover: x.coverImage?.large || ''
     })).filter(x => x.title);
-
-    catalogAnime = [...CUSTOM_ANIME, ...catalogAnime];
-
-    const vistos = new Set();
-    catalogAnime = catalogAnime.filter(a => {
-      if (vistos.has(a.title)) return false;
-      vistos.add(a.title);
+    catalogSeries = [...CUSTOM_SERIES, ...catalogSeries];
+    const vistoS = new Set();
+    catalogSeries = catalogSeries.filter(a => {
+      if (vistoS.has(a.title)) return false;
+      vistoS.add(a.title);
       return true;
     });
-    catalog = catalogAnime;
+
+    // ═══ PELÍCULAS ═══
+    const queryMovies = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, format: MOVIE, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore seasonYear coverImage { large } } } }`;
+    const moviesTodas = [];
+    for (const p of [1, 2]){
+      const res = await fetch('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: queryMovies, variables: { page: p } })
+      });
+      const data = await res.json();
+      moviesTodas.push(...(data?.data?.Page?.media || []));
+      await new Promise(r => setTimeout(r, 700));
+    }
+    let deAniList = moviesTodas.map(x => ({
+      title: x.title?.english || x.title?.romaji || x.title?.native || 'Película',
+      genres: x.genres || [],
+      episodes: 1,
+      score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
+      year: x.seasonYear || null,
+      cover: x.coverImage?.large || ''
+    })).filter(x => x.title);
+
+    catalogMovies = [...CUSTOM_MOVIES, ...deAniList];
+    const vistoM = new Set();
+    catalogMovies = catalogMovies.filter(a => {
+      if (vistoM.has(a.title)) return false;
+      vistoM.add(a.title);
+      return true;
+    });
+
+    catalogAll = [...catalogSeries, ...catalogMovies];
+    catalog = catalogSeries;
+
   } catch(e) {
     console.error('Error:', e);
-    catalog = [...CUSTOM_ANIME, ...fallback];
+    catalogSeries = [...CUSTOM_SERIES, ...fallback];
+    catalogMovies = [...CUSTOM_MOVIES];
+    catalogAll = [...catalogSeries, ...catalogMovies];
+    catalog = catalogSeries;
     statusEl.textContent = 'Catálogo de respaldo cargado.';
   }
+
   fillGenres();
   applyFilters();
   renderHistory();
+  renderFresh();
+  renderSoon();
   updateSeenCount();
 }
 loadCatalog();
