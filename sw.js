@@ -1,14 +1,26 @@
-/* Service Worker — AnimeAkihiroDaiky */
-const CACHE_NAME = 'anime-akihiro-v10'.
-const URLS = ['./', './index.html', './style.css', './app.js', './manifest.json'];
+/* ════════════════════════════════════════════════════════════
+   AKIHIRODAIKYANIME — Service Worker
+   © 2026 AkihiroDaikyAnime — Todos los derechos reservados
+   ════════════════════════════════════════════════════════════ */
 
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(URLS)));
+const CACHE_NAME = 'akihiro-v16';
+const URLS_TO_CACHE = [
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './manifest.json'
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(URLS_TO_CACHE))
+  );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
+self.addEventListener('activate', event => {
+  event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     )
@@ -16,15 +28,15 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  e.respondWith(
-    fetch(e.request)
-      .then(r => {
-        const clone = r.clone();
-        caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-        return r;
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        return response;
       })
-      .catch(() => caches.match(e.request))
+      .catch(() => caches.match(event.request))
   );
 });
