@@ -1,6 +1,6 @@
 {
-  "name": "AnimeAkihiroDaiky",
-  "short_name": "AnimeAkihiro",
+  "name": "AkihiroDaikyAnime",
+  "short_name": "AkihiroDaiky",
   "description": "Tu mundo de anime, manga y manhwa",
   "start_url": "./index.html",
   "display": "standalone",
