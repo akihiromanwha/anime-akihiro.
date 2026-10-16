@@ -1,29 +1,15 @@
-<!--
-  ════════════════════════════════════════════════════════════
-   ANIMEAKHIRODAIKY
-   © 2026 AnimeAkihiroDaiky — Todos los derechos reservados
-   GitHub: https://github.com/akihiromanwha
-   ════════════════════════════════════════════════════════════
--->
 <!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="author" content="AnimeAkihiroDaiky">
-<meta name="description" content="AnimeAkihiroDaiky — Tu mundo de anime, manga y manhwa.">
 <meta name="theme-color" content="#080808">
 <title>AnimeAkihiroDaiky</title>
-
-<!-- ═══ PWA (App) ═══ -->
 <link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AnimeAkihiro">
 <link rel="icon" type="image/png" href="akhanime.png">
 <link rel="apple-touch-icon" href="akhanime.png">
-
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -33,8 +19,8 @@
   <div class="searchWrap">
     <input id="searchInput" type="search" placeholder="Buscar anime...">
   </div>
-  <button id="profileBtn" class="smallBtn" aria-label="Perfil">👤</button>
-  <button id="themeBtn" class="smallBtn" aria-label="Cambiar tema">☀️</button>
+  <button id="profileBtn" class="smallBtn">👤</button>
+  <button id="themeBtn" class="smallBtn">☀️</button>
 </header>
 
 <main>
@@ -56,10 +42,40 @@
     <div id="historyGrid" class="historyGrid"></div>
   </section>
 
+  <!-- 🍞 A punto de salir del horno -->
+  <section id="soonSection" class="soon hidden">
+    <div class="soonHead">
+      <h2>🍞 A punto de salir del horno <span class="soonEmoji">~°~</span></h2>
+      <span class="soonSub">Próximamente</span>
+    </div>
+    <div id="soonGrid" class="soonGrid"></div>
+  </section>
+
+  <!-- 🔥 Salido recién del horno -->
+  <section id="freshSection" class="fresh hidden">
+    <div class="freshHead">
+      <h2>🔥 Salido recién del horno <span class="freshEmoji">^°^</span></h2>
+      <span class="freshSub">Ya disponibles</span>
+    </div>
+    <div id="freshGrid" class="freshGrid"></div>
+  </section>
+
+  <!-- 🎬 Toggle Series / Películas -->
+  <section class="typeToggle">
+    <button class="typeBtn active" data-type="series">
+      <span class="typeIcon">📺</span>
+      <span class="typeText">Series</span>
+    </button>
+    <button class="typeBtn" data-type="movies">
+      <span class="typeIcon">🎬</span>
+      <span class="typeText">Películas</span>
+    </button>
+  </section>
+
   <section class="toolbar">
     <h2 id="sectionTitle">Animes populares</h2>
     <div class="toolbarRight">
-      <select id="sortFilter" aria-label="Ordenar por">
+      <select id="sortFilter">
         <option value="default">Ordenar por...</option>
         <option value="az">A → Z</option>
         <option value="za">Z → A</option>
@@ -85,7 +101,6 @@
   <p class="muted">Los videos y portadas pertenecen a sus respectivos autores.</p>
 </footer>
 
-<!-- Modal de anime -->
 <div id="modal" class="modal hidden">
   <div class="modalBox modalPlayer">
     <button id="closeModal" class="close">✕</button>
@@ -93,7 +108,6 @@
   </div>
 </div>
 
-<!-- Modal de perfil -->
 <div id="profileModal" class="modal hidden">
   <div class="modalBox profileBox">
     <button id="closeProfile" class="close">✕</button>
@@ -104,12 +118,10 @@
         <p class="profileSub">Perfil personal</p>
       </div>
     </div>
-
     <div class="profileSection">
       <label class="profileLabel">Nombre de usuario</label>
       <input type="text" id="profileNameInput" class="profileInput" placeholder="Escribe tu nombre..." maxlength="20">
     </div>
-
     <div class="profileSection">
       <label class="profileLabel">Preferencias</label>
       <div class="profileOpts">
@@ -123,37 +135,25 @@
         </div>
         <div class="profileOpt">
           <span>📦 Versión</span>
-          <span>1.1</span>
+          <span>1.2</span>
         </div>
       </div>
     </div>
-
     <button class="profileSave" id="saveProfile">Guardar</button>
   </div>
 </div>
 
 <script>
-/* ════════════════════════════════════════════════════════════
-   ANIMEAKHIRODAIKY
-   © 2026 AnimeAkihiroDaiky — Todos los derechos reservados
-   ════════════════════════════════════════════════════════════ */
 console.log('%c ANIMEAKHIRODAIKY ', 'background:#dc143c;color:#fff;font-size:22px;font-weight:bold;padding:10px 20px;border-radius:6px');
 console.log('%c© 2026 AnimeAkihiroDaiky — Todos los derechos reservados', 'color:#d4af37;font-size:13px');
-console.log('%c🔗 https://github.com/akihiromanwha', 'color:#dc143c;font-size:13px');
-
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('keydown', e => {
   if (e.key === 'F12' ||
       (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
-      (e.ctrlKey && e.key.toLowerCase() === 'u')){
-    e.preventDefault();
-  }
+      (e.ctrlKey && e.key.toLowerCase() === 'u')){ e.preventDefault(); }
 });
-
-window._firma = "ANIMEAKHIRODAIKY-2026-BY-AKIHIROMANWHA";
 </script>
 
-<!-- Service Worker -->
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
