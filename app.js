@@ -1,7 +1,6 @@
 /* ════════════════════════════════════════════════════════════
    AKIHIRODAIKYANIME — app.js
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
-   GitHub: https://github.com/akihiromanwha
    ════════════════════════════════════════════════════════════ */
 
 const searchInput = document.getElementById('searchInput');
@@ -54,19 +53,11 @@ function addToHistory(title, ep, cover){
   saveHistory(h);
   renderHistory();
 }
-function clearHistory(){
-  localStorage.removeItem('anime_history');
-  renderHistory();
-}
-function getSeen(){
-  try { return JSON.parse(localStorage.getItem('anime_seen') || '{}'); }
-  catch(e){ return {}; }
-}
+function clearHistory(){ localStorage.removeItem('anime_history'); renderHistory(); }
+
+function getSeen(){ try { return JSON.parse(localStorage.getItem('anime_seen') || '{}'); } catch(e){ return {}; } }
 function saveSeen(obj){ localStorage.setItem('anime_seen', JSON.stringify(obj)); }
-function isSeen(title, ep){
-  const s = getSeen();
-  return !!(s[title] && s[title].includes(String(ep)));
-}
+function isSeen(title, ep){ const s = getSeen(); return !!(s[title] && s[title].includes(String(ep))); }
 function markAsSeen(title, ep){
   const s = getSeen();
   if (!s[title]) s[title] = [];
@@ -74,14 +65,8 @@ function markAsSeen(title, ep){
   if (!s[title].includes(num)) s[title].push(num);
   saveSeen(s);
 }
-function totalSeenCount(){
-  const s = getSeen();
-  return Object.values(s).reduce((acc, arr) => acc + arr.length, 0);
-}
-function clearSeen(){
-  localStorage.removeItem('anime_seen');
-  updateSeenCount();
-}
+function totalSeenCount(){ const s = getSeen(); return Object.values(s).reduce((acc, arr) => acc + arr.length, 0); }
+function clearSeen(){ localStorage.removeItem('anime_seen'); updateSeenCount(); }
 
 function renderHistory(){
   const section = document.getElementById('historySection');
@@ -208,6 +193,23 @@ const LINKS = {
     "Temporada 2": { "Drive": { "1": "AQUI_LINK_T2_EP1" } },
     "Temporada 3": { "Drive": { "1": "AQUI_LINK_T3_EP1" } },
     "Temporada 4": { "Drive": { "1": "AQUI_LINK_T4_EP1" } }
+  },
+  "Horimiya": {
+    "Drive": {
+      "1": "https://drive.google.com/file/d/11xNBnyOt9xJ9LJQyTgTZKMVvX_4AUofo/preview",
+      "2": "https://drive.google.com/file/d/1lUFHpg9jpbHvQVw9cXmdHhMVCb1FagEL/preview",
+      "3": "https://drive.google.com/file/d/1ua30nEgf6SZ3PnMiBsYH2KnHmDX6lzR7/preview",
+      "4": "https://drive.google.com/file/d/18RkpoyB53R_eEtgKx7YlRynus1fdGC1f/preview",
+      "5": "https://drive.google.com/file/d/1cKYL0Eq2cTolln44EjNkn1rVjLixSJ4S/preview",
+      "6": "https://drive.google.com/file/d/1VNbfYSyXDEpfyGGWiwGM-QSZ8VAnXDTk/preview",
+      "7": "https://drive.google.com/file/d/1eUn0ENkqj-O8_uzaE-dgdvvIc3rwZ-YB/preview",
+      "8": "https://drive.google.com/file/d/1s1OA-rusNjgGCNi-svV6bswUOFswV-N4/preview",
+      "9": "https://drive.google.com/file/d/1TX_niD-PqdFKpMKD-cUiRv5t-lhPEcVp/preview",
+      "10": "https://drive.google.com/file/d/1ppciAbFdWAsICvPNB1d1C2LpHNN9bwln/preview",
+      "11": "https://drive.google.com/file/d/1s8BdH6kytcTyB0rrcE7QAN7OLq0pmTFu/preview",
+      "12": "https://drive.google.com/file/d/1AUUNJe-zd2npfcn5bbz0nw5zvkDjx3tv/preview",
+      "13": "https://drive.google.com/file/d/1YVBrKSYu1GhGmGWUHBz6-R0KGkoAfCpS/preview"
+    }
   }
 };
 
@@ -225,12 +227,8 @@ function serverIcon(name){
 }
 
 /* ═══ Utilidades ═══ */
-function normalize(s){
-  return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
-}
-function esc(s){
-  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+function normalize(s){ return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }
+function esc(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function getAnimeLinks(title){
   if (!title) return null;
   if (LINKS[title]) return LINKS[title];
@@ -240,57 +238,23 @@ function getAnimeLinks(title){
   }
   return null;
 }
-function parseScore(s){
-  const n = parseFloat(s);
-  return isNaN(n) ? 0 : n;
-}
+function parseScore(s){ const n = parseFloat(s); return isNaN(n) ? 0 : n; }
 
-/* ═══ Catálogos ═══ */
+/* ═══ Catálogos (SOLO los que tienen LINKS) ═══ */
 const CUSTOM_SERIES = [
-  { title: "Blue Exorcist", genres: ["Action","Supernatural","Fantasy"], episodes: 27, score: "7.8", year: 2024, cover: "https://img.anili.st/media/9919" },
-  { title: "Overlord", genres: ["Action","Adventure","Fantasy"], episodes: 52, score: "8.0", year: 2015, cover: "https://img.anili.st/media/20832" },
   { title: "Blood Lad", genres: ["Action","Comedy","Supernatural"], episodes: 10, score: "7.3", year: 2013, cover: "https://img.anili.st/media/11633" },
-  { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "7.3", year: 2020, cover: "https://img.anili.st/media/114753" },
   { title: "The Seven Deadly Sins", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "8.1", year: 2014, cover: "https://img.anili.st/media/20789" },
   { title: "Jujutsu Kaisen", genres: ["Action","Fantasy","Supernatural"], episodes: 24, score: "8.6", year: 2020, cover: "https://img.anili.st/media/113415" },
   { title: "DanMachi", genres: ["Action","Adventure","Fantasy","Romance"], episodes: 59, score: "7.6", year: 2015, cover: "https://img.anili.st/media/20920" },
-  { title: "Ranma 1/2", genres: ["Comedy","Romance","Action"], episodes: 161, score: "7.7", year: 1989, cover: "https://img.anili.st/media/210" },
-  { title: "Bleach", genres: ["Action","Adventure","Supernatural"], episodes: 366, score: "7.9", year: 2004, cover: "https://img.anili.st/media/269" },
-  { title: "Inuyasha", genres: ["Action","Adventure","Romance"], episodes: 167, score: "7.6", year: 2000, cover: "https://img.anili.st/media/249" },
-  { title: "Hunter x Hunter", genres: ["Action","Adventure","Fantasy"], episodes: 148, score: "9.0", year: 2011, cover: "https://img.anili.st/media/11061" },
-  { title: "Fullmetal Alchemist: Brotherhood", genres: ["Action","Adventure","Drama"], episodes: 64, score: "9.1", year: 2009, cover: "https://img.anili.st/media/5114" },
-  { title: "Death Note", genres: ["Mystery","Psychological","Thriller"], episodes: 37, score: "8.6", year: 2006, cover: "https://img.anili.st/media/1535" },
-  { title: "Tokyo Ghoul", genres: ["Action","Horror","Supernatural"], episodes: 12, score: "7.8", year: 2014, cover: "https://img.anili.st/media/20605" }
+  { title: "Horimiya", genres: ["Comedy","Romance","Slice of Life"], episodes: 13, score: "8.2", year: 2021, cover: "https://img.anili.st/media/124194" }
 ];
 
-const CUSTOM_MOVIES = [
-  { title: "Jujutsu Kaisen 0", genres: ["Action","Fantasy","Supernatural"], episodes: 1, score: "8.4", year: 2021, cover: "https://img.anili.st/media/131573" },
-  { title: "Demon Slayer: Mugen Train", genres: ["Action","Fantasy","Supernatural"], episodes: 1, score: "8.6", year: 2020, cover: "https://img.anili.st/media/112151" },
-  { title: "Your Name", genres: ["Romance","Drama","Supernatural"], episodes: 1, score: "8.7", year: 2016, cover: "https://img.anili.st/media/21519" },
-  { title: "A Silent Voice", genres: ["Drama","Romance"], episodes: 1, score: "8.9", year: 2016, cover: "https://img.anili.st/media/20954" },
-  { title: "Weathering with You", genres: ["Romance","Drama","Supernatural"], episodes: 1, score: "8.3", year: 2019, cover: "https://img.anili.st/media/106286" },
-  { title: "Spirited Away", genres: ["Adventure","Fantasy","Family"], episodes: 1, score: "8.8", year: 2001, cover: "https://img.anili.st/media/199" },
-  { title: "Princess Mononoke", genres: ["Action","Adventure","Fantasy"], episodes: 1, score: "8.7", year: 1997, cover: "https://img.anili.st/media/164" },
-  { title: "Howl's Moving Castle", genres: ["Adventure","Fantasy","Romance"], episodes: 1, score: "8.7", year: 2004, cover: "https://img.anili.st/media/431" },
-  { title: "My Neighbor Totoro", genres: ["Adventure","Fantasy","Family"], episodes: 1, score: "8.3", year: 1988, cover: "https://img.anili.st/media/523" },
-  { title: "Akira", genres: ["Action","Sci-Fi","Supernatural"], episodes: 1, score: "8.2", year: 1988, cover: "https://img.anili.st/media/47" },
-  { title: "Ghost in the Shell", genres: ["Action","Sci-Fi","Psychological"], episodes: 1, score: "8.3", year: 1995, cover: "https://img.anili.st/media/43" },
-  { title: "Perfect Blue", genres: ["Psychological","Thriller","Drama"], episodes: 1, score: "8.7", year: 1998, cover: "https://img.anili.st/media/437" },
-  { title: "Paprika", genres: ["Sci-Fi","Psychological","Thriller"], episodes: 1, score: "8.4", year: 2006, cover: "https://img.anili.st/media/1943" },
-  { title: "The Girl Who Leapt Through Time", genres: ["Romance","Sci-Fi","Drama"], episodes: 1, score: "8.5", year: 2006, cover: "https://img.anili.st/media/2236" },
-  { title: "Wolf Children", genres: ["Drama","Fantasy","Family"], episodes: 1, score: "8.6", year: 2012, cover: "https://img.anili.st/media/12355" }
-];
+const CUSTOM_MOVIES = []; // Películas vacías por ahora
 
-let catalogSeries = [];
-let catalogMovies = [];
-let catalogAll = [];
-let catalog = [];
-
-const fallback = [
-  {title:'Naruto',genres:['Action','Adventure'],episodes:220,score:8.1,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20-9zXJ6z0g7n8R.jpg'},
-  {title:'One Piece',genres:['Action','Adventure'],episodes:1100,score:8.7,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-0pQwJfYc7m9L.jpg'},
-  {title:'Attack on Titan',genres:['Action','Drama'],episodes:89,score:9.0,cover:'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-8mQ2vR6sK1pL.jpg'}
-];
+let catalogSeries = [...CUSTOM_SERIES];
+let catalogMovies = [...CUSTOM_MOVIES];
+let catalogAll = [...catalogSeries, ...catalogMovies];
+let catalog = [...catalogSeries];
 
 /* ═══ Render ═══ */
 function render(list){
@@ -524,15 +488,10 @@ const saveProfile = document.getElementById('saveProfile');
 const themeState = document.getElementById('themeState');
 const seenCountEl = document.getElementById('seenCount');
 
-function updateSeenCount(){
-  if (seenCountEl) seenCountEl.textContent = totalSeenCount();
-}
+function updateSeenCount(){ if (seenCountEl) seenCountEl.textContent = totalSeenCount(); }
 const savedName = localStorage.getItem('anime_name') || '';
-if (savedName){
-  profileName.textContent = savedName;
-  profileNameInput.value = savedName;
-  profileBtn.textContent = savedName.charAt(0).toUpperCase();
-}
+if (savedName){ profileName.textContent = savedName; profileNameInput.value = savedName; profileBtn.textContent = savedName.charAt(0).toUpperCase(); }
+
 profileBtn.onclick = () => {
   profileNameInput.value = profileName.textContent === 'Invitado' ? '' : profileName.textContent;
   themeState.textContent = document.body.classList.contains('light') ? 'Claro' : 'Oscuro';
@@ -582,81 +541,9 @@ genreFilter.addEventListener('change', applyFilters);
 if (sortFilter) sortFilter.addEventListener('change', applyFilters);
 document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
-/* ═══ Cargar catálogo ═══ */
-async function loadCatalog(){
-  statusEl.textContent = 'Cargando catálogo...';
-  try {
-    // SERIES
-    const querySeries = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, format_not: MOVIE, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore seasonYear coverImage { large } } } }`;
-    const seriesTodas = [];
-    for (const p of [1, 2]){
-      const res = await fetch('https://graphql.anilist.co', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: querySeries, variables: { page: p } })
-      });
-      const data = await res.json();
-      seriesTodas.push(...(data?.data?.Page?.media || []));
-      await new Promise(r => setTimeout(r, 700));
-    }
-    catalogSeries = seriesTodas.map(x => ({
-      title: x.title?.english || x.title?.romaji || x.title?.native || 'Anime',
-      genres: x.genres || [],
-      episodes: x.episodes || 0,
-      score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
-      year: x.seasonYear || null,
-      cover: x.coverImage?.large || ''
-    })).filter(x => x.title);
-    catalogSeries = [...CUSTOM_SERIES, ...catalogSeries];
-    const vistoS = new Set();
-    catalogSeries = catalogSeries.filter(a => {
-      if (vistoS.has(a.title)) return false;
-      vistoS.add(a.title);
-      return true;
-    });
-
-    // MOVIES
-    const queryMovies = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, format: MOVIE, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore seasonYear coverImage { large } } } }`;
-    const moviesTodas = [];
-    for (const p of [1, 2]){
-      const res = await fetch('https://graphql.anilist.co', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: queryMovies, variables: { page: p } })
-      });
-      const data = await res.json();
-      moviesTodas.push(...(data?.data?.Page?.media || []));
-      await new Promise(r => setTimeout(r, 700));
-    }
-    let deAniList = moviesTodas.map(x => ({
-      title: x.title?.english || x.title?.romaji || x.title?.native || 'Película',
-      genres: x.genres || [],
-      episodes: 1,
-      score: x.averageScore ? (x.averageScore/10).toFixed(1) : '—',
-      year: x.seasonYear || null,
-      cover: x.coverImage?.large || ''
-    })).filter(x => x.title);
-
-    catalogMovies = [...CUSTOM_MOVIES, ...deAniList];
-    const vistoM = new Set();
-    catalogMovies = catalogMovies.filter(a => {
-      if (vistoM.has(a.title)) return false;
-      vistoM.add(a.title);
-      return true;
-    });
-
-    catalogAll = [...catalogSeries, ...catalogMovies];
-    catalog = catalogSeries;
-
-  } catch(e) {
-    console.error('Error:', e);
-    catalogSeries = [...CUSTOM_SERIES, ...fallback];
-    catalogMovies = [...CUSTOM_MOVIES];
-    catalogAll = [...catalogSeries, ...catalogMovies];
-    catalog = catalogSeries;
-    statusEl.textContent = 'Catálogo de respaldo cargado.';
-  }
-
+/* ═══ Cargar catálogo (SIN ANILIST) ═══ */
+function loadCatalog(){
+  statusEl.textContent = `Catálogo cargado: ${catalogAll.length} títulos disponibles.`;
   fillGenres();
   applyFilters();
   renderHistory();
