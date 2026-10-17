@@ -83,7 +83,6 @@ function clearSeen(){
   updateSeenCount();
 }
 
-/* ═══ Historial ═══ */
 function renderHistory(){
   const section = document.getElementById('historySection');
   const grid = document.getElementById('historyGrid');
@@ -110,7 +109,7 @@ function renderHistory(){
   });
 }
 
-/* ═══ Próximos a subir ═══ */
+/* ═══ Próximos ═══ */
 const SOON_ANIME = [
   { title: "Sword Art Online", cover: "https://img.anili.st/media/11757", note: "Próximamente" },
   { title: "Tokyo Ghoul", cover: "https://img.anili.st/media/20605", note: "Próximamente" },
@@ -118,7 +117,7 @@ const SOON_ANIME = [
   { title: "Noragami", cover: "https://img.anili.st/media/20447", note: "Próximamente" }
 ];
 
-/* ═══ LINKS ═══ */
+/* ═══ LINKS MANUALES ═══ */
 const LINKS = {
   "Blood Lad": {
     "Terabox": {
@@ -476,8 +475,6 @@ function openAnime(a){
           </div>
           <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
         player.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      } else if (link.includes('terabox.com') || link.includes('1024terabox.com')){
-        window.open(link, '_blank', 'noopener');
       } else {
         window.open(link, '_blank', 'noopener');
       }
@@ -589,7 +586,7 @@ document.getElementById('themeBtn').onclick = () => { document.body.classList.to
 async function loadCatalog(){
   statusEl.textContent = 'Cargando catálogo...';
   try {
-    // ═══ SERIES ═══
+    // SERIES
     const querySeries = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, format_not: MOVIE, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore seasonYear coverImage { large } } } }`;
     const seriesTodas = [];
     for (const p of [1, 2]){
@@ -618,7 +615,7 @@ async function loadCatalog(){
       return true;
     });
 
-    // ═══ PELÍCULAS ═══
+    // MOVIES
     const queryMovies = `query ($page: Int) { Page(page: $page, perPage: 50) { media(type: ANIME, format: MOVIE, sort: POPULARITY_DESC) { id title { romaji english native } genres episodes averageScore seasonYear coverImage { large } } } }`;
     const moviesTodas = [];
     for (const p of [1, 2]){
