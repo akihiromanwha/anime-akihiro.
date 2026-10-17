@@ -210,6 +210,52 @@ const LINKS = {
       "12": "https://drive.google.com/file/d/1AUUNJe-zd2npfcn5bbz0nw5zvkDjx3tv/preview",
       "13": "https://drive.google.com/file/d/1YVBrKSYu1GhGmGWUHBz6-R0KGkoAfCpS/preview"
     }
+  },
+  "100-man no Inochi no Ue ni Ore wa Tatteiru": {
+    "Temporada 1": {
+      "Drive": {
+        "1": "https://drive.google.com/file/d/1fgplV-Qu9xlefull-taHRPpulcOi2x35/preview",
+        "2": "https://drive.google.com/file/d/19IStDjFCeM4VrM35rVl418-zOo2THWgW/preview",
+        "3": "https://drive.google.com/file/d/1jipTAs64m0FKK7Mzpr-I2UAgAiPAZ4Jk/preview",
+        "4": "https://drive.google.com/file/d/19i8yh7pv594qlaBizQGiWGRcRM41en5Q/preview",
+        "5": "https://drive.google.com/file/d/14JaLjg5adtZ8xY6sUxEyPqEcPH5c3ToL/preview",
+        "6": "https://drive.google.com/file/d/19f6VCWgbNCQWT5iZtoEcJFdclrxulHq9/preview",
+        "7": "https://drive.google.com/file/d/1fUNhCeWVm0Oj2jwKZO-m37XPsbMmW6eO/preview",
+        "8": "https://drive.google.com/file/d/1TKogv2K0N-iQfG8QGcKMBdf7FbM9Zn3u/preview",
+        "9": "https://drive.google.com/file/d/1ufI3wqsI_a-2i_VJ1fFnlrFlDZeq0p9x/preview",
+        "10": "https://drive.google.com/file/d/1GqSPdjEtu_o-NhxK5VrpzYfEBzGYdMgI/preview",
+        "11": "https://drive.google.com/file/d/1ewZym3UYeGAhRJ5zLgp2NOKGj-kLSogJ/preview",
+        "12": "https://drive.google.com/file/d/1FkC4aQLz14ggEiXD-2YGP4MLwcbGAJ-k/preview"
+      }
+    },
+    "Temporada 2": {
+      "Drive": {
+        "1": "https://drive.google.com/file/d/1z_gJgNR0lOXYDbdoBAiUrA9S2pjnFlku/preview",
+        "2": "https://drive.google.com/file/d/1yZCIu5gnBEqgkm0yzDvtjNPBqx8gqGPu/preview",
+        "3": "https://drive.google.com/file/d/18CvdjQmVfBmxrLApHZlNeA7F5Z4FI2cx/preview",
+        "4": "https://drive.google.com/file/d/16YMeb-8BbfJPXQJZsRu068dvgZ3WoHV7/preview",
+        "5": "https://drive.google.com/file/d/1rbVbG0vLXAUfS0ofaHMeTsxgffsvzT6E/preview",
+        "6": "https://drive.google.com/file/d/11lU1aF4ERPMj5r00gamE-P5vsVug4kcv/preview",
+        "7": "https://drive.google.com/file/d/1LQ3eBEDoToSNH7W2hr37R_vHynO7aa8F/preview",
+        "8": "https://drive.google.com/file/d/1whvdEeeaNc23meHRb9iEqNgWtsVP2Nr9/preview",
+        "9": "https://drive.google.com/file/d/1v8O2Wd9y1cIXB1WLNHfvxXDOKN87jMYu/preview",
+        "10": "https://drive.google.com/file/d/11bk9dSnIneWXWkguyizvoY0MW-k5Kpd9/preview",
+        "11": "https://drive.google.com/file/d/19Br7KUYubwakyOF3mfx5qdH4XI4Evbt4/preview",
+        "12": "https://drive.google.com/file/d/1FTYvjGluL6AIyjAf5k5Ue0f5kZoXwmQg/preview",
+        "13": "https://drive.google.com/file/d/1ihqn2XF9BWKPuHk77VFXnA2mncQ7daA6/preview",
+        "14": "https://drive.google.com/file/d/12og301d0ZxigsDRO9fxYCLV7NXCBFJh_/preview",
+        "15": "https://drive.google.com/file/d/12ouUgwKB7m853Zpcc-Qfg1ZHJpbEBIg4/preview",
+        "16": "https://drive.google.com/file/d/1zGFa8yuZSTB3cVUPh7iXjqBHRWe8y2Wh/preview",
+        "17": "https://drive.google.com/file/d/17onpEsd9xOjY_bKTrfno9vXu-6_2d0VZ/preview",
+        "18": "https://drive.google.com/file/d/1yKhTysDNoMP-3MGCc8alfgr2Y6Ynr6q4/preview",
+        "19": "https://drive.google.com/file/d/1g_QjlSl57-6xQe3MGlLIU5wb_0F0XwEK/preview",
+        "20": "https://drive.google.com/file/d/1vi6VVWBNKnIqQo6ksqZGSmDqb4AIku4e/preview",
+        "21": "https://drive.google.com/file/d/1mrgIcBcgDrQz1gnJzgL8FBtUXeqnT2w1/preview",
+        "22": "https://drive.google.com/file/d/1SNCcuymlHJikQnIOh8PkNoGZbAxjw4vb/preview",
+        "23": "https://drive.google.com/file/d/1K4szfwHskOj12X_C2gd7zx7R-UwcDY-X/preview",
+        "24": "https://drive.google.com/file/d/12ZEGdkTh7rqrRPnKzTCJY33Ph5KBHdJH/preview"
+      }
+    }
   }
 };
 
@@ -246,7 +292,8 @@ const CUSTOM_SERIES = [
   { title: "The Seven Deadly Sins", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "8.1", year: 2014, cover: "https://img.anili.st/media/20789" },
   { title: "Jujutsu Kaisen", genres: ["Action","Fantasy","Supernatural"], episodes: 24, score: "8.6", year: 2020, cover: "https://img.anili.st/media/113415" },
   { title: "DanMachi", genres: ["Action","Adventure","Fantasy","Romance"], episodes: 59, score: "7.6", year: 2015, cover: "https://img.anili.st/media/20920" },
-  { title: "Horimiya", genres: ["Comedy","Romance","Slice of Life"], episodes: 13, score: "8.2", year: 2021, cover: "https://img.anili.st/media/124194" }
+  { title: "Horimiya", genres: ["Comedy","Romance","Slice of Life"], episodes: 13, score: "8.2", year: 2021, cover: "https://img.anili.st/media/124194" },
+  { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy","Drama"], episodes: 36, score: "7.3", year: 2020, cover: "https://img.anili.st/media/114753" }
 ];
 
 const CUSTOM_MOVIES = []; // Películas vacías por ahora
