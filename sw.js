@@ -1,9 +1,4 @@
-/* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — Service Worker
-   © 2026 AkihiroDaikyAnime — Todos los derechos reservados
-   ════════════════════════════════════════════════════════════ */
-
-const CACHE_NAME = 'akihiro-v16';
+const CACHE_NAME = 'akihiro-v17';
 const URLS_TO_CACHE = [
   './',
   './index.html',
