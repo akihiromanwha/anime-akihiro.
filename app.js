@@ -96,7 +96,6 @@ function renderHistory(){
 
 /* ═══ Próximos ═══ */
 const SOON_ANIME = [
-  { title: "Sword Art Online", cover: "https://img.anili.st/media/11757", note: "Próximamente" },
   { title: "Tokyo Ghoul", cover: "https://img.anili.st/media/20605", note: "Próximamente" },
   { title: "Attack on Titan", cover: "https://img.anili.st/media/16498", note: "Próximamente" },
   { title: "Noragami", cover: "https://img.anili.st/media/20447", note: "Próximamente" }
@@ -256,6 +255,37 @@ const LINKS = {
         "24": "https://drive.google.com/file/d/12ZEGdkTh7rqrRPnKzTCJY33Ph5KBHdJH/preview"
       }
     }
+  },
+  "Sword Art Online": {
+    "Temporada 2": {
+      "Drive": {
+        "1": "https://drive.google.com/file/d/1KPI_liqMdCyCYakONQH1xR2Z5E-O6VbV/preview",
+        "2": "https://drive.google.com/file/d/1hxqTpmFQKaAEmPxqBkYBPBbxAoQYWXZq/preview",
+        "3": "https://drive.google.com/file/d/1wCag274hU5y4tqwFFe26QdOBQ3fOVX1D/preview",
+        "4": "https://drive.google.com/file/d/18He5dCq4Uy0_-sbBAOKRb1hFOmsgbwMM/preview",
+        "5": "https://drive.google.com/file/d/1D6eEp_wimApDVP_3wHX_VtkKiA9Jmk3V/preview",
+        "6": "https://drive.google.com/file/d/1E05xmz_8gJj8qSN8d7rnHWyCmiD_OLTI/preview",
+        "7": "https://drive.google.com/file/d/16-h87O-Ai-_ntzkQgv6nLxnWieYlXDl8/preview",
+        "8": "https://drive.google.com/file/d/1pazAuJdFDQ9-LX0kWe4b08JFDlpHeP8U/preview",
+        "9": "https://drive.google.com/file/d/1g9WnKBbbe2Bp5xXPa4tGT4Ws5uzloz78/preview",
+        "10": "https://drive.google.com/file/d/1Ro4AAf_oF62AI9zSDOvhIXe1RwKw60pd/preview",
+        "11": "https://drive.google.com/file/d/1apfS5KvQB7-yRovtfpVotR_S408KKdT_/preview",
+        "12": "https://drive.google.com/file/d/1QZMzktuonJFgk-fLNJ71QCl65Ao83ebG/preview",
+        "13": "https://drive.google.com/file/d/1zHpN3OfUTfRikyiFYwl88wjpLea07LpK/preview",
+        "14": "https://drive.google.com/file/d/10YB7k6lEzqI0kJFBtY1vlhWdpBQGmv9f/preview",
+        "15": "https://drive.google.com/file/d/1lADilLTzxeWtS7GzJQEFGFzJA5OiKHzi/preview",
+        "16": "https://drive.google.com/file/d/1ODlizl7EsytMDRbnkfYA7K6bJ-W7kenX/preview",
+        "17": "https://drive.google.com/file/d/1SKqHom5RQ7TMa-zgGmvjXje17mtLBLx3/preview",
+        "18": "https://drive.google.com/file/d/1rz0uiydoc_HFiJI5dDj3H2LTk7i4a96-/preview",
+        "19": "https://drive.google.com/file/d/1ShiroVx_0i1AI_U_eM1bMSv7CokLVL53/preview",
+        "20": "https://drive.google.com/file/d/1PFIsU3uoJtUOnLESTFa7vn5n4UGhG9kY/preview",
+        "21": "https://drive.google.com/file/d/1VJB1npIS6m-jqwT0asWSJ8AMw1KL4dSG/preview",
+        "22": "https://drive.google.com/file/d/1Gzmonh_pgjLLFmNDTHNLtEISyjPdtiM8/preview",
+        "23": "https://drive.google.com/file/d/1Yg5kfcmBqGdysuQmZG-c-MdE93w0sYFb/preview",
+        "24": "https://drive.google.com/file/d/1SeOB_gRO02JTUGudbQAjKrkj0KF9XFTk/preview",
+        "25": "https://drive.google.com/file/d/1d1g3PsahhvnTuN1LJI1j4sLxnEf8uKvi/preview"
+      }
+    }
   }
 };
 
@@ -293,7 +323,8 @@ const CUSTOM_SERIES = [
   { title: "Jujutsu Kaisen", genres: ["Action","Fantasy","Supernatural"], episodes: 24, score: "8.6", year: 2020, cover: "https://img.anili.st/media/113415" },
   { title: "DanMachi", genres: ["Action","Adventure","Fantasy","Romance"], episodes: 59, score: "7.6", year: 2015, cover: "https://img.anili.st/media/20920" },
   { title: "Horimiya", genres: ["Comedy","Romance","Slice of Life"], episodes: 13, score: "8.2", year: 2021, cover: "https://img.anili.st/media/124194" },
-  { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy","Drama"], episodes: 36, score: "7.3", year: 2020, cover: "https://img.anili.st/media/114753" }
+  { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy","Drama"], episodes: 36, score: "7.3", year: 2020, cover: "https://img.anili.st/media/114753" },
+  { title: "Sword Art Online", genres: ["Action","Adventure","Fantasy","Romance"], episodes: 25, score: "7.5", year: 2014, cover: "https://img.anili.st/media/20507" }
 ];
 
 const CUSTOM_MOVIES = []; // Películas vacías por ahora
