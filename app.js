@@ -257,6 +257,36 @@ const LINKS = {
     }
   },
   "Sword Art Online": {
+    "Temporada 1": {
+      "Drive": {
+        "1": "https://drive.google.com/file/d/1LwDM_3phBwONtpap9FEzai5uNpus09OV/preview",
+        "2": "https://drive.google.com/file/d/1NiqgbvHoVmdgBzF9_xU3wGuHzIjipgEq/preview",
+        "3": "https://drive.google.com/file/d/15jgY4Nj_y0relL5OYB2HXXU7iMdLCxm6/preview",
+        "4": "https://drive.google.com/file/d/1bAatZ-UVbVHDUrfFC8HCan3Wr6V6-qUm/preview",
+        "5": "https://drive.google.com/file/d/1o0rKitZONARPIdYdJb0faOlfB0-c9B5m/preview",
+        "6": "https://drive.google.com/file/d/1ij3OcSM8m349H56JGlwAl8sfUubkac8p/preview",
+        "7": "https://drive.google.com/file/d/1w4-zmkTgTLdyrkPqCJq_CtnlgeyxXOzD/preview",
+        "8": "https://drive.google.com/file/d/1XSf7QIollSJe6Y_U5xjbNPzAhJqOug4I/preview",
+        "9": "https://drive.google.com/file/d/1Ne10wyullOjW9RGEkkqYi7CQbO_J8_aY/preview",
+        "10": "https://drive.google.com/file/d/18u8ve_ZFL4cnaPLgU4ugim8DUrIEv1le/preview",
+        "11": "https://drive.google.com/file/d/1ufNNp5C3YaSj1GeZOqGuDyeohhBSbaye/preview",
+        "12": "https://drive.google.com/file/d/1lxTxqMMfAYxsUOzMgdi6GMuL0wQv1GnS/preview",
+        "13": "https://drive.google.com/file/d/19zDIZWzTL4fguS1ci9v7DK8ApsEzD5sF/preview",
+        "14": "https://drive.google.com/file/d/1mqMmDX4iv_C6njiB5YBwrzN912fJCoct/preview",
+        "15": "https://drive.google.com/file/d/1f9O6tjYv_d8adu6EruBI0ZffGDM0sa-K/preview",
+        "16": "https://drive.google.com/file/d/1WgvntQ1ZGo4F9pfIpkWZfd871WzuarHH/preview",
+        "17": "https://drive.google.com/file/d/1sDfl4PMlshChy8M-60PSRFQket3eocHf/preview",
+        "18": "https://drive.google.com/file/d/1SX8yzVVpe0Yal6Cbx8I1I6vr73A-ZrfW/preview",
+        "19": "https://drive.google.com/file/d/1klaGbyQfil6UzstnTnYgyNQ9xkSpGtRU/preview",
+        "20": "https://drive.google.com/file/d/1u5TKQx9zlU8j_-RDvCyN47Hz0putUI1-/preview",
+        "21": "https://drive.google.com/file/d/1ZS305PQ7laS8HGcQAYA1x1CCPE_QRyRo/preview",
+        "22": "https://drive.google.com/file/d/1nLAFptZWp_BBc_lJklJZj-5aOo70tvcs/preview",
+        "23": "https://drive.google.com/file/d/1BAKYcisM1YB1_B4oTb-gQvRMHsxw5XRq/preview",
+        "24": "https://drive.google.com/file/d/1HPL3UZwfkQ0kvvWLMOPq9-l48tfvah3i/preview",
+        "25": "https://drive.google.com/file/d/1n1c7CyBLsHdmgStZcPIcYmMFs9QVVySV/preview",
+        "26": "https://drive.google.com/file/d/1zFioyA2TF8dPkvvN1cCnuDDKfUQehLqc/preview"
+      }
+    },
     "Temporada 2": {
       "Drive": {
         "1": "https://drive.google.com/file/d/1KPI_liqMdCyCYakONQH1xR2Z5E-O6VbV/preview",
@@ -324,7 +354,7 @@ const CUSTOM_SERIES = [
   { title: "DanMachi", genres: ["Action","Adventure","Fantasy","Romance"], episodes: 59, score: "7.6", year: 2015, cover: "https://img.anili.st/media/20920" },
   { title: "Horimiya", genres: ["Comedy","Romance","Slice of Life"], episodes: 13, score: "8.2", year: 2021, cover: "https://img.anili.st/media/124194" },
   { title: "100-man no Inochi no Ue ni Ore wa Tatteiru", genres: ["Action","Adventure","Fantasy","Drama"], episodes: 36, score: "7.3", year: 2020, cover: "https://img.anili.st/media/114753" },
-  { title: "Sword Art Online", genres: ["Action","Adventure","Fantasy","Romance"], episodes: 25, score: "7.5", year: 2014, cover: "https://img.anili.st/media/20507" }
+  { title: "Sword Art Online", genres: ["Action","Adventure","Fantasy","Romance"], episodes: 51, score: "7.5", year: 2012, cover: "https://img.anili.st/media/20507" }
 ];
 
 const CUSTOM_MOVIES = []; // Películas vacías por ahora
