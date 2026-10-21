@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v4.2 (Kuhi API Conectada)
+   AKIHIRODAIKYANIME — app.js v4.3 (Kuhi API Corregida)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -609,7 +609,7 @@ async function openAnime(a){
 
     if (episodesList.length === 0) throw new Error('Sin episodios');
 
-    // 3. Renderizar UI de episodios
+    // 3. Renderizar UI de episodios (AQUÍ ESTÁ EL ARREGLO)
     modalContent.innerHTML = `
       <div class="playerTopBar">
         <span class="playerIcon">🎬</span>
@@ -626,11 +626,14 @@ async function openAnime(a){
         </div>
         <p class="sectionTitle">Episodios</p>
         <div class="episodes" id="episodesBox">
-          ${episodesList.map(ep => `
-            <button class="episode" data-ep-num="${ep}">
-              ${ep}
-            </button>
-          `).join('')}
+          ${episodesList.map(ep => {
+            const num = ep.number || ep.episode || ep;
+            return `
+              <button class="episode" data-ep-num="${num}">
+                ${num}
+              </button>
+            `;
+          }).join('')}
         </div>
         <div id="playerBox"></div>
       </div>`;
