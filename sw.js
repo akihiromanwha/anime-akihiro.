@@ -1,4 +1,4 @@
-const CACHE_NAME = 'akihiro-v17';
+const CACHE_NAME = 'akihiro-v22';
 const URLS_TO_CACHE = [
   './',
   './index.html',
