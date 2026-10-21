@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v6.1 (Catálogo + Proxy CORS)
+   AKIHIRODAIKYANIME — app.js v7.0 (Series + Películas)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -13,7 +13,6 @@ const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
 let currentType = 'series';
-let currentPage = 1; 
 
 /* ═══ TU API PRIVADA (Kuhi en Render) ═══ */
 const API_URL = 'https://anime-api-tjzy.onrender.com';
@@ -83,7 +82,7 @@ function renderHistory(){
         <img src="${esc(cover)}" alt="" onerror="this.style.display='none'">
         <div class="historyInfo">
           <div class="historyTitle">${esc(item.title)}</div>
-          <div class="historyEp">Episodio ${esc(item.ep)}</div>
+          <div class="historyEp">${item.ep === 'Película' ? 'Película' : 'Episodio ' + esc(item.ep)}</div>
         </div>
       </div>`;
   }).join('');
@@ -161,14 +160,17 @@ let catalog = [...catalogSeries];
 function render(list){
   animeGrid.innerHTML = '';
   if(!list.length){
-    animeGrid.innerHTML = '<p style="padding:1rem;color:#a0a0a0;">No encontramos ese título.</p>';
+    animeGrid.innerHTML = '<p style="padding:1rem;color:#a0a0a0;">No encontramos resultados.</p>';
     return;
   }
   list.forEach((a,i)=>{
     const card = document.createElement('article');
     card.className = 'card';
     const readyBadge = LINKS[a.title] ? `<span class="badgeReady">Listo</span>` : '';
-    const buttonText = a.isApi ? 'Ver episodios' : (currentType === 'movies' ? 'Ver película' : 'Ver episodios');
+    
+    // El texto del botón cambia dependiendo de si es Película o Serie
+    const buttonText = currentType === 'movies' ? 'Ver Película' : 'Ver Episodios';
+    
     card.innerHTML = `
       ${readyBadge}
       <img class="cover" src="${esc(a.cover)}" alt="${esc(a.title)}" onerror="this.style.display='none'">
@@ -193,7 +195,8 @@ function applyFilters(){
     return (!q || text.includes(q)) && (!g || (a.genres||[]).some(x => normalize(x) === g));
   });
 
-  if (filtered.length === 0 && searchInput.value.trim() !== '') {
+  // Si busca algo que no está, muestra opción de buscar en línea
+  if (filtered.length === 0 && searchInput.value.trim() !== '' && currentType === 'series') {
     filtered.push({
       title: searchInput.value.trim(),
       genres: ["Búsqueda", "En línea"],
@@ -370,7 +373,7 @@ async function openAnime(a){
       <span class="playerTitle">${esc(a.title)}</span>
     </div>
     <div class="modalBody" style="text-align:center; padding: 2rem;">
-       <p>Buscando episodios automáticamente...</p>
+       <p>Buscando ${isMovie ? 'película' : 'episodios'} automáticamente...</p>
        <div class="spinner" style="margin:1rem auto; border: 4px solid rgba(255,255,255,.1); border-top-color: var(--accent); border-radius:50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
     </div>
     <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>`;
@@ -415,13 +418,13 @@ async function openAnime(a){
             <p class="infoMeta" style="color:var(--gold);">Fuente: Kuhi API</p>
           </div>
         </div>
-        <p class="sectionTitle">Episodios</p>
+        <p class="sectionTitle">${isMovie ? 'Película' : 'Episodios'}</p>
         <div class="episodes" id="episodesBox">
           ${episodesList.map(ep => {
             const num = ep.number || ep.episode || ep;
             return `
               <button class="episode" data-ep-num="${num}">
-                ${num}
+                ${isMovie ? '▶ Reproducir' : num}
               </button>
             `;
           }).join('')}
@@ -439,7 +442,7 @@ async function openAnime(a){
        playerBox.innerHTML = `<p style="text-align:center; padding:1rem; color:var(--gold);">Cargando video...</p>`;
 
        try {
-         // 🔥 USO DEL NUEVO PROXY (ALLORIGINS) PARA ELUDIR EL BLOQUEO CORS 🔥
+         // 🔥 PROXY ALLORIGINS
          const extractUrl = `${API_URL}/anime/extract/${animeId}?e=${epNum}`;
          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(extractUrl)}`;
          
@@ -456,7 +459,7 @@ async function openAnime(a){
 
          playerBox.innerHTML = `
            <div class="playerHeader">
-             <span>▶ Episodio ${esc(epNum)}</span>
+             <span>▶ ${isMovie ? 'Película' : 'Episodio ' + esc(epNum)}</span>
              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
            </div>
            <video id="plyrPlayer" playsinline controls crossorigin></video>`;
@@ -480,7 +483,7 @@ async function openAnime(a){
            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'pip', 'fullscreen']
          });
 
-         addToHistory(a.title, epNum, a.cover);
+         addToHistory(a.title, isMovie ? 'Película' : epNum, a.cover);
          markAsSeen(a.title, epNum);
          updateSeenCount();
          btn.classList.add('seen');
@@ -507,8 +510,8 @@ async function openAnime(a){
             <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
           </div>
         </div>
-        <p class="sectionTitle">Ver episodios</p>
-        <p class="noLinks">No se encontraron episodios automáticos en la API.<br>Intenta de nuevo más tarde o agrega links manuales.</p>
+        <p class="sectionTitle">Reproducir</p>
+        <p class="noLinks">No se encontraron enlaces automáticos para este título.<br>Intenta de nuevo más tarde o agrega links manuales.</p>
       </div>`;
   }
 }
@@ -570,11 +573,14 @@ document.querySelectorAll('.typeBtn').forEach(btn => {
     document.querySelectorAll('.typeBtn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentType = btn.dataset.type;
-    catalog = currentType === 'movies' ? catalogMovies : catalogSeries;
+    
+    // Limpiar filtros visuales
     genreFilter.innerHTML = '<option value="">Todos los géneros</option>';
-    fillGenres();
     if (sortFilter) sortFilter.value = 'default';
-    applyFilters();
+    searchInput.value = ''; 
+    
+    // Cargar el catálogo dependiendo de lo que se seleccione
+    fetchCatalog(currentType, 1); 
   };
 });
 
@@ -584,18 +590,23 @@ genreFilter.addEventListener('change', applyFilters);
 if (sortFilter) sortFilter.addEventListener('change', applyFilters);
 document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
-/* ═══ CARGAR CATÁLOGO DESDE LA API CON PAGINACIÓN ═══ */
-async function fetchHomeCatalog(page = 1) {
+/* ═══ CARGAR CATÁLOGO (SIRVE PARA SERIES Y PELÍCULAS) ═══ */
+async function fetchCatalog(type = 'series', page = 1) {
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) loadMoreBtn.style.display = 'none';
 
-  statusEl.textContent = page === 1 ? "Cargando catálogo desde la API..." : "Cargando más animes...";
+  statusEl.textContent = page === 1 ? `Cargando ${type === 'movies' ? 'películas' : 'animes'}...` : "Cargando más...";
   
   try {
-    const res = await fetch(`${API_URL}/anime/popular?page=${page}`);
+    // Kuhi API acepta el parámetro "format" para filtrar por TV o MOVIE
+    let endpoint = `${API_URL}/anime/popular?page=${page}`;
+    if (type === 'movies') endpoint += '&format=MOVIE';
+    else if (type === 'series') endpoint += '&format=TV';
+
+    const res = await fetch(endpoint);
     const data = await res.json();
     
-    const apiAnimes = data.results.map(item => {
+    let apiAnimes = data.results.map(item => {
       let titleStr = item.title;
       if (typeof item.title === 'object' && item.title !== null) {
           titleStr = item.title.english || item.title.romaji || item.title.native || "Desconocido";
@@ -615,27 +626,37 @@ async function fetchHomeCatalog(page = 1) {
         genres: item.genres || item.genre || [],
         episodes: item.totalEpisodes || item.episodes || 0,
         score: item.rating || item.score || "—",
-        year: item.releaseDate || item.year || null
+        year: item.releaseDate || item.year || null,
+        format: item.format || item.type || 'TV' // Guardamos el formato que devuelve la API
       };
     });
 
-    if (page === 1) {
-      catalogSeries = [...apiAnimes, ...CUSTOM_SERIES];
+    // FILTRO DE SEGURIDAD: Si la API ignoró el "format", filtramos manualmente
+    if (type === 'movies') {
+      apiAnimes = apiAnimes.filter(a => a.format === 'MOVIE' || a.title.toLowerCase().includes('movie') || a.title.toLowerCase().includes('película'));
     } else {
-      catalogSeries = [...catalogSeries, ...apiAnimes];
+      apiAnimes = apiAnimes.filter(a => a.format !== 'MOVIE');
+    }
+
+    if (page === 1) {
+      if (type === 'movies') catalogMovies = [...apiAnimes];
+      else catalogSeries = [...apiAnimes, ...CUSTOM_SERIES];
+    } else {
+      if (type === 'movies') catalogMovies = [...catalogMovies, ...apiAnimes];
+      else catalogSeries = [...catalogSeries, ...apiAnimes];
     }
     
     catalogAll = [...catalogSeries, ...catalogMovies];
-    catalog = catalogSeries;
+    catalog = (type === 'movies') ? catalogMovies : catalogSeries;
 
     fillGenres();
     applyFilters();
     
     if (loadMoreBtn && apiAnimes.length > 0) {
       loadMoreBtn.style.display = 'inline-block';
-      loadMoreBtn.textContent = `Cargar más animes (Página ${page + 1})`;
+      loadMoreBtn.textContent = `Cargar más ${type === 'movies' ? 'películas' : 'animes'} (Página ${page + 1})`;
       loadMoreBtn.onclick = () => {
-        fetchHomeCatalog(page + 1);
+        fetchCatalog(type, page + 1);
       };
     }
 
@@ -647,7 +668,7 @@ async function fetchHomeCatalog(page = 1) {
 
 /* ═══ INICIALIZACIÓN ═══ */
 function loadCatalog(){
-  fetchHomeCatalog(1);
+  fetchCatalog('series', 1);
   renderHistory();
   renderFresh();
   renderSoon();
