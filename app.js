@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v2.0 (Consumet + Plyr)
+   AKIHIRODAIKYANIME — app.js v2.1
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -385,13 +385,14 @@ function render(list){
     const card = document.createElement('article');
     card.className = 'card';
     const readyBadge = LINKS[a.title] ? `<span class="badgeReady">Listo</span>` : '';
+    const buttonText = a.isApi ? 'Buscar en línea' : (currentType === 'movies' ? 'Ver película' : 'Ver episodios');
     card.innerHTML = `
       ${readyBadge}
       <img class="cover" src="${esc(a.cover)}" alt="${esc(a.title)}" onerror="this.style.display='none'">
       <div class="cardBody">
         <div class="title">${esc(a.title)}</div>
         <div class="meta">${esc((a.genres||[]).slice(0,2).join(' • '))} ${a.episodes && a.episodes > 1 ? `• ${a.episodes} eps.` : ''}</div>
-        <button data-index="${i}">${currentType === 'movies' ? 'Ver película' : 'Ver episodios'}</button>
+        <button data-index="${i}">${buttonText}</button>
       </div>`;
     card.querySelector('button').onclick = () => openAnime(a);
     animeGrid.appendChild(card);
@@ -408,6 +409,19 @@ function applyFilters(){
     const text = normalize([a.title, ...(a.genres||[])].join(' '));
     return (!q || text.includes(q)) && (!g || (a.genres||[]).some(x => normalize(x) === g));
   });
+
+  // --- MAGIA NUEVA: Si buscan algo que no está, ofrecer buscarlo online ---
+  if (filtered.length === 0 && searchInput.value.trim() !== '') {
+    filtered.push({
+      title: searchInput.value.trim(),
+      genres: ["Búsqueda", "En línea"],
+      episodes: 0,
+      score: "—",
+      year: null,
+      cover: `https://placehold.co/300x450/141414/dc143c?text=${encodeURIComponent(searchInput.value.trim())}`,
+      isApi: true
+    });
+  }
 
   if (sort === 'az')           filtered.sort((a,b) => a.title.localeCompare(b.title));
   else if (sort === 'za')      filtered.sort((a,b) => b.title.localeCompare(a.title));
