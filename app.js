@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v4.3 (Kuhi API Corregida)
+   AKIHIRODAIKYANIME — app.js v5.0 (Catálogo Completo Automático)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -363,7 +363,7 @@ let catalogMovies = [...CUSTOM_MOVIES];
 let catalogAll = [...catalogSeries, ...catalogMovies];
 let catalog = [...catalogSeries];
 
-/* ═══ Render ═══ */
+/* ═══ RENDER ═══ */
 function render(list){
   animeGrid.innerHTML = '';
   if(!list.length){
@@ -374,7 +374,7 @@ function render(list){
     const card = document.createElement('article');
     card.className = 'card';
     const readyBadge = LINKS[a.title] ? `<span class="badgeReady">Listo</span>` : '';
-    const buttonText = a.isApi ? 'Buscar en línea' : (currentType === 'movies' ? 'Ver película' : 'Ver episodios');
+    const buttonText = a.isApi ? 'Ver episodios' : (currentType === 'movies' ? 'Ver película' : 'Ver episodios');
     card.innerHTML = `
       ${readyBadge}
       <img class="cover" src="${esc(a.cover)}" alt="${esc(a.title)}" onerror="this.style.display='none'">
@@ -388,7 +388,7 @@ function render(list){
   });
 }
 
-/* ═══ Filtros ═══ */
+/* ═══ FILTROS ═══ */
 function applyFilters(){
   const q = normalize(searchInput.value);
   const g = normalize(genreFilter.value);
@@ -436,7 +436,7 @@ function fillGenres(){
   });
 }
 
-/* ═══ Modal ═══ */
+/* ═══ MODAL ═══ */
 async function openAnime(a){
   const animeLinks = getAnimeLinks(a.title);
   const isMovie = currentType === 'movies';
@@ -585,15 +585,17 @@ async function openAnime(a){
   modal.classList.remove('hidden');
 
   try {
-    // 1. Buscar anime en Kuhi
-    const searchRes = await fetch(`${API_URL}/anime/search?query=${encodeURIComponent(a.title)}`);
-    const searchData = await searchRes.json();
-    
-    if (!searchData.results || searchData.results.length === 0) {
-       throw new Error('No encontrado');
-    }
+    let animeId = a.id; // <--- AQUÍ USAMOS EL ID DIRECTO SI VIENE DE LA API
 
-    const animeId = searchData.results[0].id;
+    // Si no tiene ID (porque es de búsqueda manual o custom), lo buscamos
+    if (!animeId) {
+        const searchRes = await fetch(`${API_URL}/anime/search?query=${encodeURIComponent(a.title)}`);
+        const searchData = await searchRes.json();
+        if (!searchData.results || searchData.results.length === 0) {
+           throw new Error('No encontrado');
+        }
+        animeId = searchData.results[0].id;
+    }
     
     // 2. Obtener episodios
     const epRes = await fetch(`${API_URL}/anime/episodes/${animeId}`);
@@ -609,7 +611,7 @@ async function openAnime(a){
 
     if (episodesList.length === 0) throw new Error('Sin episodios');
 
-    // 3. Renderizar UI de episodios (AQUÍ ESTÁ EL ARREGLO)
+    // 3. Renderizar UI de episodios
     modalContent.innerHTML = `
       <div class="playerTopBar">
         <span class="playerIcon">🎬</span>
@@ -721,7 +723,7 @@ async function openAnime(a){
   }
 }
 
-/* ═══ Cerrar ═══ */
+/* ═══ CERRAR ═══ */
 document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.add('hidden'); });
@@ -729,7 +731,7 @@ document.getElementById('clearHistory').onclick = () => {
   if (confirm('¿Borrar todo el historial?')) clearHistory();
 };
 
-/* ═══ Perfil ═══ */
+/* ═══ PERFIL ═══ */
 const profileModal = document.getElementById('profileModal');
 const profileBtn = document.getElementById('profileBtn');
 const closeProfile = document.getElementById('closeProfile');
@@ -786,17 +788,61 @@ document.querySelectorAll('.typeBtn').forEach(btn => {
   };
 });
 
-/* ═══ Eventos ═══ */
+/* ═══ EVENTOS ═══ */
 searchInput.addEventListener('input', applyFilters);
 genreFilter.addEventListener('change', applyFilters);
 if (sortFilter) sortFilter.addEventListener('change', applyFilters);
 document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
-/* ═══ Cargar catálogo ═══ */
+/* ═══ CARGAR CATÁLOGO DESDE LA API ═══ */
+async function fetchHomeCatalog() {
+  statusEl.textContent = "Cargando catálogo desde la API... (esto puede tardar unos segundos)";
+  try {
+    // ⚠️ NOTA: Asumo que tu API tiene un endpoint /anime/popular. 
+    // Si en tu documentación se llama distinto (ej. /anime/trending), cámbialo aquí:
+    const res = await fetch(`${API_URL}/anime/popular?page=1`);
+    const data = await res.json();
+    
+    // Mapeamos los datos de la API para que tu web los entienda
+    const apiAnimes = data.results.map(item => {
+      // Algunas APIs devuelven el título como un objeto {romaji, english}, otras como texto
+      let titleStr = item.title;
+      if (typeof item.title === 'object' && item.title !== null) {
+          titleStr = item.title.english || item.title.romaji || item.title.native || "Desconocido";
+      }
+      
+      return {
+        title: titleStr,
+        cover: item.image || item.cover || "https://placehold.co/300x450/141414/dc143c?text=Sin+Imagen",
+        id: item.id, // Guardamos el ID para no tener que buscarlo de nuevo al hacer clic
+        isApi: true,
+        genres: item.genres || item.genre || [],
+        episodes: item.totalEpisodes || item.episodes || 0,
+        score: item.rating || item.score || "—",
+        year: item.releaseDate || item.year || null
+      };
+    });
+
+    // Mezclamos los animes de la API con los que tenías escritos a mano
+    // Ponemos los de la API primero para que llenen la pantalla
+    catalogSeries = [...apiAnimes, ...CUSTOM_SERIES];
+    catalogAll = [...catalogSeries, ...catalogMovies];
+    catalog = catalogSeries; // Por defecto mostramos series
+
+    fillGenres();
+    applyFilters();
+    
+  } catch (error) {
+    console.error("Error al cargar el catálogo de la API:", error);
+    statusEl.textContent = "Error al conectar con la API. Mostrando solo los animes locales.";
+    applyFilters(); // Mostrar al menos los 7 que tienes en CUSTOM_SERIES
+  }
+}
+
+/* ═══ INICIALIZACIÓN ═══ */
 function loadCatalog(){
-  statusEl.textContent = `Catálogo cargado: ${catalogAll.length} títulos disponibles.`;
-  fillGenres();
-  applyFilters();
+  // Ya no cargamos solo los locales, ahora llamamos a la API
+  fetchHomeCatalog();
   renderHistory();
   renderFresh();
   renderSoon();
