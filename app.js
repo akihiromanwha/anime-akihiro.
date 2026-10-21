@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v6.0
+   AKIHIRODAIKYANIME — app.js v6.1 (Catálogo + Proxy CORS)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -13,6 +13,7 @@ const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
 let currentType = 'series';
+let currentPage = 1; 
 
 /* ═══ TU API PRIVADA (Kuhi en Render) ═══ */
 const API_URL = 'https://anime-api-tjzy.onrender.com';
@@ -101,7 +102,7 @@ const SOON_ANIME = [
   { title: "Noragami", cover: "https://img.anili.st/media/20447", note: "Próximamente" }
 ];
 
-/* ═══ LINKS MANUALES (Mantenemos tu lista intacta) ═══ */
+/* ═══ LINKS MANUALES ═══ */
 const LINKS = {
   "Blood Lad": { "Terabox": { "1": "https://1024terabox.com/s/1SrOBd6ZnpoQZMkinzMjfaQ", "2": "https://1024terabox.com/s/1j1q1Q7PdKnAwNYJFKWiW8Q", "3": "https://1024terabox.com/s/1kvD32FuptXudTV4cwziyug", "4": "https://1024terabox.com/s/1Oo4EjJz-MVzvuzKgDyMr7w", "5": "https://1024terabox.com/s/11DlJfZqeitlWEVYa0Urv8g", "6": "https://1024terabox.com/s/1RgFWiI2xj-dhbWb1DQPrGQ", "7": "https://1024terabox.com/s/16kkM3LND-OgcHqz0gF5B4A", "8": "https://1024terabox.com/s/1w2y73FmI2YCzRb72RdWZeg", "9": "https://1024terabox.com/s/1kXyOiawXFF7wjWk-ls00cg", "10": "https://1024terabox.com/s/1I0fAabkE6dQXW2S0JZZCBw" } },
   "The Seven Deadly Sins": { "Drive": { "1": "https://drive.google.com/file/d/1pPpZu-YHdWfLL16lhWf_Cx1mR_ooVPBf/preview", "2": "https://drive.google.com/file/d/1f6Ioc2wVQWQWUmCZIssrwn7BWpgWG075/preview", "3": "https://drive.google.com/file/d/1zkCigw0VFWAt5-s0J8A-1qYB2WpL3grf/preview", "4": "https://drive.google.com/file/d/1RBFIPZboNAOIxpEcSYf41lKH2R8LZETj/preview", "5": "https://drive.google.com/file/d/14e145iN3ZiNfh4Iqq3q53sFVpux5j-E2/preview", "6": "https://drive.google.com/file/d/1DlNQlKbpqqgXOoIWnqmEBBJu-GOkDbqO/preview", "7": "https://drive.google.com/file/d/1atJ9IaNUs9H1K1V4xWFCkewauTK6R8dK/preview", "8": "https://drive.google.com/file/d/1iPGQeMiqBJPP1QjRzqGUt9Ic4hLawvYu/preview", "9": "https://drive.google.com/file/d/1zHdk6HjFd8byN4P16flklsAN7lgqfZkP/preview", "10": "https://drive.google.com/file/d/1MVsO3-oEKrbuqeIGOQ5PdOyUnxVmqSeJ/preview", "11": "https://drive.google.com/file/d/1YU3Hgm_r2EbxArZHcGT8OyshdrG3AmkG/preview", "12": "https://drive.google.com/file/d/1-OI_I_w0QJeCftpDUTzNgfKPAIs1Y6t9/preview", "13": "https://drive.google.com/file/d/1Y2TjbVupPfBcFb9NtI4nPUU2xwZPir7H/preview", "14": "https://drive.google.com/file/d/15I6craRG71Nv17A8JCKyfFAYbYKas92n/preview", "15": "https://drive.google.com/file/d/1wC06_XaEOkZgriH6y17QsO1g2zDzQGQB/preview", "16": "https://drive.google.com/file/d/1xyCxzmfCoeP-_cVI-cybRs_o5LXJ8M8B/preview", "17": "https://drive.google.com/file/d/1aCsxpYzI9iX_P212Ws3RvD6LYelw0tsM/preview", "18": "https://drive.google.com/file/d/1lJq4rZB0dS2J_SiZUgprtZrJaZMJyWCl/preview", "19": "https://drive.google.com/file/d/1sZC-19DU4Crb2lRTimYYgk9SUTr49-6k/preview", "20": "https://drive.google.com/file/d/1btaVxAq5On0MN0gsWDz72wzbLj-RuutK/preview", "21": "https://drive.google.com/file/d/1yK-1eSHcWGUK5gaGNh6mny0hOLtjNdTs/preview", "22": "https://drive.google.com/file/d/1blulkTyYo-YCnJfWi7hyha2Qs2yynD3d/preview", "23": "https://drive.google.com/file/d/138xmbqBi_dKlsqZOwgnDO4FKMbmf14XO/preview", "24": "https://drive.google.com/file/d/1dnb5JROpG7XhxUOLKYexc0H-HgKp6_QF/preview" } },
@@ -438,9 +439,9 @@ async function openAnime(a){
        playerBox.innerHTML = `<p style="text-align:center; padding:1rem; color:var(--gold);">Cargando video...</p>`;
 
        try {
-         // 🔥 USO DEL PROXY PARA ELUDIR EL BLOQUEO CORS DEL NAVEGADOR 🔥
+         // 🔥 USO DEL NUEVO PROXY (ALLORIGINS) PARA ELUDIR EL BLOQUEO CORS 🔥
          const extractUrl = `${API_URL}/anime/extract/${animeId}?e=${epNum}`;
-         const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(extractUrl)}`;
+         const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(extractUrl)}`;
          
          const videoRes = await fetch(proxyUrl);
          const videoData = await videoRes.json();
