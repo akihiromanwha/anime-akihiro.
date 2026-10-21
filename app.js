@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v9.0 (Migración Definitiva a Consumet)
+   AKIHIRODAIKYANIME — app.js v10.1 (Kuhi + Proxy Completo)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -14,8 +14,9 @@ const modalContent= document.getElementById('modalContent');
 
 let currentType = 'series';
 
-/* ═══ NUEVA API RÁPIDA (Espejo estable de Consumet) ═══ */
-const API_URL = 'https://api-consumet-org.vercel.app';
+/* ═══ TU API PRIVADA (Kuhi en Render) ═══ */
+const API_URL = 'https://anime-api-tjzy.onrender.com';
+const PROXY_URL = 'https://api.allorigins.win/raw?url=';
 
 /* ═══ HERO ═══ */
 const HERO_IMAGES = [
@@ -362,7 +363,7 @@ async function openAnime(a){
     return;
   }
 
-  /* ═══ FLUJO AUTOMÁTICO (Consumet) ═══ */
+  /* ═══ FLUJO AUTOMÁTICO (Kuhi API con PROXY) ═══ */
   modalContent.innerHTML = `
     <div class="playerTopBar">
       <span class="playerIcon">🔍</span>
@@ -376,11 +377,29 @@ async function openAnime(a){
   modal.classList.remove('hidden');
 
   try {
-    // 1. Buscar el anime en Consumet por su ID de AniList
-    const infoRes = await fetch(`${API_URL}/meta/anilist/info/${a.id}`);
-    const infoData = await infoRes.json();
+    let animeId = a.id;
+
+    if (!animeId) {
+        const searchUrl = `${API_URL}/anime/search?query=${encodeURIComponent(a.title)}`;
+        const searchRes = await fetch(PROXY_URL + encodeURIComponent(searchUrl));
+        const searchData = await searchRes.json();
+        if (!searchData.results || searchData.results.length === 0) {
+           throw new Error('No encontrado');
+        }
+        animeId = searchData.results[0].id;
+    }
     
-    let episodesList = infoData.episodes || [];
+    const epUrl = `${API_URL}/anime/episodes/${animeId}`;
+    const epRes = await fetch(PROXY_URL + encodeURIComponent(epUrl));
+    const epData = await epRes.json();
+    
+    let episodesList = [];
+    if (epData.providers) {
+        const firstProvider = Object.values(epData.providers)[0];
+        if (firstProvider && firstProvider.episodes && firstProvider.episodes.sub) {
+            episodesList = firstProvider.episodes.sub;
+        }
+    }
 
     if (episodesList.length === 0) throw new Error('Sin episodios');
 
@@ -395,15 +414,15 @@ async function openAnime(a){
           <div class="animeInfoText">
             <h3>${esc(a.title)}</h3>
             <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
-            <p class="infoMeta" style="color:var(--gold);">Fuente: Consumet</p>
+            <p class="infoMeta" style="color:var(--gold);">Fuente: Kuhi API</p>
           </div>
         </div>
         <p class="sectionTitle">${isMovie ? 'Película' : 'Episodios'}</p>
         <div class="episodes" id="episodesBox">
           ${episodesList.map(ep => {
-            const num = ep.number || ep.episode;
+            const num = ep.number || ep.episode || ep;
             return `
-              <button class="episode" data-ep-num="${num}" data-ep-id="${ep.id}">
+              <button class="episode" data-ep-num="${num}">
                 ${isMovie ? '▶ Reproducir' : num}
               </button>
             `;
@@ -417,19 +436,18 @@ async function openAnime(a){
        const btn = e.target.closest('.episode');
        if(!btn) return;
        const epNum = btn.dataset.epNum;
-       const epId = btn.dataset.epId;
 
        const playerBox = document.getElementById('playerBox');
        playerBox.innerHTML = `<p style="text-align:center; padding:1rem; color:var(--gold);">Cargando video...</p>`;
 
        try {
-         // 2. Obtener el video directamente (Gogoanime usa el ID del episodio)
-         const videoRes = await fetch(`${API_URL}/anime/gogoanime/watch/${epId}`);
+         const extractUrl = `${API_URL}/anime/extract/${animeId}?e=${epNum}`;
+         const videoRes = await fetch(PROXY_URL + encodeURIComponent(extractUrl));
          const videoData = await videoRes.json();
          
          let videoUrl = null;
-         if (videoData.sources && videoData.sources.length > 0) {
-             const source = videoData.sources.find(s => s.isM3U8) || videoData.sources[0];
+         if (videoData.streams && videoData.streams.length > 0) {
+             const source = videoData.streams.find(s => s.type === 'hls') || videoData.streams[0];
              videoUrl = source.url;
          }
 
@@ -566,7 +584,7 @@ genreFilter.addEventListener('change', applyFilters);
 if (sortFilter) sortFilter.addEventListener('change', applyFilters);
 document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
-/* ═══ CARGAR CATÁLOGO (Consumet AniList) ═══ */
+/* ═══ CARGAR CATÁLOGO (Kuhi con Proxy) ═══ */
 async function fetchCatalog(type = 'series', page = 1) {
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) loadMoreBtn.style.display = 'none';
@@ -576,27 +594,53 @@ async function fetchCatalog(type = 'series', page = 1) {
   try {
     let endpoint = '';
     if (type === 'movies') {
-      endpoint = `${API_URL}/meta/anilist/popular?page=${page}&perPage=20&format=MOVIE`;
+      endpoint = `${API_URL}/anime/search?query=movie&page=${page}`;
     } else {
-      endpoint = `${API_URL}/meta/anilist/popular?page=${page}&perPage=20&format=TV`;
+      endpoint = `${API_URL}/anime/popular?page=${page}`;
     }
 
-    const res = await fetch(endpoint);
+    const res = await fetch(PROXY_URL + encodeURIComponent(endpoint));
     const data = await res.json();
     
     let apiAnimes = data.results.map(item => {
+      let titleStr = item.title;
+      if (typeof item.title === 'object' && item.title !== null) {
+          titleStr = item.title.english || item.title.romaji || item.title.native || "Desconocido";
+      }
+      
+      let imageCover = "https://placehold.co/300x450/141414/dc143c?text=Sin+Imagen";
+      if (item.image) imageCover = item.image;
+      else if (item.cover) imageCover = item.cover;
+      else if (item.coverImage && item.coverImage.large) imageCover = item.coverImage.large;
+      else if (item.images && item.images.jpg && item.images.jpg.image_url) imageCover = item.images.jpg.image_url;
+      
       return {
-        title: item.title.english || item.title.romaji || item.title.native,
-        cover: item.image, 
+        title: titleStr,
+        cover: imageCover, 
         id: item.id, 
         isApi: true,
-        genres: item.genres || [],
-        episodes: item.totalEpisodes || 0,
-        score: item.rating || "—",
-        year: item.releaseDate || null,
-        format: item.format
+        genres: item.genres || item.genre || [],
+        episodes: item.totalEpisodes || item.episodes || 0,
+        score: item.rating || item.score || "—",
+        year: item.releaseDate || item.year || null,
+        format: item.format || item.type || 'TV'
       };
     });
+
+    if (type === 'movies') {
+      const hasFormatInfo = apiAnimes.some(a => a.format !== 'TV');
+      if (hasFormatInfo) {
+         apiAnimes = apiAnimes.filter(a => 
+           a.format === 'MOVIE' || 
+           a.format === 'Movie' || 
+           a.format === 'SPECIAL' || 
+           a.title.toLowerCase().includes('movie') || 
+           a.title.toLowerCase().includes('película')
+         );
+      }
+    } else {
+      apiAnimes = apiAnimes.filter(a => a.format !== 'MOVIE');
+    }
 
     if (page === 1) {
       if (type === 'movies') catalogMovies = [...apiAnimes];
@@ -622,7 +666,7 @@ async function fetchCatalog(type = 'series', page = 1) {
 
   } catch (error) {
     console.error("Error:", error);
-    statusEl.textContent = "Error al conectar con la API.";
+    statusEl.textContent = "Error al conectar con la API. Intenta recargar.";
   }
 }
 
