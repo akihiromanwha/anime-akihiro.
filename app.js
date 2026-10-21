@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v3.1 (Conectado a elfennani/aniwatch-api)
+   AKIHIRODAIKYANIME — app.js v4.2 (Kuhi API Conectada)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -14,8 +14,8 @@ const modalContent= document.getElementById('modalContent');
 
 let currentType = 'series';
 
-/* ═══ TU API PRIVADA ═══ */
-const API_URL = 'https://aniwatch-api-green.vercel.app';
+/* ═══ TU API PRIVADA (Kuhi en Render) ═══ */
+const API_URL = 'https://anime-api-tjzy.onrender.com';
 
 /* ═══ HERO ═══ */
 const HERO_IMAGES = [
@@ -357,8 +357,7 @@ const CUSTOM_SERIES = [
   { title: "Sword Art Online", genres: ["Action","Adventure","Fantasy","Romance"], episodes: 51, score: "7.5", year: 2012, cover: "https://img.anili.st/media/20507" }
 ];
 
-const CUSTOM_MOVIES = []; // Películas vacías por ahora
-
+const CUSTOM_MOVIES = [];
 let catalogSeries = [...CUSTOM_SERIES];
 let catalogMovies = [...CUSTOM_MOVIES];
 let catalogAll = [...catalogSeries, ...catalogMovies];
@@ -572,7 +571,7 @@ async function openAnime(a){
     return;
   }
 
-  /* ═══ FLUJO AUTOMÁTICO (elfennani/aniwatch-api) ═══ */
+  /* ═══ FLUJO AUTOMÁTICO (Kuhi API) ═══ */
   modalContent.innerHTML = `
     <div class="playerTopBar">
       <span class="playerIcon">🔍</span>
@@ -586,24 +585,31 @@ async function openAnime(a){
   modal.classList.remove('hidden');
 
   try {
-    // 1. Buscar anime (ruta correcta para esta API)
-    const searchRes = await fetch(`${API_URL}/search?query=${encodeURIComponent(a.title)}`);
+    // 1. Buscar anime en Kuhi
+    const searchRes = await fetch(`${API_URL}/anime/search?query=${encodeURIComponent(a.title)}`);
     const searchData = await searchRes.json();
     
-    // La respuesta de esta API es un objeto con "results" o un array directamente
-    const results = searchData.results || searchData || [];
-    if (results.length === 0) throw new Error('No encontrado');
+    if (!searchData.results || searchData.results.length === 0) {
+       throw new Error('No encontrado');
+    }
 
-    const animeId = results[0].id; // ID de AniList
-
-    // 2. Obtener detalles y episodios
-    const showRes = await fetch(`${API_URL}/show/${animeId}`);
-    const showData = await showRes.json();
-    const episodesList = showData.episodes || [];
+    const animeId = searchData.results[0].id;
+    
+    // 2. Obtener episodios
+    const epRes = await fetch(`${API_URL}/anime/episodes/${animeId}`);
+    const epData = await epRes.json();
+    
+    let episodesList = [];
+    if (epData.providers) {
+        const firstProvider = Object.values(epData.providers)[0];
+        if (firstProvider && firstProvider.episodes && firstProvider.episodes.sub) {
+            episodesList = firstProvider.episodes.sub;
+        }
+    }
 
     if (episodesList.length === 0) throw new Error('Sin episodios');
 
-    // 3. Renderizar UI
+    // 3. Renderizar UI de episodios
     modalContent.innerHTML = `
       <div class="playerTopBar">
         <span class="playerIcon">🎬</span>
@@ -615,14 +621,14 @@ async function openAnime(a){
           <div class="animeInfoText">
             <h3>${esc(a.title)}</h3>
             <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
-            <p class="infoMeta" style="color:var(--gold);">Fuente: Tu API Privada</p>
+            <p class="infoMeta" style="color:var(--gold);">Fuente: Kuhi API</p>
           </div>
         </div>
         <p class="sectionTitle">Episodios</p>
         <div class="episodes" id="episodesBox">
           ${episodesList.map(ep => `
-            <button class="episode" data-allanime-id="${ep.allanimeId}" data-ep-num="${ep.episode}">
-              ${ep.episode}
+            <button class="episode" data-ep-num="${ep}">
+              ${ep}
             </button>
           `).join('')}
         </div>
@@ -634,7 +640,6 @@ async function openAnime(a){
     epBox.onclick = async (e) => {
        const btn = e.target.closest('.episode');
        if(!btn) return;
-       const allanimeId = btn.dataset.allanimeId;
        const epNum = btn.dataset.epNum;
 
        const playerBox = document.getElementById('playerBox');
@@ -642,15 +647,13 @@ async function openAnime(a){
 
        try {
          // Obtener el link de video
-         const videoRes = await fetch(`${API_URL}/episode/${allanimeId}/${epNum}`);
+         const videoRes = await fetch(`${API_URL}/anime/extract/${animeId}?e=${epNum}`);
          const videoData = await videoRes.json();
          
-         // Esta API devuelve { hls: { originalUrl, resolutions }, mp4: {...} }
          let videoUrl = null;
-         if (videoData.hls && videoData.hls.originalUrl) {
-             videoUrl = videoData.hls.originalUrl;
-         } else if (videoData.mp4 && videoData.mp4.originalUrl) {
-             videoUrl = videoData.mp4.originalUrl;
+         if (videoData.streams && videoData.streams.length > 0) {
+             const source = videoData.streams.find(s => s.type === 'hls') || videoData.streams[0];
+             videoUrl = source.url;
          }
 
          if (!videoUrl) throw new Error('No hay servidor disponible');
