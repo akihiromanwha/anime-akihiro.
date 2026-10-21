@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v5.0 (Catálogo Completo Automático)
+   AKIHIRODAIKYANIME — app.js v5.1 (Catálogo Automático + Imágenes Corregidas)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -585,9 +585,8 @@ async function openAnime(a){
   modal.classList.remove('hidden');
 
   try {
-    let animeId = a.id; // <--- AQUÍ USAMOS EL ID DIRECTO SI VIENE DE LA API
+    let animeId = a.id;
 
-    // Si no tiene ID (porque es de búsqueda manual o custom), lo buscamos
     if (!animeId) {
         const searchRes = await fetch(`${API_URL}/anime/search?query=${encodeURIComponent(a.title)}`);
         const searchData = await searchRes.json();
@@ -597,7 +596,6 @@ async function openAnime(a){
         animeId = searchData.results[0].id;
     }
     
-    // 2. Obtener episodios
     const epRes = await fetch(`${API_URL}/anime/episodes/${animeId}`);
     const epData = await epRes.json();
     
@@ -611,7 +609,6 @@ async function openAnime(a){
 
     if (episodesList.length === 0) throw new Error('Sin episodios');
 
-    // 3. Renderizar UI de episodios
     modalContent.innerHTML = `
       <div class="playerTopBar">
         <span class="playerIcon">🎬</span>
@@ -640,7 +637,6 @@ async function openAnime(a){
         <div id="playerBox"></div>
       </div>`;
 
-    // 4. Manejar clic en episodio
     const epBox = document.getElementById('episodesBox');
     epBox.onclick = async (e) => {
        const btn = e.target.closest('.episode');
@@ -651,7 +647,6 @@ async function openAnime(a){
        playerBox.innerHTML = `<p style="text-align:center; padding:1rem; color:var(--gold);">Cargando video...</p>`;
 
        try {
-         // Obtener el link de video
          const videoRes = await fetch(`${API_URL}/anime/extract/${animeId}?e=${epNum}`);
          const videoData = await videoRes.json();
          
@@ -663,7 +658,6 @@ async function openAnime(a){
 
          if (!videoUrl) throw new Error('No hay servidor disponible');
 
-         // Preparar Plyr
          playerBox.innerHTML = `
            <div class="playerHeader">
              <span>▶ Episodio ${esc(epNum)}</span>
@@ -794,27 +788,31 @@ genreFilter.addEventListener('change', applyFilters);
 if (sortFilter) sortFilter.addEventListener('change', applyFilters);
 document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
-/* ═══ CARGAR CATÁLOGO DESDE LA API ═══ */
+/* ═══ CARGAR CATÁLOGO DESDE LA API (Con búsqueda inteligente de imágenes) ═══ */
 async function fetchHomeCatalog() {
   statusEl.textContent = "Cargando catálogo desde la API... (esto puede tardar unos segundos)";
   try {
-    // ⚠️ NOTA: Asumo que tu API tiene un endpoint /anime/popular. 
-    // Si en tu documentación se llama distinto (ej. /anime/trending), cámbialo aquí:
     const res = await fetch(`${API_URL}/anime/popular?page=1`);
     const data = await res.json();
     
-    // Mapeamos los datos de la API para que tu web los entienda
     const apiAnimes = data.results.map(item => {
-      // Algunas APIs devuelven el título como un objeto {romaji, english}, otras como texto
       let titleStr = item.title;
       if (typeof item.title === 'object' && item.title !== null) {
           titleStr = item.title.english || item.title.romaji || item.title.native || "Desconocido";
       }
+
+      // 🔍 BÚSQUEDA INTELIGENTE DE IMAGEN
+      let imageCover = "https://placehold.co/300x450/141414/dc143c?text=Sin+Imagen";
+      if (item.image) imageCover = item.image;
+      else if (item.cover) imageCover = item.cover;
+      else if (item.coverImage && item.coverImage.large) imageCover = item.coverImage.large;
+      else if (item.coverImage && item.coverImage.extraLarge) imageCover = item.coverImage.extraLarge;
+      else if (item.images && item.images.jpg && item.images.jpg.image_url) imageCover = item.images.jpg.image_url;
       
       return {
         title: titleStr,
-        cover: item.image || item.cover || "https://placehold.co/300x450/141414/dc143c?text=Sin+Imagen",
-        id: item.id, // Guardamos el ID para no tener que buscarlo de nuevo al hacer clic
+        cover: imageCover, 
+        id: item.id, 
         isApi: true,
         genres: item.genres || item.genre || [],
         episodes: item.totalEpisodes || item.episodes || 0,
@@ -823,11 +821,9 @@ async function fetchHomeCatalog() {
       };
     });
 
-    // Mezclamos los animes de la API con los que tenías escritos a mano
-    // Ponemos los de la API primero para que llenen la pantalla
     catalogSeries = [...apiAnimes, ...CUSTOM_SERIES];
     catalogAll = [...catalogSeries, ...catalogMovies];
-    catalog = catalogSeries; // Por defecto mostramos series
+    catalog = catalogSeries;
 
     fillGenres();
     applyFilters();
@@ -835,13 +831,12 @@ async function fetchHomeCatalog() {
   } catch (error) {
     console.error("Error al cargar el catálogo de la API:", error);
     statusEl.textContent = "Error al conectar con la API. Mostrando solo los animes locales.";
-    applyFilters(); // Mostrar al menos los 7 que tienes en CUSTOM_SERIES
+    applyFilters();
   }
 }
 
 /* ═══ INICIALIZACIÓN ═══ */
 function loadCatalog(){
-  // Ya no cargamos solo los locales, ahora llamamos a la API
   fetchHomeCatalog();
   renderHistory();
   renderFresh();
