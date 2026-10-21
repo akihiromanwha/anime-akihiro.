@@ -34,7 +34,11 @@
 <body>
 
 <header>
-  <div class="logo">Akihiro<span>DaikyAnime</span></div>
+  <!-- AQUÍ ESTÁ LA CORRECCIÓN: Envolvimos el logo en un enlace a la raíz (/) -->
+  <a href="/" class="logoLink" style="text-decoration: none; color: inherit; cursor: pointer; display: flex; align-items: center;">
+    <div class="logo">Akihiro<span>DaikyAnime</span></div>
+  </a>
+  
   <div class="searchWrap">
     <input id="searchInput" type="search" placeholder="Buscar anime...">
   </div>
