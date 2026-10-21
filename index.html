@@ -34,7 +34,6 @@
 <body>
 
 <header>
-  <!-- AQUÍ ESTÁ LA CORRECCIÓN: Envolvimos el logo en un enlace a la raíz (/) -->
   <a href="/" class="logoLink" style="text-decoration: none; color: inherit; cursor: pointer; display: flex; align-items: center;">
     <div class="logo">Akihiro<span>DaikyAnime</span></div>
   </a>
@@ -111,6 +110,12 @@
 
   <section id="status" class="status">Cargando catálogo...</section>
   <section id="animeGrid" class="grid"></section>
+
+  <!-- BOTÓN DE CARGAR MÁS (Añadido para la paginación, con estilos que combinan con tu web) -->
+  <div style="text-align: center; margin: 2rem 0;">
+    <button id="loadMoreBtn" style="display: none; background: #dc143c; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s;">Cargar más animes</button>
+  </div>
+
 </main>
 
 <footer class="siteFooter">
@@ -181,6 +186,7 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
-<script src="app.js?v=24"></script>
+<!-- Actualizado a v=33 para que el navegador cargue los nuevos cambios -->
+<script src="app.js?v=33"></script>
 </body>
 </html>
