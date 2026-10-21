@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v8.0 (Migración a Consumet API)
+   AKIHIRODAIKYANIME — app.js v9.0 (Migración Definitiva a Consumet)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -14,8 +14,8 @@ const modalContent= document.getElementById('modalContent');
 
 let currentType = 'series';
 
-/* ═══ NUEVA API (Consumet - Rápida y sin cold start) ═══ */
-const API_URL = 'https://api.consumet.org';
+/* ═══ NUEVA API RÁPIDA (Espejo estable de Consumet) ═══ */
+const API_URL = 'https://api-consumet-org.vercel.app';
 
 /* ═══ HERO ═══ */
 const HERO_IMAGES = [
@@ -362,7 +362,7 @@ async function openAnime(a){
     return;
   }
 
-  /* ═══ FLUJO AUTOMÁTICO (Consumet API) ═══ */
+  /* ═══ FLUJO AUTOMÁTICO (Consumet) ═══ */
   modalContent.innerHTML = `
     <div class="playerTopBar">
       <span class="playerIcon">🔍</span>
@@ -376,23 +376,11 @@ async function openAnime(a){
   modal.classList.remove('hidden');
 
   try {
-    let animeId = a.id;
-
-    if (!animeId) {
-        // Búsqueda en Consumet (Gogoanime)
-        const searchRes = await fetch(`${API_URL}/anime/gogoanime/${encodeURIComponent(a.title)}`);
-        const searchData = await searchRes.json();
-        if (!searchData.results || searchData.results.length === 0) {
-           throw new Error('No encontrado');
-        }
-        animeId = searchData.results[0].id;
-    }
+    // 1. Buscar el anime en Consumet por su ID de AniList
+    const infoRes = await fetch(`${API_URL}/meta/anilist/info/${a.id}`);
+    const infoData = await infoRes.json();
     
-    // Obtener episodios de Consumet
-    const epRes = await fetch(`${API_URL}/anime/gogoanime/info/${animeId}`);
-    const epData = await epRes.json();
-    
-    let episodesList = epData.episodes || [];
+    let episodesList = infoData.episodes || [];
 
     if (episodesList.length === 0) throw new Error('Sin episodios');
 
@@ -407,13 +395,13 @@ async function openAnime(a){
           <div class="animeInfoText">
             <h3>${esc(a.title)}</h3>
             <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
-            <p class="infoMeta" style="color:var(--gold);">Fuente: Consumet API</p>
+            <p class="infoMeta" style="color:var(--gold);">Fuente: Consumet</p>
           </div>
         </div>
         <p class="sectionTitle">${isMovie ? 'Película' : 'Episodios'}</p>
         <div class="episodes" id="episodesBox">
           ${episodesList.map(ep => {
-            const num = ep.number || ep.episode || ep;
+            const num = ep.number || ep.episode;
             return `
               <button class="episode" data-ep-num="${num}" data-ep-id="${ep.id}">
                 ${isMovie ? '▶ Reproducir' : num}
@@ -435,7 +423,7 @@ async function openAnime(a){
        playerBox.innerHTML = `<p style="text-align:center; padding:1rem; color:var(--gold);">Cargando video...</p>`;
 
        try {
-         // Consumet obtiene el enlace de video directamente (sin proxy)
+         // 2. Obtener el video directamente (Gogoanime usa el ID del episodio)
          const videoRes = await fetch(`${API_URL}/anime/gogoanime/watch/${epId}`);
          const videoData = await videoRes.json();
          
@@ -578,7 +566,7 @@ genreFilter.addEventListener('change', applyFilters);
 if (sortFilter) sortFilter.addEventListener('change', applyFilters);
 document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
-/* ═══ CARGAR CATÁLOGO (Consumet API) ═══ */
+/* ═══ CARGAR CATÁLOGO (Consumet AniList) ═══ */
 async function fetchCatalog(type = 'series', page = 1) {
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) loadMoreBtn.style.display = 'none';
@@ -587,7 +575,6 @@ async function fetchCatalog(type = 'series', page = 1) {
   
   try {
     let endpoint = '';
-    // Usamos el endpoint de Consumet para populares (AniList)
     if (type === 'movies') {
       endpoint = `${API_URL}/meta/anilist/popular?page=${page}&perPage=20&format=MOVIE`;
     } else {
