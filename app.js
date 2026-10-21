@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v2.1
+   AKIHIRODAIKYANIME — app.js v3.1 (Conectado a elfennani/aniwatch-api)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -14,15 +14,8 @@ const modalContent= document.getElementById('modalContent');
 
 let currentType = 'series';
 
-/* ═══ API CONSUMET (Proxy) ═══ */
-const PROXY_CONSUMET = 'https://mangadex-proxy-ten.vercel.app/api/consumet';
-
-async function fetchConsumet(endpoint) {
-  const url = `${PROXY_CONSUMET}?url=https://api.consumet.org${endpoint}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Error en la API de Consumet');
-  return await res.json();
-}
+/* ═══ TU API PRIVADA ═══ */
+const API_URL = 'https://aniwatch-api-green.vercel.app';
 
 /* ═══ HERO ═══ */
 const HERO_IMAGES = [
@@ -50,10 +43,7 @@ const HERO_IMAGES = [
 })();
 
 /* ═══ LOCALSTORAGE ═══ */
-function getHistory(){
-  try { return JSON.parse(localStorage.getItem('anime_history') || '[]'); }
-  catch(e){ return []; }
-}
+function getHistory(){ try { return JSON.parse(localStorage.getItem('anime_history') || '[]'); } catch(e){ return []; } }
 function saveHistory(list){ localStorage.setItem('anime_history', JSON.stringify(list)); }
 function addToHistory(title, ep, cover){
   let h = getHistory();
@@ -410,7 +400,6 @@ function applyFilters(){
     return (!q || text.includes(q)) && (!g || (a.genres||[]).some(x => normalize(x) === g));
   });
 
-  // --- MAGIA NUEVA: Si buscan algo que no está, ofrecer buscarlo online ---
   if (filtered.length === 0 && searchInput.value.trim() !== '') {
     filtered.push({
       title: searchInput.value.trim(),
@@ -453,9 +442,6 @@ async function openAnime(a){
   const animeLinks = getAnimeLinks(a.title);
   const isMovie = currentType === 'movies';
 
-  // ═════════════════════════════════════════════════════════════
-  // 1. FLUJO MANUAL (Links de Drive / Terabox / etc.)
-  // ═════════════════════════════════════════════════════════════
   if (animeLinks && Object.keys(animeLinks).length) {
     const firstKey = Object.keys(animeLinks)[0];
     const firstValue = animeLinks[firstKey];
@@ -586,9 +572,7 @@ async function openAnime(a){
     return;
   }
 
-  // ═════════════════════════════════════════════════════════════
-  // 2. FLUJO AUTOMÁTICO (Consumet + Plyr)
-  // ═════════════════════════════════════════════════════════════
+  /* ═══ FLUJO AUTOMÁTICO (elfennani/aniwatch-api) ═══ */
   modalContent.innerHTML = `
     <div class="playerTopBar">
       <span class="playerIcon">🔍</span>
@@ -602,20 +586,24 @@ async function openAnime(a){
   modal.classList.remove('hidden');
 
   try {
-    // Buscar anime en Gogoanime (vía Consumet)
-    const searchData = await fetchConsumet(`/anime/gogoanime/${encodeURIComponent(a.title)}`);
+    // 1. Buscar anime (ruta correcta para esta API)
+    const searchRes = await fetch(`${API_URL}/search?query=${encodeURIComponent(a.title)}`);
+    const searchData = await searchRes.json();
     
-    if (!searchData.results || searchData.results.length === 0) {
-       throw new Error('No encontrado');
-    }
+    // La respuesta de esta API es un objeto con "results" o un array directamente
+    const results = searchData.results || searchData || [];
+    if (results.length === 0) throw new Error('No encontrado');
 
-    const consumetAnime = searchData.results[0];
-    const infoData = await fetchConsumet(`/anime/gogoanime/info/${consumetAnime.id}`);
-    const episodesList = infoData.episodes || [];
+    const animeId = results[0].id; // ID de AniList
+
+    // 2. Obtener detalles y episodios
+    const showRes = await fetch(`${API_URL}/show/${animeId}`);
+    const showData = await showRes.json();
+    const episodesList = showData.episodes || [];
 
     if (episodesList.length === 0) throw new Error('Sin episodios');
 
-    // Renderizar UI de episodios
+    // 3. Renderizar UI
     modalContent.innerHTML = `
       <div class="playerTopBar">
         <span class="playerIcon">🎬</span>
@@ -627,26 +615,26 @@ async function openAnime(a){
           <div class="animeInfoText">
             <h3>${esc(a.title)}</h3>
             <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
-            <p class="infoMeta" style="color:var(--gold);">Fuente: Consumet (Gogoanime)</p>
+            <p class="infoMeta" style="color:var(--gold);">Fuente: Tu API Privada</p>
           </div>
         </div>
         <p class="sectionTitle">Episodios</p>
         <div class="episodes" id="episodesBox">
           ${episodesList.map(ep => `
-            <button class="episode" data-ep-id="${ep.id}" data-ep-num="${ep.number}">
-              ${ep.number}
+            <button class="episode" data-allanime-id="${ep.allanimeId}" data-ep-num="${ep.episode}">
+              ${ep.episode}
             </button>
           `).join('')}
         </div>
         <div id="playerBox"></div>
       </div>`;
 
-    // Manejar clic en un episodio de Consumet
+    // 4. Manejar clic en episodio
     const epBox = document.getElementById('episodesBox');
     epBox.onclick = async (e) => {
        const btn = e.target.closest('.episode');
        if(!btn) return;
-       const epId = btn.dataset.epId;
+       const allanimeId = btn.dataset.allanimeId;
        const epNum = btn.dataset.epNum;
 
        const playerBox = document.getElementById('playerBox');
@@ -654,11 +642,20 @@ async function openAnime(a){
 
        try {
          // Obtener el link de video
-         const streamData = await fetchConsumet(`/anime/gogoanime/watch/${epId}`);
-         const source = streamData.sources.find(s => s.isM3U8) || streamData.sources[0];
-         const videoUrl = source.url;
+         const videoRes = await fetch(`${API_URL}/episode/${allanimeId}/${epNum}`);
+         const videoData = await videoRes.json();
+         
+         // Esta API devuelve { hls: { originalUrl, resolutions }, mp4: {...} }
+         let videoUrl = null;
+         if (videoData.hls && videoData.hls.originalUrl) {
+             videoUrl = videoData.hls.originalUrl;
+         } else if (videoData.mp4 && videoData.mp4.originalUrl) {
+             videoUrl = videoData.mp4.originalUrl;
+         }
 
-         // Preparar contenedor Plyr
+         if (!videoUrl) throw new Error('No hay servidor disponible');
+
+         // Preparar Plyr
          playerBox.innerHTML = `
            <div class="playerHeader">
              <span>▶ Episodio ${esc(epNum)}</span>
@@ -668,7 +665,6 @@ async function openAnime(a){
 
          const videoElement = document.getElementById('plyrPlayer');
          
-         // Configurar HLS.js para streams .m3u8
          if (videoUrl.includes('.m3u8')) {
            if (Hls.isSupported()) {
              const hls = new Hls();
@@ -681,7 +677,6 @@ async function openAnime(a){
            videoElement.src = videoUrl;
          }
 
-         // Inicializar Plyr
          new Plyr(videoElement, {
            fullscreen: { enabled: true, fallback: true, iosNative: true },
            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'pip', 'fullscreen']
@@ -701,7 +696,6 @@ async function openAnime(a){
     };
 
   } catch (err) {
-    // Si la API falla o no encuentra el anime, mostrar mensaje
     modalContent.innerHTML = `
       <div class="playerTopBar">
         <span class="playerIcon">🎬</span>
@@ -716,7 +710,7 @@ async function openAnime(a){
           </div>
         </div>
         <p class="sectionTitle">Ver episodios</p>
-        <p class="noLinks">No se encontraron episodios automáticos.<br>Este anime aún no tiene links manuales en <code>LINKS</code>.</p>
+        <p class="noLinks">No se encontraron episodios automáticos en la API.<br>Intenta de nuevo más tarde o agrega links manuales.</p>
       </div>`;
   }
 }
