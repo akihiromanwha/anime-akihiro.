@@ -997,3 +997,13 @@ body.light .typeBtn{ background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.1); 
   .typeBtn{ padding: .6rem 1rem; font-size: .82rem; }
   #playerBox iframe{ height: 240px; }
 }
+/* Estilos para Plyr */
+.plyr {
+  --plyr-color-main: #dc143c;
+  --plyr-video-background: #000;
+  border-radius: 12px;
+}
+.plyr__video-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+}
