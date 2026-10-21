@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v7.0 (Series + Películas)
+   AKIHIRODAIKYANIME — app.js v8.0 (Migración a Consumet API)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -14,8 +14,8 @@ const modalContent= document.getElementById('modalContent');
 
 let currentType = 'series';
 
-/* ═══ TU API PRIVADA (Kuhi en Render) ═══ */
-const API_URL = 'https://anime-api-tjzy.onrender.com';
+/* ═══ NUEVA API (Consumet - Rápida y sin cold start) ═══ */
+const API_URL = 'https://api.consumet.org';
 
 /* ═══ HERO ═══ */
 const HERO_IMAGES = [
@@ -167,10 +167,7 @@ function render(list){
     const card = document.createElement('article');
     card.className = 'card';
     const readyBadge = LINKS[a.title] ? `<span class="badgeReady">Listo</span>` : '';
-    
-    // El texto del botón cambia dependiendo de si es Película o Serie
     const buttonText = currentType === 'movies' ? 'Ver Película' : 'Ver Episodios';
-    
     card.innerHTML = `
       ${readyBadge}
       <img class="cover" src="${esc(a.cover)}" alt="${esc(a.title)}" onerror="this.style.display='none'">
@@ -195,7 +192,6 @@ function applyFilters(){
     return (!q || text.includes(q)) && (!g || (a.genres||[]).some(x => normalize(x) === g));
   });
 
-  // Si busca algo que no está, muestra opción de buscar en línea
   if (filtered.length === 0 && searchInput.value.trim() !== '' && currentType === 'series') {
     filtered.push({
       title: searchInput.value.trim(),
@@ -366,7 +362,7 @@ async function openAnime(a){
     return;
   }
 
-  /* ═══ FLUJO AUTOMÁTICO (Kuhi API con PROXY) ═══ */
+  /* ═══ FLUJO AUTOMÁTICO (Consumet API) ═══ */
   modalContent.innerHTML = `
     <div class="playerTopBar">
       <span class="playerIcon">🔍</span>
@@ -383,7 +379,8 @@ async function openAnime(a){
     let animeId = a.id;
 
     if (!animeId) {
-        const searchRes = await fetch(`${API_URL}/anime/search?query=${encodeURIComponent(a.title)}`);
+        // Búsqueda en Consumet (Gogoanime)
+        const searchRes = await fetch(`${API_URL}/anime/gogoanime/${encodeURIComponent(a.title)}`);
         const searchData = await searchRes.json();
         if (!searchData.results || searchData.results.length === 0) {
            throw new Error('No encontrado');
@@ -391,16 +388,11 @@ async function openAnime(a){
         animeId = searchData.results[0].id;
     }
     
-    const epRes = await fetch(`${API_URL}/anime/episodes/${animeId}`);
+    // Obtener episodios de Consumet
+    const epRes = await fetch(`${API_URL}/anime/gogoanime/info/${animeId}`);
     const epData = await epRes.json();
     
-    let episodesList = [];
-    if (epData.providers) {
-        const firstProvider = Object.values(epData.providers)[0];
-        if (firstProvider && firstProvider.episodes && firstProvider.episodes.sub) {
-            episodesList = firstProvider.episodes.sub;
-        }
-    }
+    let episodesList = epData.episodes || [];
 
     if (episodesList.length === 0) throw new Error('Sin episodios');
 
@@ -415,7 +407,7 @@ async function openAnime(a){
           <div class="animeInfoText">
             <h3>${esc(a.title)}</h3>
             <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
-            <p class="infoMeta" style="color:var(--gold);">Fuente: Kuhi API</p>
+            <p class="infoMeta" style="color:var(--gold);">Fuente: Consumet API</p>
           </div>
         </div>
         <p class="sectionTitle">${isMovie ? 'Película' : 'Episodios'}</p>
@@ -423,7 +415,7 @@ async function openAnime(a){
           ${episodesList.map(ep => {
             const num = ep.number || ep.episode || ep;
             return `
-              <button class="episode" data-ep-num="${num}">
+              <button class="episode" data-ep-num="${num}" data-ep-id="${ep.id}">
                 ${isMovie ? '▶ Reproducir' : num}
               </button>
             `;
@@ -437,21 +429,19 @@ async function openAnime(a){
        const btn = e.target.closest('.episode');
        if(!btn) return;
        const epNum = btn.dataset.epNum;
+       const epId = btn.dataset.epId;
 
        const playerBox = document.getElementById('playerBox');
        playerBox.innerHTML = `<p style="text-align:center; padding:1rem; color:var(--gold);">Cargando video...</p>`;
 
        try {
-         // 🔥 PROXY ALLORIGINS
-         const extractUrl = `${API_URL}/anime/extract/${animeId}?e=${epNum}`;
-         const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(extractUrl)}`;
-         
-         const videoRes = await fetch(proxyUrl);
+         // Consumet obtiene el enlace de video directamente (sin proxy)
+         const videoRes = await fetch(`${API_URL}/anime/gogoanime/watch/${epId}`);
          const videoData = await videoRes.json();
          
          let videoUrl = null;
-         if (videoData.streams && videoData.streams.length > 0) {
-             const source = videoData.streams.find(s => s.type === 'hls') || videoData.streams[0];
+         if (videoData.sources && videoData.sources.length > 0) {
+             const source = videoData.sources.find(s => s.isM3U8) || videoData.sources[0];
              videoUrl = source.url;
          }
 
@@ -574,12 +564,10 @@ document.querySelectorAll('.typeBtn').forEach(btn => {
     btn.classList.add('active');
     currentType = btn.dataset.type;
     
-    // Limpiar filtros visuales
     genreFilter.innerHTML = '<option value="">Todos los géneros</option>';
     if (sortFilter) sortFilter.value = 'default';
     searchInput.value = ''; 
     
-    // Cargar el catálogo dependiendo de lo que se seleccione
     fetchCatalog(currentType, 1); 
   };
 });
@@ -590,7 +578,7 @@ genreFilter.addEventListener('change', applyFilters);
 if (sortFilter) sortFilter.addEventListener('change', applyFilters);
 document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
-/* ═══ CARGAR CATÁLOGO (SIRVE PARA SERIES Y PELÍCULAS) ═══ */
+/* ═══ CARGAR CATÁLOGO (Consumet API) ═══ */
 async function fetchCatalog(type = 'series', page = 1) {
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) loadMoreBtn.style.display = 'none';
@@ -598,45 +586,30 @@ async function fetchCatalog(type = 'series', page = 1) {
   statusEl.textContent = page === 1 ? `Cargando ${type === 'movies' ? 'películas' : 'animes'}...` : "Cargando más...";
   
   try {
-    // Kuhi API acepta el parámetro "format" para filtrar por TV o MOVIE
-    let endpoint = `${API_URL}/anime/popular?page=${page}`;
-    if (type === 'movies') endpoint += '&format=MOVIE';
-    else if (type === 'series') endpoint += '&format=TV';
+    let endpoint = '';
+    // Usamos el endpoint de Consumet para populares (AniList)
+    if (type === 'movies') {
+      endpoint = `${API_URL}/meta/anilist/popular?page=${page}&perPage=20&format=MOVIE`;
+    } else {
+      endpoint = `${API_URL}/meta/anilist/popular?page=${page}&perPage=20&format=TV`;
+    }
 
     const res = await fetch(endpoint);
     const data = await res.json();
     
     let apiAnimes = data.results.map(item => {
-      let titleStr = item.title;
-      if (typeof item.title === 'object' && item.title !== null) {
-          titleStr = item.title.english || item.title.romaji || item.title.native || "Desconocido";
-      }
-      
-      let imageCover = "https://placehold.co/300x450/141414/dc143c?text=Sin+Imagen";
-      if (item.image) imageCover = item.image;
-      else if (item.cover) imageCover = item.cover;
-      else if (item.coverImage && item.coverImage.large) imageCover = item.coverImage.large;
-      else if (item.images && item.images.jpg && item.images.jpg.image_url) imageCover = item.images.jpg.image_url;
-      
       return {
-        title: titleStr,
-        cover: imageCover, 
+        title: item.title.english || item.title.romaji || item.title.native,
+        cover: item.image, 
         id: item.id, 
         isApi: true,
-        genres: item.genres || item.genre || [],
-        episodes: item.totalEpisodes || item.episodes || 0,
-        score: item.rating || item.score || "—",
-        year: item.releaseDate || item.year || null,
-        format: item.format || item.type || 'TV' // Guardamos el formato que devuelve la API
+        genres: item.genres || [],
+        episodes: item.totalEpisodes || 0,
+        score: item.rating || "—",
+        year: item.releaseDate || null,
+        format: item.format
       };
     });
-
-    // FILTRO DE SEGURIDAD: Si la API ignoró el "format", filtramos manualmente
-    if (type === 'movies') {
-      apiAnimes = apiAnimes.filter(a => a.format === 'MOVIE' || a.title.toLowerCase().includes('movie') || a.title.toLowerCase().includes('película'));
-    } else {
-      apiAnimes = apiAnimes.filter(a => a.format !== 'MOVIE');
-    }
 
     if (page === 1) {
       if (type === 'movies') catalogMovies = [...apiAnimes];
