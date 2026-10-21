@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js
+   AKIHIRODAIKYANIME — app.js v2.0 (Consumet + Plyr)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -13,6 +13,16 @@ const modal       = document.getElementById('modal');
 const modalContent= document.getElementById('modalContent');
 
 let currentType = 'series';
+
+/* ═══ API CONSUMET (Proxy) ═══ */
+const PROXY_CONSUMET = 'https://mangadex-proxy-ten.vercel.app/api/consumet';
+
+async function fetchConsumet(endpoint) {
+  const url = `${PROXY_CONSUMET}?url=https://api.consumet.org${endpoint}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Error en la API de Consumet');
+  return await res.json();
+}
 
 /* ═══ HERO ═══ */
 const HERO_IMAGES = [
@@ -346,7 +356,7 @@ function getAnimeLinks(title){
 }
 function parseScore(s){ const n = parseFloat(s); return isNaN(n) ? 0 : n; }
 
-/* ═══ Catálogos (SOLO los que tienen LINKS) ═══ */
+/* ═══ Catálogos ═══ */
 const CUSTOM_SERIES = [
   { title: "Blood Lad", genres: ["Action","Comedy","Supernatural"], episodes: 10, score: "7.3", year: 2013, cover: "https://img.anili.st/media/11633" },
   { title: "The Seven Deadly Sins", genres: ["Action","Adventure","Fantasy"], episodes: 24, score: "8.1", year: 2014, cover: "https://img.anili.st/media/20789" },
@@ -425,11 +435,20 @@ function fillGenres(){
 }
 
 /* ═══ Modal ═══ */
-function openAnime(a){
+async function openAnime(a){
   const animeLinks = getAnimeLinks(a.title);
   const isMovie = currentType === 'movies';
 
-  if (!animeLinks || !Object.keys(animeLinks).length){
+  // ═════════════════════════════════════════════════════════════
+  // 1. FLUJO MANUAL (Links de Drive / Terabox / etc.)
+  // ═════════════════════════════════════════════════════════════
+  if (animeLinks && Object.keys(animeLinks).length) {
+    const firstKey = Object.keys(animeLinks)[0];
+    const firstValue = animeLinks[firstKey];
+    const isSeasons = typeof firstValue === 'object' 
+                   && !Array.isArray(firstValue)
+                   && typeof Object.values(firstValue)[0] === 'object';
+
     modalContent.innerHTML = `
       <div class="playerTopBar">
         <span class="playerIcon">${isMovie ? '🎬' : '🎞️'}</span>
@@ -441,141 +460,251 @@ function openAnime(a){
           <div class="animeInfoText">
             <h3>${esc(a.title)}</h3>
             <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
+            <p class="infoMeta">Selecciona servidor</p>
           </div>
         </div>
-        <p class="sectionTitle">Ver ${isMovie ? 'película' : 'episodios'}</p>
-        <p class="noLinks">Este título aún no tiene links configurados.<br>Agrégalo en <code>LINKS</code> en <code>app.js</code>.</p>
+        <div id="seasonTabsBox"></div>
+        <p class="sectionTitle">Servidores</p>
+        <div id="serverTabsBox"></div>
+        <p class="sectionTitle">${isMovie ? 'Película' : 'Episodios'}</p>
+        <div class="episodes" id="episodesBox"></div>
+        <div id="playerBox"></div>
       </div>`;
+
+    function showServers(linksObj){
+      const servers = Object.keys(linksObj);
+      const serverBox = document.getElementById('serverTabsBox');
+      if (!serverBox) return;
+      serverBox.innerHTML = `
+        <div class="serverTabs">
+          ${servers.map((srv, i) => `
+            <button class="serverTab${i===0?' active':''}" data-server="${esc(srv)}">
+              <span class="serverLabel">Opción ${i+1}</span>
+              <span class="serverName">${serverIcon(srv)} ${esc(srv)}</span>
+            </button>
+          `).join('')}
+        </div>`;
+      showEpisodes(linksObj[servers[0]], servers[0]);
+      serverBox.querySelectorAll('.serverTab').forEach(btn => {
+        btn.onclick = () => {
+          serverBox.querySelectorAll('.serverTab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          showEpisodes(linksObj[btn.dataset.server], btn.dataset.server);
+        };
+      });
+    }
+
+    function showEpisodes(epsObj, serverName){
+      const box = document.getElementById('episodesBox');
+      const player = document.getElementById('playerBox');
+      if (!box) return;
+      if (player) player.innerHTML = '';
+
+      const keys = Object.keys(epsObj).sort((x,y) => Number(x) - Number(y));
+      if (!keys.length){
+        box.innerHTML = `<p class="noLinks">No hay contenido en <b>${esc(serverName)}</b>.</p>`;
+        return;
+      }
+      box.innerHTML = keys.map(num => {
+        const seen = isSeen(a.title, num);
+        const label = isMovie ? 'Ver' : esc(num);
+        return `
+          <button class="episode${seen ? ' seen' : ''}" data-link="${esc(epsObj[num])}" data-num="${esc(num)}">
+            ${label}
+          </button>`;
+      }).join('');
+
+      box.onclick = (e) => {
+        const btn = e.target.closest('.episode');
+        if (!btn) return;
+        const link = btn.dataset.link;
+        const num = btn.dataset.num;
+
+        if (link.startsWith('AQUI_') || !link.startsWith('http')){
+          alert('⚠️ Aún sin link configurado.');
+          return;
+        }
+
+        addToHistory(a.title, isMovie ? 'Película' : num, a.cover);
+        markAsSeen(a.title, num);
+        updateSeenCount();
+        btn.classList.add('seen');
+
+        if (link.includes('drive.google.com')){
+          const match = link.match(/\/d\/([^/]+)/);
+          const id = match ? match[1] : '';
+          player.innerHTML = `
+            <div class="playerHeader">
+              <span>▶ ${isMovie ? 'Película' : 'Episodio ' + esc(num)}</span>
+              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+            </div>
+            <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+          player.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          window.open(link, '_blank', 'noopener');
+        }
+      };
+    }
+
+    if (isSeasons){
+      const seasons = Object.keys(animeLinks);
+      const seasonBox = document.getElementById('seasonTabsBox');
+      seasonBox.innerHTML = `
+        <p class="sectionTitle">Temporadas</p>
+        <div class="seasonTabs">
+          ${seasons.map((s, i) => `
+            <button class="seasonTab${i===0?' active':''}" data-season="${esc(s)}">${esc(s)}</button>
+          `).join('')}
+        </div>`;
+      showServers(animeLinks[seasons[0]]);
+      seasonBox.querySelectorAll('.seasonTab').forEach(btn => {
+        btn.onclick = () => {
+          seasonBox.querySelectorAll('.seasonTab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          showServers(animeLinks[btn.dataset.season]);
+        };
+      });
+    } else {
+      showServers(animeLinks);
+    }
+
     modal.classList.remove('hidden');
     return;
   }
 
-  const firstKey = Object.keys(animeLinks)[0];
-  const firstValue = animeLinks[firstKey];
-  const isSeasons = typeof firstValue === 'object' 
-                 && !Array.isArray(firstValue)
-                 && typeof Object.values(firstValue)[0] === 'object';
-
+  // ═════════════════════════════════════════════════════════════
+  // 2. FLUJO AUTOMÁTICO (Consumet + Plyr)
+  // ═════════════════════════════════════════════════════════════
   modalContent.innerHTML = `
     <div class="playerTopBar">
-      <span class="playerIcon">${isMovie ? '🎬' : '🎞️'}</span>
+      <span class="playerIcon">🔍</span>
       <span class="playerTitle">${esc(a.title)}</span>
     </div>
-    <div class="modalBody">
-      <div class="animeInfo">
-        <img class="animeInfoCover" src="${esc(a.cover)}" alt="" onerror="this.style.display='none'">
-        <div class="animeInfoText">
-          <h3>${esc(a.title)}</h3>
-          <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
-          <p class="infoMeta">Selecciona servidor</p>
-        </div>
-      </div>
-      <div id="seasonTabsBox"></div>
-      <p class="sectionTitle">Servidores</p>
-      <div id="serverTabsBox"></div>
-      <p class="sectionTitle">${isMovie ? 'Película' : 'Episodios'}</p>
-      <div class="episodes" id="episodesBox"></div>
-      <div id="playerBox"></div>
-    </div>`;
-
-  function showServers(linksObj){
-    const servers = Object.keys(linksObj);
-    const serverBox = document.getElementById('serverTabsBox');
-    if (!serverBox) return;
-    serverBox.innerHTML = `
-      <div class="serverTabs">
-        ${servers.map((srv, i) => `
-          <button class="serverTab${i===0?' active':''}" data-server="${esc(srv)}">
-            <span class="serverLabel">Opción ${i+1}</span>
-            <span class="serverName">${serverIcon(srv)} ${esc(srv)}</span>
-          </button>
-        `).join('')}
-      </div>`;
-    showEpisodes(linksObj[servers[0]], servers[0]);
-    serverBox.querySelectorAll('.serverTab').forEach(btn => {
-      btn.onclick = () => {
-        serverBox.querySelectorAll('.serverTab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        showEpisodes(linksObj[btn.dataset.server], btn.dataset.server);
-      };
-    });
-  }
-
-  function showEpisodes(epsObj, serverName){
-    const box = document.getElementById('episodesBox');
-    const player = document.getElementById('playerBox');
-    if (!box) return;
-    if (player) player.innerHTML = '';
-
-    const keys = Object.keys(epsObj).sort((x,y) => Number(x) - Number(y));
-    if (!keys.length){
-      box.innerHTML = `<p class="noLinks">No hay contenido en <b>${esc(serverName)}</b>.</p>`;
-      return;
-    }
-    box.innerHTML = keys.map(num => {
-      const seen = isSeen(a.title, num);
-      const label = isMovie ? 'Ver' : esc(num);
-      return `
-        <button class="episode${seen ? ' seen' : ''}" data-link="${esc(epsObj[num])}" data-num="${esc(num)}">
-          ${label}
-        </button>`;
-    }).join('');
-
-    box.onclick = (e) => {
-      const btn = e.target.closest('.episode');
-      if (!btn) return;
-      const link = btn.dataset.link;
-      const num = btn.dataset.num;
-
-      if (link.startsWith('AQUI_') || !link.startsWith('http')){
-        alert('⚠️ Aún sin link configurado.');
-        return;
-      }
-
-      addToHistory(a.title, isMovie ? 'Película' : num, a.cover);
-      markAsSeen(a.title, num);
-      updateSeenCount();
-      btn.classList.add('seen');
-
-      if (link.includes('drive.google.com')){
-        const match = link.match(/\/d\/([^/]+)/);
-        const id = match ? match[1] : '';
-        player.innerHTML = `
-          <div class="playerHeader">
-            <span>▶ ${isMovie ? 'Película' : 'Episodio ' + esc(num)}</span>
-            <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
-          </div>
-          <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-        player.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      } else {
-        window.open(link, '_blank', 'noopener');
-      }
-    };
-  }
-
-  if (isSeasons){
-    const seasons = Object.keys(animeLinks);
-    const seasonBox = document.getElementById('seasonTabsBox');
-    seasonBox.innerHTML = `
-      <p class="sectionTitle">Temporadas</p>
-      <div class="seasonTabs">
-        ${seasons.map((s, i) => `
-          <button class="seasonTab${i===0?' active':''}" data-season="${esc(s)}">${esc(s)}</button>
-        `).join('')}
-      </div>`;
-    showServers(animeLinks[seasons[0]]);
-    seasonBox.querySelectorAll('.seasonTab').forEach(btn => {
-      btn.onclick = () => {
-        seasonBox.querySelectorAll('.seasonTab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        showServers(animeLinks[btn.dataset.season]);
-      };
-    });
-  } else {
-    showServers(animeLinks);
-  }
-
+    <div class="modalBody" style="text-align:center; padding: 2rem;">
+       <p>Buscando episodios automáticamente...</p>
+       <div class="spinner" style="margin:1rem auto; border: 4px solid rgba(255,255,255,.1); border-top-color: var(--accent); border-radius:50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
+    </div>
+    <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>`;
   modal.classList.remove('hidden');
+
+  try {
+    // Buscar anime en Gogoanime (vía Consumet)
+    const searchData = await fetchConsumet(`/anime/gogoanime/${encodeURIComponent(a.title)}`);
+    
+    if (!searchData.results || searchData.results.length === 0) {
+       throw new Error('No encontrado');
+    }
+
+    const consumetAnime = searchData.results[0];
+    const infoData = await fetchConsumet(`/anime/gogoanime/info/${consumetAnime.id}`);
+    const episodesList = infoData.episodes || [];
+
+    if (episodesList.length === 0) throw new Error('Sin episodios');
+
+    // Renderizar UI de episodios
+    modalContent.innerHTML = `
+      <div class="playerTopBar">
+        <span class="playerIcon">🎬</span>
+        <span class="playerTitle">${esc(a.title)} <small style="color:var(--muted);font-size:.8rem;">(Auto)</small></span>
+      </div>
+      <div class="modalBody">
+        <div class="animeInfo">
+          <img class="animeInfoCover" src="${esc(a.cover)}" alt="" onerror="this.style.display='none'">
+          <div class="animeInfoText">
+            <h3>${esc(a.title)}</h3>
+            <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
+            <p class="infoMeta" style="color:var(--gold);">Fuente: Consumet (Gogoanime)</p>
+          </div>
+        </div>
+        <p class="sectionTitle">Episodios</p>
+        <div class="episodes" id="episodesBox">
+          ${episodesList.map(ep => `
+            <button class="episode" data-ep-id="${ep.id}" data-ep-num="${ep.number}">
+              ${ep.number}
+            </button>
+          `).join('')}
+        </div>
+        <div id="playerBox"></div>
+      </div>`;
+
+    // Manejar clic en un episodio de Consumet
+    const epBox = document.getElementById('episodesBox');
+    epBox.onclick = async (e) => {
+       const btn = e.target.closest('.episode');
+       if(!btn) return;
+       const epId = btn.dataset.epId;
+       const epNum = btn.dataset.epNum;
+
+       const playerBox = document.getElementById('playerBox');
+       playerBox.innerHTML = `<p style="text-align:center; padding:1rem; color:var(--gold);">Cargando video...</p>`;
+
+       try {
+         // Obtener el link de video
+         const streamData = await fetchConsumet(`/anime/gogoanime/watch/${epId}`);
+         const source = streamData.sources.find(s => s.isM3U8) || streamData.sources[0];
+         const videoUrl = source.url;
+
+         // Preparar contenedor Plyr
+         playerBox.innerHTML = `
+           <div class="playerHeader">
+             <span>▶ Episodio ${esc(epNum)}</span>
+             <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+           </div>
+           <video id="plyrPlayer" playsinline controls crossorigin></video>`;
+
+         const videoElement = document.getElementById('plyrPlayer');
+         
+         // Configurar HLS.js para streams .m3u8
+         if (videoUrl.includes('.m3u8')) {
+           if (Hls.isSupported()) {
+             const hls = new Hls();
+             hls.loadSource(videoUrl);
+             hls.attachMedia(videoElement);
+           } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+             videoElement.src = videoUrl;
+           }
+         } else {
+           videoElement.src = videoUrl;
+         }
+
+         // Inicializar Plyr
+         new Plyr(videoElement, {
+           fullscreen: { enabled: true, fallback: true, iosNative: true },
+           controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'pip', 'fullscreen']
+         });
+
+         addToHistory(a.title, epNum, a.cover);
+         markAsSeen(a.title, epNum);
+         updateSeenCount();
+         btn.classList.add('seen');
+
+         playerBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+       } catch(err) {
+         playerBox.innerHTML = `<p style="text-align:center; color:#dc143c;">Error al cargar el video. Prueba otro episodio.</p>`;
+         console.error(err);
+       }
+    };
+
+  } catch (err) {
+    // Si la API falla o no encuentra el anime, mostrar mensaje
+    modalContent.innerHTML = `
+      <div class="playerTopBar">
+        <span class="playerIcon">🎬</span>
+        <span class="playerTitle">${esc(a.title)}</span>
+      </div>
+      <div class="modalBody">
+        <div class="animeInfo">
+          <img class="animeInfoCover" src="${esc(a.cover)}" alt="">
+          <div class="animeInfoText">
+            <h3>${esc(a.title)}</h3>
+            <p class="infoMeta"><span class="star">★</span> ${esc(a.score || '—')} • ${esc((a.genres||[]).slice(0,3).join(' • '))}</p>
+          </div>
+        </div>
+        <p class="sectionTitle">Ver episodios</p>
+        <p class="noLinks">No se encontraron episodios automáticos.<br>Este anime aún no tiene links manuales en <code>LINKS</code>.</p>
+      </div>`;
+  }
 }
 
 /* ═══ Cerrar ═══ */
@@ -649,7 +778,7 @@ genreFilter.addEventListener('change', applyFilters);
 if (sortFilter) sortFilter.addEventListener('change', applyFilters);
 document.getElementById('themeBtn').onclick = () => { document.body.classList.toggle('light'); };
 
-/* ═══ Cargar catálogo (SIN ANILIST) ═══ */
+/* ═══ Cargar catálogo ═══ */
 function loadCatalog(){
   statusEl.textContent = `Catálogo cargado: ${catalogAll.length} títulos disponibles.`;
   fillGenres();
