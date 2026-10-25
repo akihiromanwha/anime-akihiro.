@@ -1,43 +1,23 @@
-<!--
-  ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME
-   © 2026 AkihiroDaikyAnime — Todos los derechos reservados
-   GitHub: https://github.com/akihiromanwha
-   ════════════════════════════════════════════════════════════
--->
 <!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="AkihiroDaikyAnime">
-<meta name="copyright" content="© 2026 AkihiroDaikyAnime">
-<meta name="description" content="AkihiroDaikyAnime — Tu mundo de anime, manga y manhwa.">
-<meta name="theme-color" content="#080808">
+<meta name="theme-color" content="#0a0a0a">
 <title>AkihiroDaikyAnime</title>
 <link rel="manifest" href="manifest.json">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AkihiroDaiky">
 <link rel="icon" type="image/png" href="akhanime.png">
-<link rel="apple-touch-icon" href="akhanime.png">
-
-<!-- ═══ Plyr & Hls.js ═══ -->
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-<!-- ═════════════════════════════════ -->
-
 <link rel="stylesheet" href="style.css">
+<!-- Cargamos el reproductor de forma diferida para no bloquear la carga inicial -->
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest" defer></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js" defer></script>
 </head>
 <body>
 
 <header>
-  <a href="/" class="logoLink" style="text-decoration: none; color: inherit; cursor: pointer; display: flex; align-items: center;">
-    <div class="logo">Akihiro<span>DaikyAnime</span></div>
-  </a>
-  
+  <div class="logo">Akihiro<span>DaikyAnime</span></div>
   <div class="searchWrap">
     <input id="searchInput" type="search" placeholder="Buscar anime...">
   </div>
@@ -46,146 +26,44 @@
 </header>
 
 <main>
+  <!-- Hero estático y ligero -->
   <section class="hero">
-    <div class="heroBg" id="heroBgA"></div>
-    <div class="heroBg" id="heroBgB"></div>
     <div class="heroContent">
       <p class="tag">ANIME • MANGA • MANHWA</p>
-      <h1>Tu mundo de anime,<br>manga y manhwa.</h1>
-      <p class="heroSub">Busca tus series favoritas y consulta sus capítulos.</p>
+      <h1>Tu mundo de anime</h1>
+      <p>Busca tus series favoritas y consulta sus capítulos.</p>
     </div>
-  </section>
-
-  <section id="historySection" class="history hidden">
-    <div class="historyHead">
-      <h2>📺 Continuar viendo</h2>
-      <button id="clearHistory" class="clearBtn">Limpiar</button>
-    </div>
-    <div id="historyGrid" class="historyGrid"></div>
-  </section>
-
-  <section id="soonSection" class="soon hidden">
-    <div class="soonHead">
-      <h2>🍞 A punto de salir del horno <span class="soonEmoji">~°~</span></h2>
-      <span class="soonSub">Próximamente</span>
-    </div>
-    <div id="soonGrid" class="soonGrid"></div>
-  </section>
-
-  <section id="freshSection" class="fresh hidden">
-    <div class="freshHead">
-      <h2>🔥 Salido recién del horno <span class="freshEmoji">^°^</span></h2>
-      <span class="freshSub">Ya disponibles</span>
-    </div>
-    <div id="freshGrid" class="freshGrid"></div>
   </section>
 
   <section class="typeToggle">
-    <button class="typeBtn active" data-type="series">
-      <span class="typeIcon">📺</span>
-      <span class="typeText">Series</span>
-    </button>
-    <button class="typeBtn" data-type="movies">
-      <span class="typeIcon">🎬</span>
-      <span class="typeText">Películas</span>
-    </button>
+    <button class="typeBtn active" data-type="series">📺 Series</button>
+    <button class="typeBtn" data-type="movies">🎬 Películas</button>
   </section>
 
   <section class="toolbar">
     <h2 id="sectionTitle">Animes populares</h2>
-    <div class="toolbarRight">
-      <select id="sortFilter">
-        <option value="default">Ordenar por...</option>
-        <option value="az">A → Z</option>
-        <option value="za">Z → A</option>
-        <option value="yearNew">Más recientes</option>
-        <option value="yearOld">Más antiguos</option>
-        <option value="score">Mejor puntuados</option>
-      </select>
-      <select id="genreFilter">
-        <option value="">Todos los géneros</option>
-      </select>
-    </div>
+    <select id="sortFilter">
+      <option value="default">Ordenar...</option>
+      <option value="az">A → Z</option>
+      <option value="za">Z → A</option>
+    </select>
   </section>
 
   <section id="status" class="status">Cargando catálogo...</section>
   <section id="animeGrid" class="grid"></section>
-
-  <div style="text-align: center; margin: 2rem 0;">
-    <button id="loadMoreBtn" style="display: none; background: #dc143c; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s;">Cargar más</button>
-  </div>
-
 </main>
 
 <footer class="siteFooter">
   <p class="copyright">© 2026 <b>AkihiroDaikyAnime</b> — Todos los derechos reservados</p>
-  <p>Hecho por <a href="https://github.com/akihiromanwha" target="_blank" rel="noopener">akihiromanwha</a></p>
-  <p class="muted">Los videos y portadas pertenecen a sus respectivos autores.</p>
 </footer>
 
 <div id="modal" class="modal hidden">
-  <div class="modalBox modalPlayer">
+  <div class="modalBox">
     <button id="closeModal" class="close">✕</button>
     <div id="modalContent"></div>
   </div>
 </div>
 
-<div id="profileModal" class="modal hidden">
-  <div class="modalBox profileBox">
-    <button id="closeProfile" class="close">✕</button>
-    <div class="profileHeader">
-      <div class="profileAvatar">👤</div>
-      <div class="profileInfo">
-        <h2 id="profileName">Invitado</h2>
-        <p class="profileSub">Perfil personal</p>
-      </div>
-    </div>
-    <div class="profileSection">
-      <label class="profileLabel">Nombre de usuario</label>
-      <input type="text" id="profileNameInput" class="profileInput" placeholder="Escribe tu nombre..." maxlength="20">
-    </div>
-    <div class="profileSection">
-      <label class="profileLabel">Preferencias</label>
-      <div class="profileOpts">
-        <div class="profileOpt" id="optTheme">
-          <span>🌗 Tema</span>
-          <span id="themeState">Oscuro</span>
-        </div>
-        <div class="profileOpt" id="optClearSeen">
-          <span>🧹 Limpiar vistos</span>
-          <span id="seenCount">0</span>
-        </div>
-        <div class="profileOpt">
-          <span>📦 Versión</span>
-          <span>1.3</span>
-        </div>
-      </div>
-    </div>
-    <button class="profileSave" id="saveProfile">Guardar</button>
-  </div>
-</div>
-
-<script>
-console.log('%c AKIHIRODAIKYANIME ', 'background:#dc143c;color:#fff;font-size:22px;font-weight:bold;padding:10px 20px;border-radius:6px');
-console.log('%c© 2026 AkihiroDaikyAnime — Todos los derechos reservados', 'color:#d4af37;font-size:13px');
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-  if (e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
-      (e.ctrlKey && e.key.toLowerCase() === 'u')){ e.preventDefault(); }
-});
-window._firma = "AKIHIRODAIKYANIME-2026-BY-AKIHIROMANWHA";
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  });
-}
-</script>
-
-<!-- Actualizado a v=35 -->
-<script src="app.js?v=35"></script>
+<script src="app.js"></script>
 </body>
 </html>
