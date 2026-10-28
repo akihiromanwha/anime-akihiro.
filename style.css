@@ -124,6 +124,7 @@ header{
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative; /* FIX: Para que el badge no se salga */
 }
 .card .cover{
   width: 100%;
@@ -166,8 +167,9 @@ header{
   padding: .2rem .4rem;
   border-radius: 4px;
   position: absolute;
-  margin: .3rem;
+  top: .3rem; right: .3rem;
   font-weight: bold;
+  z-index: 10;
 }
 
 /* Modal */
@@ -202,6 +204,7 @@ header{
   border-radius: 50%;
   width: 30px; height: 30px;
   cursor: pointer;
+  z-index: 20;
 }
 #modalContent{ padding: 1.2rem; }
 .modalCover{
