@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v5.0 (AllAnime API - Súper Ligero)
+   AKIHIRODAIKYANIME — app.js v5.2 (Conectado a Render)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -12,8 +12,9 @@ const modalContent= document.getElementById('modalContent');
 const sortFilter  = document.getElementById('sortFilter');
 
 let currentType = 'series';
-// ⚠️ REEMPLAZA ESTO CON TU URL DE RENDER DEL PASO 1
-const API_URL = 'https://allanime-api-xxxx.onrender.com';
+
+// ✅ URL REAL EXTRAÍDA DE TUS CAPTURAS DE RENDER
+const API_URL = 'https://allanime-api-d3dx.onrender.com'; 
 
 /* ═══ TUS LINKS MANUALES ═══ */
 const LINKS = {
@@ -48,7 +49,6 @@ const CUSTOM_SERIES = [
 const CUSTOM_MOVIES = [];
 let catalogSeries = [...CUSTOM_SERIES];
 let catalogMovies = [...CUSTOM_MOVIES];
-let catalogAll = [...catalogSeries, ...catalogMovies];
 let catalog = [...catalogSeries];
 
 function render(list){
@@ -106,10 +106,25 @@ searchInput.addEventListener('input', () => {
   debounceTimer = setTimeout(applyFilters, 400);
 });
 
+// Evita que la página se quede colgada si Render está "dormido"
+async function fetchWithTimeout(url, options = {}, timeout = 15000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
+  }
+}
+
 async function openAnime(a){
   const animeLinks = getAnimeLinks(a.title);
   const isMovie = currentType === 'movies';
 
+  // 1. SI EL ANIME TIENE LINKS MANUALES (TU CATÁLOGO)
   if (animeLinks && Object.keys(animeLinks).length) {
     const firstKey = Object.keys(animeLinks)[0];
     const firstValue = animeLinks[firstKey];
@@ -189,20 +204,26 @@ async function openAnime(a){
     return;
   }
 
-  /* FLUJO AUTOMÁTICO (AllAnime API) */
-  modalContent.innerHTML = `<p style="text-align:center; padding: 2rem;">Buscando episodios...</p>`;
+  // 2. SI NO HAY LINKS MANUALES, BUSCAMOS EN LA API DE RENDER
+  modalContent.innerHTML = `<p style="text-align:center; padding: 2rem;">Buscando episodios en la API...</p>`;
   modal.classList.remove('hidden');
 
   try {
-    const searchRes = await fetch(`${API_URL}/anime/search?q=${encodeURIComponent(a.title)}&limit=1`);
+    // Hacemos la petición a tu backend en Render
+    const searchRes = await fetchWithTimeout(`${API_URL}/anime/search?q=${encodeURIComponent(a.title)}&limit=1`);
+    
+    // Si Render está despertando, puede que tarde. Aquí verificamos si la respuesta es válida.
+    if (!searchRes.ok) throw new Error('Error en el servidor de Render');
+    
     const searchData = await searchRes.json();
+    
     if (!searchData.results || searchData.results.length === 0) throw new Error('No encontrado');
 
     const animeData = searchData.results[0];
     const animeId = animeData._id;
 
-    // La API de AllAnime a veces devuelve los episodios en el mismo objeto de búsqueda o requiere otra llamada
-    const epRes = await fetch(`${API_URL}/anime/info/${animeId}`);
+    // Pedimos la info de los episodios
+    const epRes = await fetchWithTimeout(`${API_URL}/anime/info/${animeId}`);
     const epData = await epRes.json();
     const episodesList = epData.episodes || [];
 
@@ -210,7 +231,7 @@ async function openAnime(a){
 
     modalContent.innerHTML = `
       <img class="modalCover" src="${esc(a.cover)}" alt="">
-      <div class="modalInfo"><h2>${esc(a.title)}</h2><p>Auto</p></div>
+      <div class="modalInfo"><h2>${esc(a.title)}</h2><p>Auto (API)</p></div>
       <div class="watchOptions">
         <p class="sectionTitle">Episodios</p>
         <div class="episodes" id="episodesBox">
@@ -230,30 +251,32 @@ async function openAnime(a){
        playerBox.innerHTML = `<p style="text-align:center;">Cargando video...</p>`;
 
        try {
-         // La API de AllAnime devuelve enlaces directos MP4
-         const videoRes = await fetch(`${API_URL}/anime/watch/${animeId}/${epNum}`);
+         const videoRes = await fetchWithTimeout(`${API_URL}/anime/watch/${animeId}/${epNum}`);
          const videoData = await videoRes.json();
-         let videoUrl = videoData.sources?.[0]?.url; // A menudo es un MP4 directo
+         let videoUrl = videoData.sources?.[0]?.url; 
          if (!videoUrl) throw new Error('No hay servidor');
 
          playerBox.innerHTML = `<div class="playerHeader"><span>▶ Ep ${esc(epNum)}</span><button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button></div>
             <video id="plyrPlayer" playsinline controls crossorigin></video>`;
          const videoElement = document.getElementById('plyrPlayer');
          
-         // Al ser MP4 directo, no se necesita HLS.js, haciendo la página más ligera
          videoElement.src = videoUrl;
          
          new Plyr(videoElement, { fullscreen: { enabled: true, fallback: true, iosNative: true } });
          btn.classList.add('seen');
        } catch(err) {
-         playerBox.innerHTML = `<p style="text-align:center; color:#dc143c;">Error al cargar.</p>`;
+         playerBox.innerHTML = `<p style="text-align:center; color:#dc143c;">Error al cargar el video.</p>`;
        }
     };
   } catch (err) {
+    console.error("Error de API:", err);
     modalContent.innerHTML = `
       <img class="modalCover" src="${esc(a.cover)}" alt="">
       <div class="modalInfo"><h2>${esc(a.title)}</h2></div>
-      <p class="noLinks">No se encontraron episodios en la API.</p>`;
+      <p class="noLinks" style="color:#ff4d4d; text-align:center; padding:1rem;">
+        No se encontraron episodios en la API.<br>
+        <small style="color:#999;">(Puede que el servidor de Render esté despertando, espera unos segundos y vuelve a intentar).</small>
+      </p>`;
   }
 }
 
