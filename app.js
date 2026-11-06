@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   AKIHIRODAIKYANIME — app.js v5.1 (AllAnime + New Saga)
+   AKIHIRODAIKYANIME — app.js v5.2 (New Saga + Mixdrop Embed)
    © 2026 AkihiroDaikyAnime — Todos los derechos reservados
    ════════════════════════════════════════════════════════════ */
 
@@ -14,9 +14,9 @@ const sortFilter  = document.getElementById('sortFilter');
 let currentType = 'series';
 
 // ⚠️ REEMPLAZA ESTO CON TU URL DE RENDER DE ALLANIME
-const API_URL = 'https://allanime-api-xxxx.onrender.com';
+const API_URL = 'TU_URL_DE_RENDER_AQUI';
 
-/* ═══ TUS LINKS MANUALES (Tus animes) ═══ */
+/* ═══ TUS LINKS MANUALES ═══ */
 const LINKS = {
   "Blood Lad": {
     "Terabox": {
@@ -401,17 +401,29 @@ async function openAnime(a){
         const num = btn.dataset.num;
         btn.classList.add('seen');
 
-        // Si es Mixdrop o Terabox, abrimos en pestaña nueva
-        if (link.includes('mixdrop') || link.includes('terabox')) {
-          window.open(link, '_blank', 'noopener');
+        // Intentar reproducir Mixdrop dentro de la página
+        if (link.includes('mixdrop')) {
+          const embedLink = link.replace('/e/', '/emb/');
+          player.innerHTML = `
+            <div class="playerHeader">
+              <span>▶ ${isMovie ? 'Película' : 'Ep ' + esc(num)}</span>
+              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+            </div>
+            <iframe src="${embedLink}" allow="autoplay; fullscreen" allowfullscreen style="width:100%; height:400px; border:none; border-radius:8px; background:#000;"></iframe>`;
         } 
-        // Si es Drive, lo reproducimos dentro
+        // Reproducir Drive dentro
         else if (link.includes('drive.google.com')){
           const match = link.match(/\/d\/([^/]+)/);
           const id = match ? match[1] : '';
-          player.innerHTML = `<div class="playerHeader"><span>▶ ${isMovie ? 'Película' : 'Ep ' + esc(num)}</span><button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button></div>
+          player.innerHTML = `
+            <div class="playerHeader">
+              <span>▶ ${isMovie ? 'Película' : 'Ep ' + esc(num)}</span>
+              <button class="closePlayer" onclick="document.getElementById('playerBox').innerHTML=''">✕</button>
+            </div>
             <iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-        } else {
+        } 
+        // Terabox y otros abren en pestaña nueva
+        else {
           window.open(link, '_blank', 'noopener');
         }
       };
